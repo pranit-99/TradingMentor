@@ -118,4 +118,9 @@ public class TradeController {
     public ResponseEntity<List<UserTrade>> getAllTrades() {
         return ResponseEntity.ok(userTradeRepository.findAll());
     }
+    @GetMapping("/user/{userId}")
+    public List<UserTrade> getTradesForUser(@PathVariable Long userId) {
+        return userTradeRepository.findByUserIdOrderByTradeTimeDesc(userId);
+    }
+    
 }

@@ -35,9 +35,9 @@ public class PositionController {
      * Returns JSON array with that user's holdings.
      */
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Position>> getPositionsForUser(@PathVariable Integer userId) {
-        List<Position> positions = positionRepository.findByUserId(userId);
-        return ResponseEntity.ok(positions);
+    public List<Position> getPositionsForUser(@PathVariable Integer userId) {
+        // Repository method returns list of Position rows for that user
+        return positionRepository.findByUserId(userId);
     }
 
     /**
