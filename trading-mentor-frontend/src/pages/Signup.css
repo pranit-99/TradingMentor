@@ -1,0 +1,130 @@
+/* Full-page container */
+.signup-page {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 32px;
+    background: radial-gradient(circle at top, #1f2937 0, #020617 55%, #000000 100%);
+    color: #e5e7eb;
+  }
+  
+  /* Card */
+  .signup-card {
+    width: 100%;
+    max-width: 720px;
+    background: rgba(15, 23, 42, 0.95);
+    border-radius: 18px;
+    padding: 24px 28px 28px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+  }
+  
+  .signup-card h2 {
+    font-size: 1.6rem;
+    margin-bottom: 4px;
+  }
+  
+  .signup-subtitle {
+    font-size: 0.9rem;
+    color: #9ca3af;
+    margin-bottom: 20px;
+  }
+  
+  /* Alerts */
+  .signup-alert {
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+  }
+  
+  .signup-alert.success {
+    background: rgba(22, 163, 74, 0.08);
+    border: 1px solid rgba(34, 197, 94, 0.5);
+    color: #bbf7d0;
+  }
+  
+  .signup-alert.error {
+    background: rgba(220, 38, 38, 0.08);
+    border: 1px solid rgba(248, 113, 113, 0.7);
+    color: #fecaca;
+  }
+  
+  /* Form layout */
+  .signup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  
+  .signup-row {
+    display: flex;
+    gap: 14px;
+  }
+  
+  .signup-field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .signup-field label {
+    font-size: 0.8rem;
+    margin-bottom: 4px;
+    color: #9ca3af;
+  }
+  
+  .signup-field input {
+    background: #020617;
+    border-radius: 10px;
+    border: 1px solid rgba(55, 65, 81, 0.8);
+    padding: 8px 10px;
+    font-size: 0.9rem;
+    color: #e5e7eb;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  
+  .signup-field input::placeholder {
+    color: #6b7280;
+  }
+  
+  .signup-field input:focus {
+    border-color: #22c55e;
+    box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.6);
+  }
+  
+  /* Submit button */
+  .signup-submit {
+    margin-top: 10px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    background: linear-gradient(90deg, #22c55e, #16a34a);
+    color: #0b1120;
+    align-self: flex-start;
+    transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.2s ease;
+  }
+  
+  .signup-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 25px rgba(34, 197, 94, 0.35);
+  }
+  
+  .signup-submit:disabled {
+    opacity: 0.6;
+    cursor: default;
+    box-shadow: none;
+    transform: none;
+  }
+  
+  .signup-hint {
+    margin-top: 8px;
+    font-size: 0.8rem;
+    color: #9ca3af;
+  }
+  

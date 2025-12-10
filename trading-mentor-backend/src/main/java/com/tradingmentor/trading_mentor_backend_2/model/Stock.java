@@ -1,6 +1,8 @@
 package com.tradingmentor.trading_mentor_backend.model;
 
 import jakarta.persistence.*;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -39,6 +41,18 @@ public class Stock {
 
     @Column(name = "updated_at", insertable = false, updatable = false)
     private LocalDateTime updatedAt; // Set by DB when row is updated
+
+    // Latest market price from Alpha Vantage
+    @Column(name = "last_price")
+    private BigDecimal lastPrice;
+
+    // Currency of the price (e.g., USD)
+    @Column(name = "last_price_currency")
+    private String lastPriceCurrency;
+
+    // When we last updated the price
+    @Column(name = "last_price_updated_at")
+    private LocalDateTime lastPriceUpdatedAt;
 
     // JPA requires a no-argument constructor
     public Stock() {
@@ -117,4 +131,29 @@ public class Stock {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public BigDecimal getLastPrice() {
+        return lastPrice;
+    }
+
+    public void setLastPrice(BigDecimal lastPrice) {
+        this.lastPrice = lastPrice;
+    }
+
+    public String getLastPriceCurrency() {
+        return lastPriceCurrency;
+    }
+
+    public void setLastPriceCurrency(String lastPriceCurrency) {
+        this.lastPriceCurrency = lastPriceCurrency;
+    }
+
+    public LocalDateTime getLastPriceUpdatedAt() {
+        return lastPriceUpdatedAt;
+    }
+
+    public void setLastPriceUpdatedAt(LocalDateTime lastPriceUpdatedAt) {
+        this.lastPriceUpdatedAt = lastPriceUpdatedAt;
+    }
+
 }

@@ -1,24 +1,26 @@
 package com.tradingmentor.trading_mentor_backend.Service;
 
-import com.tradingmentor.trading_mentor_backend.model.Order;
-import com.tradingmentor.trading_mentor_backend.model.OrderStatus;
-import com.tradingmentor.trading_mentor_backend.model.Side;
-import com.tradingmentor.trading_mentor_backend.model.Trade;
-import com.tradingmentor.trading_mentor_backend.repository.OrderRepository;
-import com.tradingmentor.trading_mentor_backend.repository.PositionRepository;
-import com.tradingmentor.trading_mentor_backend.repository.TradeRepository;
-import com.tradingmentor.trading_mentor_backend.model.Position;
+import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.tradingmentor.trading_mentor_backend.model.UserTrade;
-import com.tradingmentor.trading_mentor_backend.repository.UserTradeRepository;
 
-import java.util.List;
-import java.time.LocalDateTime;
-import java.math.BigDecimal;
+import com.tradingmentor.trading_mentor_backend.model.Order;
+import com.tradingmentor.trading_mentor_backend.model.OrderStatus;
+import com.tradingmentor.trading_mentor_backend.model.Position;
+import com.tradingmentor.trading_mentor_backend.model.Side;
+import com.tradingmentor.trading_mentor_backend.model.Trade;
+import com.tradingmentor.trading_mentor_backend.model.TradingAccount;
+import com.tradingmentor.trading_mentor_backend.model.UserTrade;
+import com.tradingmentor.trading_mentor_backend.repository.OrderRepository;
+import com.tradingmentor.trading_mentor_backend.repository.PositionRepository;
+import com.tradingmentor.trading_mentor_backend.repository.TradeRepository;
+import com.tradingmentor.trading_mentor_backend.repository.TradingAccountRepository;
+import com.tradingmentor.trading_mentor_backend.repository.UserTradeRepository;
 
 /**
  * MatchingEngineService
@@ -37,15 +39,18 @@ public class MatchingEngineService {
     private final PositionRepository positionRepository;
     private final UserTradeRepository userTradeRepository;
     private final TradeRepository tradeRepository;
+    private final TradingAccountRepository tradingAccountRepository;
 
     public MatchingEngineService(OrderRepository orderRepository,
                                 PositionRepository positionRepository,
                                 TradeRepository tradeRepository,
-                                 UserTradeRepository userTradeRepository) {
+                                 UserTradeRepository userTradeRepository,
+                                 TradingAccountRepository tradingAccountRepository) {
         this.orderRepository = orderRepository;
         this.positionRepository = positionRepository;
         this.userTradeRepository = userTradeRepository;
         this.tradeRepository = tradeRepository;
+        this.tradingAccountRepository = tradingAccountRepository;
     }
 
     /**
@@ -89,19 +94,53 @@ public class MatchingEngineService {
 
         for (Order sellOrder : sellOrders) {
 
-            // Stop if BUY order is fully satisfied
-            if (remainingQty <= 0) {
+            if (sellOrder.getUserId().equals(buyOrder.getUserId())){
+                continue;
+            }
+
+            if(remainingQty <= 0){
                 break;
             }
 
-            // Price condition: BUY price must be >= SELL price
             if (buyOrder.getPrice().compareTo(sellOrder.getPrice()) < 0) {
                 // Remaining sell orders are even more expensive, so we stop
                 break;
             }
 
+
             // Calculate how much we can trade in this match
             int tradableQty = Math.min(remainingQty, sellOrder.getQuantity());
+            // Calculate trade price (here we use the SELL price, but you can choose mid or BUY)
+            BigDecimal tradePrice = sellOrder.getPrice();
+            BigDecimal tradeValue = tradePrice.multiply(BigDecimal.valueOf(tradableQty));
+
+            /* ==== CASH MOVEMENT FOR THIS TRADE CHUNK ==== */
+
+// Buyer = incoming buyOrder
+TradingAccount buyerAccount = tradingAccountRepository
+        .findByUserId(buyOrder.getUserId())
+        .orElseThrow(() -> new IllegalStateException("No trading account for buyer"));
+
+// Seller = resting sellOrder
+TradingAccount sellerAccount = tradingAccountRepository
+        .findByUserId(sellOrder.getUserId())
+        .orElseThrow(() -> new IllegalStateException("No trading account for seller"));
+
+// 1) Clear reserved + deduct real cash from buyer
+buyerAccount.setReservedCash(
+        buyerAccount.getReservedCash().subtract(tradeValue)
+);
+buyerAccount.setCashBalance(
+        buyerAccount.getCashBalance().subtract(tradeValue)
+);
+
+// 2) Give money to seller
+sellerAccount.setCashBalance(
+        sellerAccount.getCashBalance().add(tradeValue)
+);
+
+tradingAccountRepository.save(buyerAccount);
+tradingAccountRepository.save(sellerAccount);
 
             // --- Create Trade Record ---
 Trade trade = new Trade();
@@ -130,8 +169,7 @@ tradeRepository.save(trade);
             // Save updated SELL order
             orderRepository.save(sellOrder);
 
-            // Calculate trade price (here we use the SELL price, but you can choose mid or BUY)
-            BigDecimal tradePrice = sellOrder.getPrice();
+            
 
             // 1) Insert two rows in user_trades (buyer + seller)
             //recordTrade(buyOrder, sellOrder, tradableQty, tradePrice);
@@ -156,7 +194,7 @@ tradeRepository.save(trade);
             buyOrder.setStatus(OrderStatus.PARTIALLY_FILLED);
         }
 
-        orderRepository.save(buyOrder);
+        
     }
 
     /**
@@ -174,6 +212,10 @@ tradeRepository.save(trade);
 
         for (Order buyOrder : buyOrders) {
 
+            if (buyOrder.getUserId().equals(sellOrder.getUserId())) {
+                continue;  // skip this BUY order, go to next
+            }
+
             if (remainingQty <= 0) {
                 break;
             }
@@ -185,6 +227,35 @@ tradeRepository.save(trade);
             }
 
             int tradableQty = Math.min(remainingQty, buyOrder.getQuantity());
+            // 🔹 Price & value
+BigDecimal tradePrice = buyOrder.getPrice();  // or sellOrder.getPrice()
+BigDecimal tradeValue = tradePrice.multiply(BigDecimal.valueOf(tradableQty));
+
+/* ==== CASH MOVEMENT ==== */
+
+// Buyer = resting buyOrder
+TradingAccount buyerAccount = tradingAccountRepository
+        .findByUserId(buyOrder.getUserId())
+        .orElseThrow(() -> new IllegalStateException("No trading account for buyer"));
+
+// Seller = incoming sellOrder
+TradingAccount sellerAccount = tradingAccountRepository
+        .findByUserId(sellOrder.getUserId())
+        .orElseThrow(() -> new IllegalStateException("No trading account for seller"));
+
+buyerAccount.setReservedCash(
+        buyerAccount.getReservedCash().subtract(tradeValue)
+);
+buyerAccount.setCashBalance(
+        buyerAccount.getCashBalance().subtract(tradeValue)
+);
+
+sellerAccount.setCashBalance(
+        sellerAccount.getCashBalance().add(tradeValue)
+);
+
+tradingAccountRepository.save(buyerAccount);
+tradingAccountRepository.save(sellerAccount);
 
             Trade trade = new Trade();
 trade.setBuyOrderId(buyOrder.getOrderId());
@@ -209,7 +280,6 @@ trade.setQuantity(tradableQty);
             // Save updated BUY order
             orderRepository.save(buyOrder);
 
-            BigDecimal tradePrice = buyOrder.getPrice();
 
             // 1) Insert trade rows
             //recordTrade(buyOrder, sellOrder, tradableQty, tradePrice);
@@ -235,6 +305,7 @@ trade.setQuantity(tradableQty);
         }
 
         orderRepository.save(sellOrder);
+
     }
     /**
  * Save trade history rows for BOTH sides of a matched trade.
@@ -243,38 +314,131 @@ trade.setQuantity(tradableQty);
  *  - one UserTrade row for the buyer
  *  - one UserTrade row for the seller
  */
-private void recordTrade(Order buyOrder,
-    Order sellOrder,
-    int tradeQty,
-    BigDecimal tradePrice) {
+    private void recordTrade(Order buyOrder,
+        Order sellOrder,
+        int quantity,
+        BigDecimal tradePrice) {
+
+BigDecimal tradeValue = tradePrice.multiply(BigDecimal.valueOf(quantity));
+
+// 1) UPDATE CASH FOR BUYER & SELLER
+TradingAccount buyerAccount = tradingAccountRepository
+.findByUserId(buyOrder.getUserId())
+.orElseThrow(() -> new IllegalStateException("No trading account for buyer userId=" + buyOrder.getUserId()));
+
+TradingAccount sellerAccount = tradingAccountRepository
+.findByUserId(sellOrder.getUserId())
+.orElseThrow(() -> new IllegalStateException("No trading account for seller userId=" + sellOrder.getUserId()));
+
+// Buyer: reserved_cash ↓ , cash_balance ↓
+buyerAccount.setReservedCash(
+buyerAccount.getReservedCash().subtract(tradeValue)
+);
+buyerAccount.setCashBalance(
+buyerAccount.getCashBalance().subtract(tradeValue)
+);
+
+// Seller: cash_balance ↑
+sellerAccount.setCashBalance(
+sellerAccount.getCashBalance().add(tradeValue)
+);
+
+tradingAccountRepository.save(buyerAccount);
+tradingAccountRepository.save(sellerAccount);
+
+// 2) UPDATE POSITIONS
+
+// ----- Buyer position -----
+Integer buyerUserIdInt = buyOrder.getUserId() != null
+? buyOrder.getUserId().intValue()
+: null;
+
+if (buyerUserIdInt == null) {
+throw new IllegalStateException("Buyer userId is null; cannot update positions");
+}
+
+Optional<Position> buyerPosOpt =
+positionRepository.findByUserIdAndSymbol(buyerUserIdInt, buyOrder.getSymbol());
+
+Position buyerPos;
+if (buyerPosOpt.isEmpty()) {
+// New position
+buyerPos = new Position();
+buyerPos.setUserId(buyerUserIdInt);
+buyerPos.setSymbol(buyOrder.getSymbol());
+buyerPos.setQuantity(quantity);
+buyerPos.setAvgPrice(tradePrice);
+} else {
+// Update existing position: new weighted average price
+buyerPos = buyerPosOpt.get();
+int oldQty = buyerPos.getQuantity();
+BigDecimal oldValue = buyerPos.getAvgPrice()
+.multiply(BigDecimal.valueOf(oldQty));
+
+BigDecimal newValue = tradePrice
+.multiply(BigDecimal.valueOf(quantity));
+
+int newQty = oldQty + quantity;
+BigDecimal newAvgPrice = oldValue.add(newValue)
+.divide(BigDecimal.valueOf(newQty), 2, RoundingMode.HALF_UP);
+
+buyerPos.setQuantity(newQty);
+buyerPos.setAvgPrice(newAvgPrice);
+}
+buyerPos.setUpdatedAt(LocalDateTime.now());
+positionRepository.save(buyerPos);
+
+// ----- Seller position -----
+Integer sellerUserIdInt = sellOrder.getUserId() != null
+? sellOrder.getUserId().intValue()
+: null;
+
+if (sellerUserIdInt == null) {
+throw new IllegalStateException("Seller userId is null; cannot update positions");
+}
+
+Optional<Position> sellerPosOpt =
+positionRepository.findByUserIdAndSymbol(sellerUserIdInt, sellOrder.getSymbol());
+
+if (sellerPosOpt.isPresent()) {
+Position sellerPos = sellerPosOpt.get();
+int newQty = sellerPos.getQuantity() - quantity;
+
+if (newQty <= 0) {
+// Seller fully exited this symbol
+positionRepository.delete(sellerPos);
+} else {
+sellerPos.setQuantity(newQty);
+sellerPos.setUpdatedAt(LocalDateTime.now());
+positionRepository.save(sellerPos);
+}
+}
+// If seller had no position, this is like selling from 0 (we disallow that earlier in validation)
+
+// 3) INSERT USER_TRADES (buyer & seller legs)
 
 LocalDateTime now = LocalDateTime.now();
 
-// Trade seen from BUYER side
-UserTrade buyTrade = new UserTrade();
-buyTrade.setOrderId(buyOrder.getOrderId());
-buyTrade.setUserId(buyOrder.getUserId());
-buyTrade.setSymbol(buyOrder.getSymbol());
-buyTrade.setSide(Side.BUY);
-buyTrade.setPrice(tradePrice);
-buyTrade.setQuantity(tradeQty);
-buyTrade.setTradeTime(now);
+UserTrade buyerTrade = new UserTrade();
+buyerTrade.setUserId(buyOrder.getUserId());
+buyerTrade.setOrderId(buyOrder.getOrderId());
+buyerTrade.setSymbol(buyOrder.getSymbol());
+buyerTrade.setSide(Side.BUY);
+buyerTrade.setPrice(tradePrice);
+buyerTrade.setQuantity(quantity);
+buyerTrade.setTradeTime(now);
+userTradeRepository.save(buyerTrade);
 
-// Trade seen from SELLER side
-UserTrade sellTrade = new UserTrade();
-sellTrade.setOrderId(sellOrder.getOrderId());
-sellTrade.setUserId(sellOrder.getUserId());
-sellTrade.setSymbol(sellOrder.getSymbol());
-sellTrade.setSide(Side.SELL);
-sellTrade.setPrice(tradePrice);
-sellTrade.setQuantity(tradeQty);
-sellTrade.setTradeTime(now);
-
-// Persist both sides
-userTradeRepository.save(buyTrade);
-userTradeRepository.save(sellTrade);
+UserTrade sellerTrade = new UserTrade();
+sellerTrade.setUserId(sellOrder.getUserId());
+sellerTrade.setOrderId(sellOrder.getOrderId());
+sellerTrade.setSymbol(sellOrder.getSymbol());
+sellerTrade.setSide(Side.SELL);
+sellerTrade.setPrice(tradePrice);
+sellerTrade.setQuantity(quantity);
+sellerTrade.setTradeTime(now);
+userTradeRepository.save(sellerTrade);
 }
-
     /**
      * Update the buyer's position after a BUY trade.
      *
