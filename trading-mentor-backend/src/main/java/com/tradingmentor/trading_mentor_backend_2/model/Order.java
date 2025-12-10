@@ -3,6 +3,7 @@ package com.tradingmentor.trading_mentor_backend.model;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "orders")
@@ -33,8 +34,10 @@ public class Order {
     @Column(name = "status", nullable = false)
     private OrderStatus status = OrderStatus.OPEN;
 
-    @Column(name = "created_at", insertable = false, updatable = false)
+    @CreationTimestamp
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
+    
 
     // Mandatory no-args constructor for JPA
     public Order() {
