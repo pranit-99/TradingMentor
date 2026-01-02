@@ -1,0 +1,228 @@
+/* Portfolio.css */
+
+.port-page{
+    padding:20px;
+    min-height:100vh;
+    color:#e7eefc;
+    background: linear-gradient(180deg, #0b1220 0%, #070b14 100%);
+  }
+  
+  .port-headerRow{
+    display:flex;
+    justify-content:space-between;
+    gap:16px;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    margin-bottom:16px;
+  }
+  
+  .port-kicker{
+    font-size:12px;
+    letter-spacing:1.2px;
+    opacity:0.7;
+  }
+  .port-title{
+    margin:6px 0 4px;
+    font-size:28px;
+  }
+  .port-sub{
+    opacity:0.75;
+    font-size:13px;
+  }
+  
+  .port-searchWrap{
+    display:flex;
+    gap:10px;
+    align-items:center;
+  }
+  
+  .port-search,
+  .port-select{
+    padding:10px 12px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.06);
+    color:#e7eefc;
+    outline:none;
+  }
+  
+  .port-search{ min-width:220px; }
+  
+  .port-btnGhost{
+    padding:10px 12px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.06);
+    color:#e7eefc;
+    cursor:pointer;
+  }
+  
+  .port-cards{
+    display:grid;
+    grid-template-columns: repeat(4, minmax(160px, 1fr));
+    gap:12px;
+    margin-bottom:16px;
+  }
+  
+  .port-card{
+    padding:14px;
+    border-radius:14px;
+    background: rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.10);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  }
+  .port-cardMuted{ opacity:0.7; }
+  
+  .port-cardLabel{ font-size:12px; opacity:0.75; }
+  .port-cardValue{ font-size:20px; font-weight:700; margin-top:6px; }
+  .port-cardHint{ font-size:12px; opacity:0.65; margin-top:6px; }
+  
+  .port-block{
+    padding:14px;
+    border-radius:16px;
+    background: rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.10);
+    margin-bottom:16px;
+  }
+  
+  .port-blockHead{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .port-blockTitle{ font-weight:700; }
+  .port-blockHint{ font-size:12px; opacity:0.65; }
+  
+  .port-allocBar{
+    margin-top:12px;
+    height:14px;
+    border-radius:999px;
+    overflow:hidden;
+    display:flex;
+    border:1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.04);
+  }
+  
+  .port-allocSeg{
+    height:100%;
+    background: linear-gradient(90deg, rgba(0,255,200,0.35), rgba(0,140,255,0.35));
+  }
+  
+  .port-allocLegend{
+    margin-top:10px;
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  
+  .port-chip{
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:12px;
+    background: rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.10);
+  }
+  .port-chipMuted{
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:12px;
+    opacity:0.7;
+    border:1px dashed rgba(255,255,255,0.16);
+  }
+  
+  .port-info{ padding:10px; opacity:0.75; }
+  .port-error{ padding:10px; color:#ff6b6b; }
+  
+  .port-emptyMini{ padding:10px; opacity:0.75; }
+  
+  .port-empty{
+    padding:18px;
+    text-align:center;
+  }
+  .port-emptyTitle{
+    font-size:18px;
+    font-weight:800;
+    margin-bottom:6px;
+  }
+  .port-emptyText{
+    opacity:0.75;
+    margin-bottom:12px;
+  }
+  
+  .port-btnPrimary{
+    padding:10px 14px;
+    border-radius:12px;
+    border:1px solid rgba(0,255,200,0.35);
+    background: linear-gradient(90deg, rgba(0,255,200,0.25), rgba(0,140,255,0.25));
+    color:#e7eefc;
+    cursor:pointer;
+    font-weight:700;
+  }
+  
+  .port-tableWrap{ overflow-x:auto; }
+  
+  .port-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+  }
+  
+  .port-th{
+    text-align:left;
+    padding:10px;
+    font-size:12px;
+    opacity:0.75;
+    border-bottom:1px solid rgba(255,255,255,0.10);
+  }
+  .port-thRight{
+    text-align:right;
+    padding:10px;
+    font-size:12px;
+    opacity:0.75;
+    border-bottom:1px solid rgba(255,255,255,0.10);
+  }
+  
+  .port-tr{ border-bottom:1px solid rgba(255,255,255,0.06); }
+  
+  .port-td{ padding:10px; }
+  .port-tdRight{ padding:10px; text-align:right; }
+  
+  .port-symbolBadge{
+    padding:6px 10px;
+    border-radius:10px;
+    font-weight:700;
+    background: rgba(0,140,255,0.12);
+    border:1px solid rgba(0,140,255,0.25);
+  }
+  
+  .port-footerTotals{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:14px;
+  }
+  
+  .port-footerBox{
+    padding:12px;
+    border-radius:12px;
+    background: rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.10);
+    min-width:200px;
+  }
+  .port-footerLabel{ font-size:12px; opacity:0.75; }
+  .port-footerValue{ font-size:18px; font-weight:800; margin-top:6px; }
+  .port-footerNote{ font-size:12px; opacity:0.7; }
+  .port-green { color: #3df0a6; }
+.port-red { color: #ff6b6b; }
+
+.port-plBig{
+  font-size: 28px;
+  font-weight: 900;
+  text-align: center;
+  padding: 14px 0;
+}
+
+  

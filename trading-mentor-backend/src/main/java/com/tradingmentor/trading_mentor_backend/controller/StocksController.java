@@ -1,11 +1,16 @@
 package com.tradingmentor.trading_mentor_backend.controller;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.tradingmentor.trading_mentor_backend.model.Stock;
 import com.tradingmentor.trading_mentor_backend.repository.StockRepository;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * REST API for exposing the list of tradable stocks to clients.

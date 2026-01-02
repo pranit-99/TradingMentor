@@ -1,8 +1,17 @@
 package com.tradingmentor.trading_mentor_backend.model;
 
-import jakarta.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 
 /**
  * account_master
@@ -68,6 +77,12 @@ public class AccountMaster {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(name = "cash_balance", nullable = false)
+    private BigDecimal cashBalance = BigDecimal.ZERO;
+
+    @Column(name = "reserved_cash", nullable = false)
+    private BigDecimal reservedCash = BigDecimal.ZERO;
 
     // ===== Constructors =====
     public AccountMaster() {
@@ -222,4 +237,10 @@ public class AccountMaster {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public BigDecimal getCashBalance() { return cashBalance; }
+public void setCashBalance(BigDecimal cashBalance) { this.cashBalance = cashBalance; }
+
+public BigDecimal getReservedCash() { return reservedCash; }
+public void setReservedCash(BigDecimal reservedCash) { this.reservedCash = reservedCash; }
 }

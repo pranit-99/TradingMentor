@@ -15,11 +15,13 @@ import com.tradingmentor.trading_mentor_backend.model.Position;
 import com.tradingmentor.trading_mentor_backend.model.Side;
 import com.tradingmentor.trading_mentor_backend.model.Trade;
 import com.tradingmentor.trading_mentor_backend.model.TradingAccount;
+import com.tradingmentor.trading_mentor_backend.model.Transact;
 import com.tradingmentor.trading_mentor_backend.model.UserTrade;
 import com.tradingmentor.trading_mentor_backend.repository.OrderRepository;
 import com.tradingmentor.trading_mentor_backend.repository.PositionRepository;
 import com.tradingmentor.trading_mentor_backend.repository.TradeRepository;
 import com.tradingmentor.trading_mentor_backend.repository.TradingAccountRepository;
+import com.tradingmentor.trading_mentor_backend.repository.TransactRepository;
 import com.tradingmentor.trading_mentor_backend.repository.UserTradeRepository;
 
 /**
@@ -40,17 +42,20 @@ public class MatchingEngineService {
     private final UserTradeRepository userTradeRepository;
     private final TradeRepository tradeRepository;
     private final TradingAccountRepository tradingAccountRepository;
+    private final TransactRepository transactRepository;
 
     public MatchingEngineService(OrderRepository orderRepository,
                                 PositionRepository positionRepository,
                                 TradeRepository tradeRepository,
                                  UserTradeRepository userTradeRepository,
-                                 TradingAccountRepository tradingAccountRepository) {
+                                 TradingAccountRepository tradingAccountRepository,
+                                 TransactRepository transactRepository) {
         this.orderRepository = orderRepository;
         this.positionRepository = positionRepository;
         this.userTradeRepository = userTradeRepository;
         this.tradeRepository = tradeRepository;
         this.tradingAccountRepository = tradingAccountRepository;
+        this.transactRepository = transactRepository;
     }
 
     /**
@@ -83,19 +88,20 @@ public class MatchingEngineService {
      * Match a BUY order against existing SELL orders.
      */
     private void matchBuyOrder(Order buyOrder, int remainingQty) {
-
+        int originalQty = buyOrder.getQuantity();
         // Get all OPEN SELL orders for the same symbol, best price first
         List<Order> sellOrders = orderRepository
-                .findBySymbolAndSideAndStatusOrderByPriceAscCreatedAtAsc(
+                .findBySymbolAndSideAndStatusInOrderByPriceAscCreatedAtAsc(
                         buyOrder.getSymbol(),
                         Side.SELL,
-                        OrderStatus.OPEN
+                        List.of(OrderStatus.OPEN, OrderStatus.PARTIALLY_FILLED)
                 );
+
 
         for (Order sellOrder : sellOrders) {
 
             if (sellOrder.getUserId().equals(buyOrder.getUserId())){
-                continue;
+                throw new IllegalStateException("Self-trade is not allowed.");
             }
 
             if(remainingQty <= 0){
@@ -126,6 +132,29 @@ TradingAccount sellerAccount = tradingAccountRepository
         .findByUserId(sellOrder.getUserId())
         .orElseThrow(() -> new IllegalStateException("No trading account for seller"));
 
+// 1) Record ledger transactions
+// 1) Buyer ledger entry (DEBIT)
+recordTransaction(
+    buyOrder.getUserId(),
+    buyerAccount.getAccountNumber(),
+    buyOrder.getSymbol(),
+    tradeValue,
+    "D",     // debit
+    "B",     // buy side
+    "E",     // equity
+    buyOrder.getOrderId().longValue()
+);
+// 2) Seller ledger entry (CREDIT)
+recordTransaction(
+    sellOrder.getUserId(),
+    sellerAccount.getAccountNumber(),
+    sellOrder.getSymbol(),
+    tradeValue,
+    "C",     // credit
+    "S",     // sell side
+    "E",
+    sellOrder.getOrderId().longValue()
+);
 // 1) Clear reserved + deduct real cash from buyer
 buyerAccount.setReservedCash(
         buyerAccount.getReservedCash().subtract(tradeValue)
@@ -160,11 +189,18 @@ tradeRepository.save(trade);
             sellOrder.setQuantity(sellOrder.getQuantity() - tradableQty);
 
             // Update SELL order status
-            if (sellOrder.getQuantity() == 0) {
+            /*if (sellOrder.getQuantity() == 0) {
                 sellOrder.setStatus(OrderStatus.FILLED);
             } else {
                 sellOrder.setStatus(OrderStatus.PARTIALLY_FILLED);
+            }*/
+            if (sellOrder.getQuantity() == 0) {
+                sellOrder.setStatus(OrderStatus.FILLED);
+            } else {
+                // keep it matchable
+                sellOrder.setStatus(OrderStatus.OPEN);
             }
+            
 
             // Save updated SELL order
             orderRepository.save(sellOrder);
@@ -184,7 +220,7 @@ tradeRepository.save(trade);
         }
 
         // Update BUY order based on remaining quantity
-        buyOrder.setQuantity(remainingQty);
+        /*  buyOrder.setQuantity(remainingQty);
         if (remainingQty == 0) {
             buyOrder.setStatus(OrderStatus.FILLED);
         } else if (remainingQty < 0) {
@@ -192,7 +228,21 @@ tradeRepository.save(trade);
             throw new IllegalStateException("Remaining quantity cannot be negative");
         } else if (remainingQty < buyOrder.getQuantity()) {
             buyOrder.setStatus(OrderStatus.PARTIALLY_FILLED);
-        }
+        }*/
+        buyOrder.setQuantity(remainingQty);
+
+        int filledQty = originalQty - remainingQty;
+
+        if (remainingQty == 0) {
+         buyOrder.setStatus(OrderStatus.FILLED);
+         } else if (filledQty > 0) {
+         buyOrder.setStatus(OrderStatus.PARTIALLY_FILLED);
+         } else {
+         buyOrder.setStatus(OrderStatus.OPEN);
+         }
+
+orderRepository.save(buyOrder);
+
 
         
     }
@@ -204,16 +254,16 @@ tradeRepository.save(trade);
 
         // Get all OPEN BUY orders for the same symbol, best (highest) price first
         List<Order> buyOrders = orderRepository
-                .findBySymbolAndSideAndStatusOrderByPriceDescCreatedAtAsc(
+                .findBySymbolAndSideAndStatusInOrderByPriceDescCreatedAtAsc(
                         sellOrder.getSymbol(),
                         Side.BUY,
-                        OrderStatus.OPEN
+                        List.of(OrderStatus.OPEN, OrderStatus.PARTIALLY_FILLED)
                 );
 
         for (Order buyOrder : buyOrders) {
 
             if (buyOrder.getUserId().equals(sellOrder.getUserId())) {
-                continue;  // skip this BUY order, go to next
+                throw new IllegalStateException("Self-trade is not allowed.");  // skip this BUY order, go to next
             }
 
             if (remainingQty <= 0) {
@@ -243,6 +293,30 @@ TradingAccount sellerAccount = tradingAccountRepository
         .findByUserId(sellOrder.getUserId())
         .orElseThrow(() -> new IllegalStateException("No trading account for seller"));
 
+        // 1) Buyer ledger entry (DEBIT)
+recordTransaction(
+    buyOrder.getUserId(),
+    buyerAccount.getAccountNumber(),
+    buyOrder.getSymbol(),
+    tradeValue,
+    "D",     // debit
+    "B",     // buy side
+    "E",     // equity
+    buyOrder.getOrderId().longValue()
+);
+
+       // 2) Seller ledger entry (CREDIT)
+recordTransaction(
+    sellOrder.getUserId(),
+    sellerAccount.getAccountNumber(),
+    sellOrder.getSymbol(),
+    tradeValue,
+    "C",     // credit
+    "S",     // sell side
+    "E",
+    sellOrder.getOrderId().longValue()
+);
+
 buyerAccount.setReservedCash(
         buyerAccount.getReservedCash().subtract(tradeValue)
 );
@@ -271,13 +345,21 @@ trade.setQuantity(tradableQty);
             buyOrder.setQuantity(buyOrder.getQuantity() - tradableQty);
 
             // Update BUY order status
-            if (buyOrder.getQuantity() == 0) {
+            /*if (buyOrder.getQuantity() == 0) {
                 buyOrder.setStatus(OrderStatus.FILLED);
             } else {
                 buyOrder.setStatus(OrderStatus.PARTIALLY_FILLED);
+            }*/
+            if (buyOrder.getQuantity() == 0) {
+                buyOrder.setStatus(OrderStatus.FILLED);
+            } else {
+                // keep it matchable
+                buyOrder.setStatus(OrderStatus.OPEN);
             }
+            
 
             // Save updated BUY order
+            
             orderRepository.save(buyOrder);
 
 
@@ -571,5 +653,39 @@ sellOrder.getSymbol(),
 tradeQty
 );
 }
+
+private void recordTransaction(Integer userId,
+    String accountNumber,
+    String symbol,
+    BigDecimal amount,
+    String creditDebitFlag,   // "C" or "D"
+    String buySellFlag,       // "B" or "S"
+    String instrumentType,      // "E" for Equity
+    Long orderId) {
+
+        if (accountNumber == null || accountNumber.isBlank()) {
+            throw new IllegalStateException("accountNumber is required for transaction insert");
+        }
+        
+
+Transact txn = new Transact();
+
+txn.setUserId(userId);
+txn.setAccountNumber(accountNumber);              // if you store account_id
+txn.setSymbol(symbol);
+txn.setAmount(amount);
+txn.setCreditDebitFlag(creditDebitFlag);  // "C" or "D"
+txn.setBuySellFlag(buySellFlag);
+
+txn.setInstrumentType("CASH");    // "E" for equity
+txn.setTransactionDate(LocalDateTime.now());
+txn.setSecurityType("E");
+txn.setTradeDate(LocalDateTime.now());
+txn.setOrderId(orderId);                  // optional but helpful
+txn.setDescription("Trade executed: " + buySellFlag + " " + symbol);
+
+transactRepository.save(txn);
+}
+
 
 }

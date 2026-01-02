@@ -1,12 +1,13 @@
 package com.tradingmentor.trading_mentor_backend.Service;
 
-import com.tradingmentor.trading_mentor_backend.model.Stock;
-import com.tradingmentor.trading_mentor_backend.repository.StockRepository;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import com.tradingmentor.trading_mentor_backend.model.Stock;
+import com.tradingmentor.trading_mentor_backend.repository.StockRepository;
 
 /**
  * Updates stock_master prices using Alpha Vantage data.

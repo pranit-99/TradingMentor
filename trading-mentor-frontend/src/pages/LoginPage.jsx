@@ -44,6 +44,11 @@ const LoginPage = ({ onLoginSuccess, onNavigate }) => {
 
       const data = await response.json();
 
+      
+
+// (Optional) keep full user object if you want
+localStorage.setItem("tm_user", JSON.stringify(data));
+localStorage.setItem("userId", data.userId);
       // Example response: { userId, firstName, lastName, email }
       setSuccessMessage(`Welcome back, ${data.firstName}!`);
       setLoading(false);
