@@ -1,12 +1,13 @@
 package com.tradingmentor.trading_mentor_backend.Service;
 
-import com.tradingmentor.trading_mentor_backend.dto.GlobalQuoteResponse;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
+import com.tradingmentor.trading_mentor_backend.dto.GlobalQuoteResponse;
 
 /**
  * Calls Alpha Vantage GLOBAL_QUOTE endpoint to fetch latest price

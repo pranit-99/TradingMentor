@@ -1,10 +1,15 @@
 package com.tradingmentor.trading_mentor_backend.controller;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.tradingmentor.trading_mentor_backend.model.UserTrade;
 import com.tradingmentor.trading_mentor_backend.repository.UserTradeRepository;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * REST controller for user trade history.

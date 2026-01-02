@@ -1,8 +1,15 @@
 package com.tradingmentor.trading_mentor_backend.model;
 
-import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 
 /**
  * transactions
@@ -19,8 +26,8 @@ public class AccountTransaction {
     @Column(name = "transaction_id")
     private Long transactionId;
 
-    @Column(name = "trading_account_id", nullable = false)
-    private Long tradingAccountId;
+   // @Column(name = "trading_account_id", nullable = false)
+   // private Long tradingAccountId;
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
@@ -83,13 +90,13 @@ public class AccountTransaction {
         this.transactionId = transactionId;
     }
 
-    public Long getTradingAccountId() {
+    /*public Long getTradingAccountId() {
         return tradingAccountId;
     }
 
     public void setTradingAccountId(Long tradingAccountId) {
         this.tradingAccountId = tradingAccountId;
-    }
+    }*/
 
     public Long getUserId() {
         return userId;

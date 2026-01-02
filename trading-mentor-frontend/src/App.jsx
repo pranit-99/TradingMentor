@@ -7,6 +7,11 @@ import LoginPage from "./pages/LoginPage.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import TradingAccountModal from "./pages/TradingAccountModal";
 import Funds from "./pages/Funds.jsx";
+import Ledger from "./pages/Ledger.jsx"
+import Portfolio from "./pages/Portfolio";
+import TradeHistory from "./pages/TradeHistory.jsx";
+import Profile from "./pages/Profile.jsx";
+
 
 
 
@@ -17,6 +22,7 @@ const MENU_ITEMS = [
   "Funds",
   "Stocks Listing",
   "Profile",
+  "Ledger Window"
 ]
 
 function App() {
@@ -86,41 +92,18 @@ const handleLoginSuccess = (user) => {
           </>
         );
         case "Portfolio":
-        return (
-          <>
-            <h1>Your Portfolio</h1>
-            <p>
-              This page will show your open positions, total P&amp;L, and asset
-              allocation when we hook it to the backend.
-            </p>
-          </>
-        );
+        return <Portfolio currentUser={currentUser}/>;
         case "Trade History":
-        return (
-          <>
-            <h1>Trade History</h1>
-            <p>
-              Here we’ll list all executed trades from the <code>user_trades</code> and{" "}
-              <code>trades</code> tables (with filters and export later).
-            </p>
-          </>
-        );
+        return <TradeHistory currentUser={currentUser} />;
         case "Funds":
-        return <Funds />;
+        return <Funds currentUser={currentUser} />;
         ;
         case "Stocks Listing":
         return <StocksListing currentUser={currentUser} />;// so we know who is placing orders
-        
+        case "Ledger Window":
+         return <Ledger currentUser={currentUser}/>;
         case "Profile":
-        return (
-          <>
-            <h1>Profile</h1>
-            <p>
-              Basic user details, preferences, and maybe risk profile/AI
-              recommendations can go here.
-            </p>
-          </>
-        );
+        return <Profile currentUser={currentUser}/>;
         case "SignUp":
           return <Signup />;
       case "Login":
@@ -171,9 +154,17 @@ const handleLoginSuccess = (user) => {
         <div className="user-initials">{getUserInitials(currentUser)}</div>
         <button
             className="nav-btn primary"
-            onClick={() =>
-              currentUser ? setCurrentUser(null) : setActiveMenu("Login")
-            }
+            onClick={() => {
+              if (currentUser) {
+                localStorage.removeItem("tm_user");
+                localStorage.removeItem("userId");
+                setCurrentUser(null);
+                setActiveMenu("Login"); // optional
+              } else {
+                setActiveMenu("Login");
+              }
+            }}
+            
           >
             {currentUser ? "Logout" : "Login"}
           </button>

@@ -1,15 +1,16 @@
 package com.tradingmentor.trading_mentor_backend.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.tradingmentor.trading_mentor_backend.model.Position;
 import com.tradingmentor.trading_mentor_backend.model.Side;
 import com.tradingmentor.trading_mentor_backend.model.UserTrade;
 import com.tradingmentor.trading_mentor_backend.repository.PositionRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Optional;
 
 /**
  * Business logic for updating positions when trades are executed.
