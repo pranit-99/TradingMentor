@@ -1,0 +1,4 @@
+.DS_Store
+node_modules/
+trading-mentor-frontend/node_modules/
+trading-mentor-backend/target/
