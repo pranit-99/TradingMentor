@@ -2,3 +2,4 @@
 node_modules/
 trading-mentor-frontend/node_modules/
 trading-mentor-backend/target/
+.DS_Store

@@ -11,6 +11,7 @@ import Ledger from "./pages/Ledger.jsx"
 import Portfolio from "./pages/Portfolio";
 import TradeHistory from "./pages/TradeHistory.jsx";
 import Profile from "./pages/Profile.jsx";
+import AiMlDashboard from "./pages/AiMlDashboard.jsx";
 
 
 
@@ -89,6 +90,7 @@ const handleLoginSuccess = (user) => {
               Learn trading with zero real money risk. We’ll plug in live/
               trending AI-picked stocks and catchy copy here later.
             </p>
+            <AiMlDashboard />
           </>
         );
         case "Portfolio":
