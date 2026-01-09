@@ -9,6 +9,8 @@ export default function Ledger() {
   const [error, setError] = useState("");
   const [rows, setRows] = useState([]);
 
+  const SPRING_BASE_URL = import.meta.env.VITE_SPRING_BASE_URL;
+
   const handleFetchLedger = async () => {
     setError("");
     setRows([]);
@@ -20,7 +22,7 @@ export default function Ledger() {
 
     setLoading(true);
     try {
-      const url = `http://localhost:8080/api/transactions/ledger?userId=${encodeURIComponent(
+      const url = `${SPRING_BASE_URL}/api/transactions/ledger?userId=${encodeURIComponent(
         userId
       )}&from=${encodeURIComponent(fromDate)}&to=${encodeURIComponent(toDate)}`;
 

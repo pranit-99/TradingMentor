@@ -7,6 +7,7 @@ export default function Profile() {
   const [err, setErr] = useState("");
 
   const userId = Number(localStorage.getItem("userId"));
+  const SPRING_BASE_URL = import.meta.env.VITE_SPRING_BASE_URL;
 
   useEffect(() => {
     if (!userId) {
@@ -20,7 +21,7 @@ export default function Profile() {
         setLoading(true);
         setErr("");
 
-        const res = await fetch(`http://localhost:8080/api/profile/${userId}`);
+        const res = await fetch(`${SPRING_BASE_URL}/api/profile/${userId}`);
         if (!res.ok) {
           const txt = await res.text();
           throw new Error(txt || `Failed: ${res.status}`);

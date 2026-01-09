@@ -9,11 +9,14 @@ export default function AiMlDashboard() {
 
 
   const symbols = "AAPL,MSFT,TSLA,NVDA";
+  const AI_BASE_URL = import.meta.env.VITE_AI_BASE_URL;
 
   useEffect(() => {
-    const url = `http://localhost:8001/overview?symbols=${encodeURIComponent(symbols)}`;
-    //const predictUrl = `http://localhost:8001/predict_many?symbols=${encodeURIComponent(symbols)}`;
-    const predictUrl = `http://localhost:8001/predict_compare?symbols=${encodeURIComponent(symbols)}`;
+    //const url = `http://localhost:8001/overview?symbols=${encodeURIComponent(symbols)}`;
+    //const predictUrl = `http://localhost:8001/predict_compare?symbols=${encodeURIComponent(symbols)}`;
+    const url = `${AI_BASE_URL}/overview?symbols=${encodeURIComponent(symbols)}`;
+    const predictUrl = `${AI_BASE_URL}/predict_compare?symbols=${encodeURIComponent(symbols)}`;
+
 
     fetch(url)
       .then((res) => {

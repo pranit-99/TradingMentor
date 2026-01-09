@@ -6,7 +6,7 @@ const ForgotPassword = ({ onBackToLogin }) => {
   const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-
+  const SPRING_BASE_URL = import.meta.env.VITE_SPRING_BASE_URL;
   const handleReset = async (e) => {
     e.preventDefault();
     setMessage("");
@@ -19,7 +19,7 @@ const ForgotPassword = ({ onBackToLogin }) => {
     try {
       setLoading(true);
 
-      const res = await fetch("http://localhost:8080/api/auth/forgot-password", {
+      const res = await fetch(`${SPRING_BASE_URL}/api/auth/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, newPassword }),

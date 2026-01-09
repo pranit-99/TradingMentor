@@ -10,36 +10,39 @@ const Funds = ({ currentUser }) => {
 const [spinning, setSpinning] = useState(false);
 const [spinResult, setSpinResult] = useState(null);
 
+const SPRING_BASE_URL = import.meta.env.VITE_SPRING_BASE_URL;
+
+const fetchFunds = async () => {
+  try {
+    setLoading(true);
+    setError("");
+
+    //  Adjust this URL if your backend endpoint name is different
+    //const response = await fetch(`http://localhost:8080/api/accounts/${currentUser.userId}`);
+    const response = await fetch(`${SPRING_BASE_URL}/api/accounts/${currentUser.userId}`);
+
+
+    if (!response.ok) {
+      throw new Error(`Backend error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    // data should contain cashBalance and reservedCash from TradingAccount
+    setFunds(data);
+  } catch (err) {
+    console.error("Error fetching funds:", err);
+    setError("Unable to load funds right now.");
+  } finally {
+    setLoading(false);
+  }
+};
+
   useEffect(() => {
     if (!currentUser || !currentUser.userId) {
       setError("Please log in to view funds.");
       setLoading(false);
       return;
     }
-
-    const fetchFunds = async () => {
-      try {
-        setLoading(true);
-        setError("");
-
-        //  Adjust this URL if your backend endpoint name is different
-        const response = await fetch(`http://localhost:8080/api/accounts/${currentUser.userId}`);
-
-
-        if (!response.ok) {
-          throw new Error(`Backend error: ${response.status}`);
-        }
-
-        const data = await response.json();
-        // data should contain cashBalance and reservedCash from TradingAccount
-        setFunds(data);
-      } catch (err) {
-        console.error("Error fetching funds:", err);
-        setError("Unable to load funds right now.");
-      } finally {
-        setLoading(false);
-      }
-    };
 
     fetchFunds();
   }, [currentUser]);
@@ -92,7 +95,8 @@ const [spinResult, setSpinResult] = useState(null);
     setTimeout(async () => {
       try {
         // 🔗 Backend credit API
-        await fetch("http://localhost:8080/api/accounts/credit", {
+        /*await fetch("http://localhost:8080/api/accounts/credit"*/
+        await fetch(`${SPRING_BASE_URL}/api/accounts/credit`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

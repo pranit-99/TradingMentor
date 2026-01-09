@@ -23,6 +23,7 @@ function StocksListing({ currentUser }) {
   const [placingOrder, setPlacingOrder] = useState(false);
   const [orderError, setOrderError] = useState("");
   const [orderSuccess, setOrderSuccess] = useState("");
+  const SPRING_BASE_URL = import.meta.env.VITE_SPRING_BASE_URL;
 
   // 1. Fetch data once when component mounts
   useEffect(() => {
@@ -30,7 +31,7 @@ function StocksListing({ currentUser }) {
       try {
         setLoading(true);
         setError("");
-        const response = await fetch("http://localhost:8080/api/stocks");
+        const response = await fetch(`${SPRING_BASE_URL}/api/stocks`);
         if (!response.ok) {
           throw new Error("Failed to fetch stocks");
         }
@@ -144,7 +145,7 @@ function StocksListing({ currentUser }) {
       setOrderError("");
       setOrderSuccess("");
 
-      const resp = await fetch("http://localhost:8080/api/orders", {
+      const resp = await fetch(`${SPRING_BASE_URL}/api/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

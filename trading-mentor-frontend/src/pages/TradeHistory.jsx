@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import "./TradeHistory.css";
 
+
 export default function TradeHistory() {
   // ✅ Always use logged-in userId (not hardcoded)
   const userId = localStorage.getItem("userId");
@@ -13,6 +14,7 @@ export default function TradeHistory() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const [rows, setRows] = useState([]);
+  const SPRING_BASE_URL = import.meta.env.VITE_SPRING_BASE_URL;
 
   const fetchLedger = async () => {
     try {
@@ -33,9 +35,10 @@ export default function TradeHistory() {
 
       setLoading(true);
 
-      const url = `http://localhost:8080/api/transactions/ledger?userId=${encodeURIComponent(
+      const url = `${SPRING_BASE_URL}/api/transactions/ledger?userId=${encodeURIComponent(
         userId
       )}&from=${encodeURIComponent(fromDate)}&to=${encodeURIComponent(toDate)}`;
+      
 
       const res = await fetch(url);
       if (!res.ok) {

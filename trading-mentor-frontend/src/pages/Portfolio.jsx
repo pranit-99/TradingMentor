@@ -1,8 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "./Portfolio.css";
 
-const API_BASE = "http://localhost:8080";
-const STOCKS_URL = `${API_BASE}/api/stocks`; // ✅ use same as StocksListing
+//const API_BASE = "http://localhost:8080";
+//const STOCKS_URL = `${API_BASE}/api/stocks`; // ✅ use same as StocksListing
+const API_BASE = import.meta.env.VITE_SPRING_BASE_URL;
+const STOCKS_URL = `${API_BASE}/api/stocks`;
+
 
 export default function Portfolio({ currentUser }) {
   const [positions, setPositions] = useState([]);
@@ -27,7 +30,7 @@ export default function Portfolio({ currentUser }) {
         setErr("");
 
         const [posRes, stockRes] = await Promise.all([
-          fetch(`http://localhost:8080/api/positions/user/${userId}`),
+          fetch(`${API_BASE}/api/positions/user/${userId}`),
           fetch(STOCKS_URL),
         ]);
 

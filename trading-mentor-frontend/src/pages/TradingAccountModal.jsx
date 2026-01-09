@@ -22,6 +22,8 @@ function TradingAccountModal({ currentUser, onClose }) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const SPRING_BASE_URL = import.meta.env.VITE_SPRING_BASE_URL;
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -79,7 +81,7 @@ function TradingAccountModal({ currentUser, onClose }) {
     try {
       setSubmitting(true);
 
-      const res = await fetch("http://localhost:8080/api/accounts", {
+      const res = await fetch(`${SPRING_BASE_URL}/api/accounts`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

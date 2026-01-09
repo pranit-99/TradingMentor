@@ -18,6 +18,7 @@ function Signup() {
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const SPRING_BASE_URL = import.meta.env.VITE_SPRING_BASE_URL;
 
   // handle input updates
   const handleChange = (e) => {
@@ -60,7 +61,7 @@ function Signup() {
     try {
       setLoading(true);
 
-      const res = await fetch("http://localhost:8080/api/auth/signup", {
+      const res = await fetch(`${SPRING_BASE_URL}/api/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

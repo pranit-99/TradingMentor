@@ -3,7 +3,7 @@ import "./SpinWheel.css";
 export default function SpinWheelModal({ open, onClose, onSpin, spinning, result }) {
   if (!open) return null;
 
-  const amounts = [10, 25, 50, 75, 100, 150, 200, 300]; // example
+  const amounts = [1000, 250, 500, 550, 100, 1500, 800, 300]; // example
 
   return (
     <div className="spin-overlay">

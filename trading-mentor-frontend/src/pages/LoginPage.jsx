@@ -11,6 +11,7 @@ const LoginPage = ({ onLoginSuccess, onNavigate }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const SPRING_BASE_URL = import.meta.env.VITE_SPRING_BASE_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,7 +26,7 @@ const LoginPage = ({ onLoginSuccess, onNavigate }) => {
     try {
       setLoading(true);
 
-      const response = await fetch("http://localhost:8080/api/auth/login", {
+      const response = await fetch(`${SPRING_BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
