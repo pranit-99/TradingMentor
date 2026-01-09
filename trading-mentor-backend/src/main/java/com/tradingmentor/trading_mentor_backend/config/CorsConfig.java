@@ -13,7 +13,7 @@ public class CorsConfig {
       @Override
       public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-          .allowedOriginPatterns("http://localhost:5173") // ✅ frontend
+          .allowedOriginPatterns("http://localhost:5173","https://trading-mentor-nine.vercel.app") // ✅ frontend
           .allowedMethods("GET","POST","PUT","DELETE","OPTIONS")
           .allowedHeaders("*")
           .allowCredentials(false);
