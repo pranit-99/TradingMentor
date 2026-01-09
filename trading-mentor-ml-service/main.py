@@ -18,7 +18,7 @@ app.add_middleware(
     CORSMiddleware,
    allow_origins=[
         "http://localhost:5173",
-        "https://trading-mentor-bz5vvz37c-pranits-projects-5e06cf64.vercel.app",
+        "https://trading-mentor-nine.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
