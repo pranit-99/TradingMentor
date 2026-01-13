@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sklearn.linear_model import Ridge
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_absolute_error
 
 import yfinance as yf
 import numpy as np
@@ -27,12 +28,7 @@ app.add_middleware(
 
 @app.get("/health")
 def health():
-    return {"status": "ok"}
-
-
-
-
-def compute_trend_from_close_prices(close_prices: np.ndarray) -> tuple[str, float, float]:
+    return {"status": "ok"}def compute_trend_from_close_prices(close_prices: np.ndarray) -> tuple[str, float, float]:
     """
     Trend rules:
     - GREEN if short_avg > long_avg by 1%+
@@ -88,10 +84,120 @@ def compute_rsi(close_prices: np.ndarray, period: int = 14) -> float:
     rsi = 100.0 - (100.0 / (1.0 + rs))
     return float(rsi)
 
-    
-    
+def explain_tuned_prediction(feature_snapshot: dict, direction: str) -> str:
+    """
+    Creates a simple human-readable explanation using feature_snapshot.
+    This is a rule-based explanation (XAI-style) for learning dashboards.
+    """
+    if not feature_snapshot:
+        return "Not enough features to explain."
 
-    
+    vol20 = feature_snapshot.get("vol20")
+    sma = feature_snapshot.get("sma5_vs_sma20")
+    mom5 = feature_snapshot.get("momentum5")
+    rsi = feature_snapshot.get("rsi14")
+
+    reasons = []
+
+    # RSI interpretation
+    if isinstance(rsi, (int, float)):
+        if rsi >= 70:
+            reasons.append(f"RSI {rsi} (overbought)")
+        elif rsi <= 30:
+            reasons.append(f"RSI {rsi} (oversold)")
+        else:
+            reasons.append(f"RSI {rsi} (neutral)")
+
+    # Momentum
+    if isinstance(mom5, (int, float)):
+        if mom5 > 0.02:
+            reasons.append(f"momentum5 +{round(mom5*100,2)}% (strong positive)")
+        elif mom5 < -0.02:
+            reasons.append(f"momentum5 {round(mom5*100,2)}% (strong negative)")
+        else:
+            reasons.append(f"momentum5 {round(mom5*100,2)}% (mild)")
+
+    # Trend structure
+    if isinstance(sma, (int, float)):
+        if sma > 0.01:
+            reasons.append("SMA5 above SMA20 (up-trend structure)")
+        elif sma < -0.01:
+            reasons.append("SMA5 below SMA20 (down-trend structure)")
+        else:
+            reasons.append("SMA5 close to SMA20 (sideways)")
+
+    # Volatility
+    if isinstance(vol20, (int, float)):
+        if vol20 > 0.02:
+            reasons.append(f"high volatility ({vol20})")
+        elif vol20 < 0.01:
+            reasons.append(f"low volatility ({vol20})")
+        else:
+            reasons.append(f"moderate volatility ({vol20})")
+
+    # Combine into final explanation based on direction
+    if direction == "UP":
+        return "Why UP: " + ", ".join(reasons)
+    if direction == "DOWN":
+        return "Why DOWN: " + ", ".join(reasons)
+    return "Why FLAT: " + ", ".join(reasons)
+
+def compute_anomaly_from_close_prices(close_prices: np.ndarray) -> dict:
+    """
+    Simple anomaly detection (volatility spike):
+    - Compare short-term vol (last 5 returns) vs baseline vol (last 20 returns).
+    - Flag anomaly when short vol is much higher than baseline AND last move is large.
+    """
+    # Need enough closes for 20-day returns
+    if close_prices is None or len(close_prices) < 25:
+        return {"flag": False, "label": "NONE", "score": 0, "reason": "Not enough data"}
+
+    # daily returns
+    rets = (close_prices[1:] - close_prices[:-1]) / close_prices[:-1]
+
+    # baseline (20) and recent (5)
+    base = rets[-20:]
+    recent = rets[-5:]
+
+    base_vol = float(np.std(base))
+    recent_vol = float(np.std(recent))
+    last_ret = float(rets[-1])
+
+    # Avoid divide-by-zero
+    if base_vol <= 1e-9:
+        return {"flag": False, "label": "NONE", "score": 0, "reason": "Baseline vol too small"}
+
+    ratio = recent_vol / base_vol
+    last_move_sigma = abs(last_ret) / base_vol
+
+    # thresholds (simple, learning-friendly)
+    is_spike = (ratio >= 1.8) and (last_move_sigma >= 2.0)
+
+    if not is_spike:
+        return {
+            "flag": False,
+            "label": "NONE",
+            "score": int(min(99, ratio * 20)),
+            "reason": f"Stable (ratio={ratio:.2f}, last_move_sigma={last_move_sigma:.2f})"
+        }
+
+    # severity
+    if ratio >= 2.5 or last_move_sigma >= 3.0:
+        label = "HIGH"
+        score = 85
+    else:
+        label = "MEDIUM"
+        score = 65
+
+    return {
+        "flag": True,
+        "label": label,
+        "score": score,
+        "reason": f"Vol spike: ratio={ratio:.2f}, last_move={last_ret*100:.2f}% (~{last_move_sigma:.1f}σ)"
+    }
+
+
+   
 
 @app.get("/health")
 def health_check():
@@ -244,7 +350,7 @@ def overview(symbols: str):
         try:
             data = yf.download(
                 symbol,
-                period="1mo",
+                period="3mo",
                 interval="1d",
                 progress=False,
                 threads=False
@@ -269,6 +375,7 @@ def overview(symbols: str):
 
         trend, short_avg, long_avg = compute_trend_from_close_prices(close_prices)
         risk_label, risk_score, vol = compute_risk_from_close_prices(close_prices)
+        anomaly = compute_anomaly_from_close_prices(close_prices)
 
         results.append({
             "symbol": symbol,
@@ -277,7 +384,8 @@ def overview(symbols: str):
             "risk_score": risk_score,
             "volatility": round(vol, 4),
             "short_avg": round(short_avg, 2),
-            "long_avg": round(long_avg, 2)
+            "long_avg": round(long_avg, 2),
+            "anomaly": anomaly
         })
 
     return {"count": len(results), "results": results}
@@ -544,22 +652,24 @@ def predict_many_ridge(symbols: str):
 @app.get("/predict_compare")
 def predict_compare(symbols: str):
     """
-    Returns both Linear and Ridge predictions for easy UI comparison.
+    Returns Linear + Ridge(fixed) + Ridge(tuned) predictions for UI comparison.
     Example: /predict_compare?symbols=AAPL,MSFT,TSLA,NVDA
     """
     linear = predict_many(symbols)
-    ridge = predict_many_ridge(symbols)
+    ridge_fixed = predict_many_ridge(symbols)
+    ridge_tuned = predict_many_ridge_tuned(symbols)
 
-    # Build maps by symbol for quick merge
     linear_map = {r.get("symbol"): r for r in (linear.get("results") or [])}
-    ridge_map = {r.get("symbol"): r for r in (ridge.get("results") or [])}
+    fixed_map = {r.get("symbol"): r for r in (ridge_fixed.get("results") or [])}
+    tuned_map = {r.get("symbol"): r for r in (ridge_tuned.get("results") or [])}
 
     merged = []
     all_symbols = [s.strip().upper() for s in symbols.split(",") if s.strip()]
 
     for sym in all_symbols:
         l = linear_map.get(sym, {})
-        rd = ridge_map.get(sym, {})
+        fx = fixed_map.get(sym, {})
+        td = tuned_map.get(sym, {})
 
         merged.append({
             "symbol": sym,
@@ -571,12 +681,23 @@ def predict_compare(symbols: str):
                 "reason": l.get("reason"),
             },
 
-            "ridge": {
-                "direction": rd.get("direction"),
-                "predicted_next_day_return": rd.get("predicted_next_day_return"),
-                "status": rd.get("status"),
-                "reason": rd.get("reason"),
-                "feature_snapshot": rd.get("feature_snapshot"),
+            "ridge_fixed": {
+                "direction": fx.get("direction"),
+                "predicted_next_day_return": fx.get("predicted_next_day_return"),
+                "status": fx.get("status"),
+                "reason": fx.get("reason"),
+            },
+
+            "ridge_tuned": {
+                "direction": td.get("direction"),
+                "predicted_next_day_return": td.get("predicted_next_day_return"),
+                "best_alpha": td.get("best_alpha"),
+                "val_mae": td.get("val_mae"),
+                "confidence": td.get("confidence"),
+                "feature_snapshot": td.get("feature_snapshot"),
+                "explanation": td.get("explanation"),
+                "status": td.get("status"),
+                "reason": td.get("reason"),
             },
         })
 
@@ -584,7 +705,190 @@ def predict_compare(symbols: str):
 
 
 
+@app.get("/predict_many_ridge_tuned")
+def predict_many_ridge_tuned(symbols: str):
+    """
+    Ridge tuned: tries multiple alphas and selects the best using time-based validation MAE.
+    Example: /predict_many_ridge_tuned?symbols=AAPL,MSFT,TSLA,NVDA
+    """
+    symbol_list = [s.strip().upper() for s in symbols.split(",") if s.strip()]
+    results = []
 
+    alphas_to_try = [0.1, 1.0, 10.0, 50.0]
+
+    for symbol in symbol_list:
+        try:
+            data = yf.download(symbol, period="6mo", interval="1d", progress=False, threads=False)
+
+            if data is None or getattr(data, "empty", True) or len(data) < 80:
+                results.append({"symbol": symbol, "status": "UNKNOWN", "reason": "Not enough data (~80 days needed)"})
+                continue
+
+            # Close safely
+            close_obj = data["Close"]
+            if hasattr(close_obj, "columns"):
+                close_obj = close_obj.iloc[:, 0]
+            close = close_obj.to_numpy().astype(float)
+
+            # Returns
+            returns = (close[1:] - close[:-1]) / close[:-1]
+            lag = 5
+
+            if len(returns) <= lag + 30:
+                results.append({"symbol": symbol, "status": "UNKNOWN", "reason": "Not enough returns for features"})
+                continue
+
+            # Build dataset
+            X, y = [], []
+            for t in range(lag, len(returns)):
+                past5 = returns[t-lag:t]
+                close_slice = close[: t + 1]
+                if len(close_slice) < 30:
+                    continue
+
+                sma5 = float(np.mean(close_slice[-5:]))
+                sma20 = float(np.mean(close_slice[-20:]))
+                momentum5 = float((close_slice[-1] / close_slice[-6]) - 1.0)
+                vol20 = float(np.std(returns[max(0, t-20):t]))
+                rsi14 = compute_rsi(close_slice, period=14)
+
+                features = list(past5) + [
+                    vol20,
+                    (sma5 / sma20) - 1.0,
+                    momentum5,
+                    rsi14
+                ]
+
+                X.append(features)
+                y.append(float(returns[t]))
+
+            if len(X) < 60:
+                results.append({"symbol": symbol, "status": "UNKNOWN", "reason": "Not enough rows after feature build"})
+                continue
+
+            X = np.array(X, dtype=float)
+            y = np.array(y, dtype=float)
+
+            # Time-based split: train first 80%, validate last 20%
+            split = int(len(X) * 0.8)
+            X_train, X_val = X[:split], X[split:]
+            y_train, y_val = y[:split], y[split:]
+
+            best_alpha = None
+            best_mae = None
+
+            for a in alphas_to_try:
+                model = make_pipeline(StandardScaler(), Ridge(alpha=a))
+                model.fit(X_train, y_train)
+                val_pred = model.predict(X_val)
+                mae = float(mean_absolute_error(y_val, val_pred))
+
+                if best_mae is None or mae < best_mae:
+                    best_mae = mae
+                    best_alpha = a
+
+                # Confidence from validation MAE (learning baseline)
+                if best_mae <= 0.010:
+                    confidence_label = "HIGH"
+                    confidence_pct = 80
+                elif best_mae <= 0.020:
+                    confidence_label = "MEDIUM"
+                    confidence_pct = 60
+                else:
+                    confidence_label = "LOW"
+                    confidence_pct = 40
+                    
+
+            # Train final model with best alpha on all available data (train+val)
+            final_model = make_pipeline(StandardScaler(), Ridge(alpha=best_alpha))
+            final_model.fit(X, y)
+
+            # Build latest features for next-day prediction
+            latest_close_slice = close
+            latest_past5 = returns[-lag:]
+            sma5 = float(np.mean(latest_close_slice[-5:]))
+            sma20 = float(np.mean(latest_close_slice[-20:]))
+            momentum5 = float((latest_close_slice[-1] / latest_close_slice[-6]) - 1.0)
+            vol20 = float(np.std(returns[-20:]))
+            rsi14 = compute_rsi(latest_close_slice, period=14)
+            
+
+
+            latest_features = np.array(
+                [list(latest_past5) + [vol20, (sma5 / sma20) - 1.0, momentum5, rsi14]],
+                dtype=float
+            )
+
+            pred_return = float(final_model.predict(latest_features)[0])
+            direction = "UP" if pred_return > 0 else "DOWN" if pred_return < 0 else "FLAT"
+            feature_snapshot = {
+                "vol20": round(vol20, 4),
+                "sma5_vs_sma20": round((sma5 / sma20) - 1.0, 4),
+                "momentum5": round(momentum5, 4),
+                "rsi14": None if np.isnan(rsi14) else round(rsi14, 2)
+                }
+            explanation = explain_tuned_prediction(feature_snapshot, direction)
+            
+
+
+            results.append({
+                "symbol": symbol,
+                "model": "Ridge+StandardScaler (tuned)",
+                "best_alpha": best_alpha,
+                "val_mae": round(best_mae, 6),
+                "direction": direction,
+                "predicted_next_day_return": round(pred_return, 6),
+                "confidence": {
+                    "label": confidence_label,
+                    "percent": confidence_pct
+                    },
+                "feature_snapshot": feature_snapshot,
+                "explanation": explanation
+            })
+
+        except Exception as e:
+            results.append({"symbol": symbol, "status": "ERROR", "reason": str(e)})
+
+    return {"count": len(results), "results": results}
+           
+
+            
+
+                
+
+            
+    
+
+
+
+
+        
+        
+
+
+        
+            
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+        
+        
+        
+
+            
+            
+    
         
         
 
