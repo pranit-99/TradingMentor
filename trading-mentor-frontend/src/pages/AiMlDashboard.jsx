@@ -5,6 +5,7 @@ export default function AiMlDashboard() {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [predMap, setPredMap] = useState({});
+  const [lastUpdated, setLastUpdated] = useState(null);
 
 
 
@@ -12,48 +13,56 @@ export default function AiMlDashboard() {
   const AI_BASE_URL = import.meta.env.VITE_AI_BASE_URL;
 
   useEffect(() => {
-    //const url = `http://localhost:8001/overview?symbols=${encodeURIComponent(symbols)}`;
-    //const predictUrl = `http://localhost:8001/predict_compare?symbols=${encodeURIComponent(symbols)}`;
-    const url = `${AI_BASE_URL}/overview?symbols=${encodeURIComponent(symbols)}`;
-    const predictUrl = `${AI_BASE_URL}/predict_compare?symbols=${encodeURIComponent(symbols)}`;
+    let cancelled = false;
+  
+    const fetchAll = async () => {
+      try {
+        setError(null);
+        //const url = `http://localhost:8001/overview?symbols=${encodeURIComponent(symbols)}`;
+    	//const predictUrl = `http://localhost:8001/predict_compare?symbols=${encodeURIComponent(symbols)}`;
+          const url = `${AI_BASE_URL}/overview?symbols=${encodeURIComponent(symbols)}`;
+          const predictUrl = `${AI_BASE_URL}/predict_compare?symbols=${encodeURIComponent(symbols)}`;
 
-
-    fetch(url)
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
-      .then(setData)
-      .catch((err) => setError(err.message));
-
-      /*fetch(predictUrl)
-      .then((res) => {
-        if (!res.ok) throw new Error(`Predict HTTP ${res.status}`);
-        return res.json();
-      })
-      .then((pred) => {
+  
+        // 1) overview
+        const ovRes = await fetch(url);
+        if (!ovRes.ok) throw new Error(`Overview HTTP ${ovRes.status}`);
+        const ovJson = await ovRes.json();
+  
+        // 2) prediction compare
+        const prRes = await fetch(predictUrl);
+        if (!prRes.ok) throw new Error(`Predict HTTP ${prRes.status}`);
+        const prJson = await prRes.json();
+  
+        if (cancelled) return;
+  
+        setData(ovJson);
+  
         const map = {};
-        (pred.results || []).forEach((p) => {
+        (prJson.results || []).forEach((p) => {
           map[p.symbol] = p;
         });
         setPredMap(map);
-      })
-      .catch((err) => setError(err.message));*/
-      fetch(predictUrl)
-  .then((res) => {
-    if (!res.ok) throw new Error(`Predict HTTP ${res.status}`);
-    return res.json();
-  })
-  .then((pred) => {
-    const map = {};
-    (pred.results || []).forEach((p) => {
-      map[p.symbol] = p;   // p has { symbol, linear:{...}, ridge:{...} }
-    });
-    setPredMap(map);
-  })
-  .catch((err) => setError(err.message));
-
-  }, []);
+  
+        setLastUpdated(new Date());
+      } catch (err) {
+        if (!cancelled) setError(err.message);
+      }
+    };
+  
+    // run immediately
+    fetchAll();
+  
+    // refresh every 60 seconds
+    const id = setInterval(fetchAll, 60_000);
+  
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+    };
+  }, [symbols]);
+  
+  
 
   const trendBadgeClass = (trend) => {
     if (trend === "GREEN") return "badge-green";
@@ -72,6 +81,9 @@ export default function AiMlDashboard() {
   return (
     <div className="aiml-wrap">
       <div className="aiml-title">AI/ML Dashboard (Live Signals)</div>
+      <div className="aiml-updated">
+        Last updated: {lastUpdated ? lastUpdated.toLocaleTimeString() : "—"}
+      </div>
 
       {error && (
         <div className="aiml-card">
@@ -88,9 +100,20 @@ export default function AiMlDashboard() {
               <div className="aiml-card-top">
                 <div className="aiml-symbol">{row.symbol}</div>
 
-                <div className={`aiml-badge ${trendBadgeClass(row.trend)}`}>
+                  <div className="aiml-badges">
+                  <div className={`aiml-badge ${trendBadgeClass(row.trend)}`}>
                   {row.trend}
-                </div>
+                  </div>
+
+                  {row.anomaly?.flag && (
+                  <div
+                    className={`aiml-anom aiml-anom-${(row.anomaly.label || "MEDIUM").toLowerCase()}`}
+                      title={row.anomaly.reason}
+                      >
+                    ⚠ {row.anomaly.label}
+                  </div>
+                 )}
+                  </div>
               </div>
 
               <div className="aiml-row">
@@ -107,20 +130,11 @@ export default function AiMlDashboard() {
                 <span>Volatility</span>
                 <b>{row.volatility}</b>
               </div>
+              
+              
 
-              {/*<div className="aiml-row">
-              <span>Prediction</span>
-              <b>
-              {(() => {
-              const p = predMap[row.symbol];
-              if (!p) return "Loading...";
-              if (!p.direction || typeof p.predicted_next_day_return !== "number") return "N/A";
-              return `${p.direction} (${p.predicted_next_day_return})`;
-              })()}
-              </b>
-            </div>*/}
-            <div className="aiml-row">
-            <span>Prediction</span>
+            <div className="pred-section">
+            <div className="pred-title">Prediction</div>
             {/*{(() => {
              const p = predMap[row.symbol];
 
@@ -142,53 +156,116 @@ export default function AiMlDashboard() {
           );
            })()}*/}
            {(() => {
-  const p = predMap[row.symbol];
-  if (!p) {
-    return (
-      <div className="aiml-row">
-        <span>Prediction</span>
-        <b>Loading...</b>
-      </div>
-    );
-  }
+    const p = predMap[row.symbol];
 
-  const renderPred = (label, obj) => {
-    if (!obj || typeof obj.predicted_next_day_return !== "number" || !obj.direction) {
-      return (
-        <div className="aiml-row">
-          <span><span className="pred-label">{label}:</span>Prediction</span>
-          <b>N/A</b>
-        </div>
-      );
+    if (!p) {
+      return <div className="pred-loading">Loading...</div>;
     }
 
-    const pct = (obj.predicted_next_day_return * 100).toFixed(2);
-    const sign = obj.predicted_next_day_return >= 0 ? "+" : "";
+    const renderPred = (label, obj, meta = null) => {
+      if (!obj || typeof obj.predicted_next_day_return !== "number" || !obj.direction) {
+        return (
+          <div className="pred-item">
+            <div className="pred-name">{label}</div>
+            <div className="pred-na">N/A</div>
+          </div>
+        );
+      }
 
-    const cls =
-      obj.direction === "UP" ? "pred-up" :
-      obj.direction === "DOWN" ? "pred-down" :
-      "pred-flat";
+      const pct = (obj.predicted_next_day_return * 100).toFixed(2);
+      const sign = obj.predicted_next_day_return >= 0 ? "+" : "";
+
+      const cls =
+        obj.direction === "UP" ? "pred-up" :
+        obj.direction === "DOWN" ? "pred-down" :
+        "pred-flat";
+
+      /*return (
+        <div className="pred-item">
+          <div className="pred-name">{label}</div>
+
+          <div className={`pred-value ${cls}`}>{obj.direction}</div>
+          <div className={`pred-pct ${cls}`}>({sign}{pct}%)</div>
+
+          {meta && <div className="pred-meta">{meta}</div>}
+          
+        </div>
+      );*/
+      return (
+        <div className="pred-item">
+          <div className="pred-name">{label}</div>
+      
+          <div className={`pred-value ${cls}`}>{obj.direction}</div>
+          <div className={`pred-pct ${cls}`}>({sign}{pct}%)</div>
+      
+          {meta && <div className="pred-meta">{meta}</div>}
+      
+          {/* CONFIDENCE — only for Tuned */}
+          {label === "Tuned" && obj.confidence && (
+            <div className="pred-confidence">
+              <span
+                className={
+                  obj.confidence.label === "HIGH"
+                    ? "conf-high"
+                    : obj.confidence.label === "MEDIUM"
+                    ? "conf-med"
+                    : "conf-low"
+                }
+              >
+                Confidence: {obj.confidence.label}
+              </span>
+              <span className="conf-pill">
+                {obj.confidence.percent}%
+              </span>
+            </div>
+          )}
+      
+          {/* EXPLANATION — only for Tuned */}
+          
+        </div>
+      );
+      
+    };
 
     return (
-      <div className="aiml-row">
-        <span><span className="pred-label">{label}:</span>Prediction</span>
-        <b className={cls}>
-          {obj.direction} ({sign}{pct}%)
-        </b>
+      <div className="pred-grid">
+        {renderPred("Linear", p.linear)}
+        {renderPred("Ridge", p.ridge_fixed)}
+        {renderPred(
+          "Tuned",
+          p.ridge_tuned,
+          p.ridge_tuned?.best_alpha
+            ? `α=${p.ridge_tuned.best_alpha} | MAE=${p.ridge_tuned.val_mae}`
+            : null
+        )}
+       {/*{p.ridge_tuned?.confidence && (
+  <div className="aiml-row">
+    <span>Confidence</span>
+    <div className="conf-box">
+      <span
+        className={
+          p.ridge_tuned.confidence.label === "HIGH"
+            ? "conf-high"
+            : p.ridge_tuned.confidence.label === "MEDIUM"
+            ? "conf-med"
+            : "conf-low"
+        }
+      >
+        
+        {p.ridge_tuned.confidence.label}
+      </span>
+      <span className="conf-pill">
+        {p.ridge_tuned.confidence.percent}%
+      </span>
+    </div>
+    
+  </div>
+)}*/}
+
       </div>
     );
-  };
-
-  return (
-    <>
-      {renderPred("Linear", p.linear)}
-      {renderPred("Ridge", p.ridge)}
-    </>
-  );
-})()}
-
-          </div>
+  })()}
+</div>
 
               <div className="aiml-riskbar">
                 <div
