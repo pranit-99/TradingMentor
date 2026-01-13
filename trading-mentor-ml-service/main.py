@@ -28,7 +28,9 @@ app.add_middleware(
 
 @app.get("/health")
 def health():
-    return {"status": "ok"}def compute_trend_from_close_prices(close_prices: np.ndarray) -> tuple[str, float, float]:
+    return {"status": "ok"}
+
+def compute_trend_from_close_prices(close_prices: np.ndarray) -> tuple[str, float, float]:
     """
     Trend rules:
     - GREEN if short_avg > long_avg by 1%+
