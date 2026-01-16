@@ -8,8 +8,11 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_absolute_error
 
-import yfinance as yf
+
 import numpy as np
+import os
+import time
+import requests
 
 app = FastAPI()
 
@@ -29,6 +32,44 @@ app.add_middleware(
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+FINNHUB_API_KEY = os.getenv("FINNHUB_API_KEY", "").strip()
+
+
+def fetch_finnhub_daily_closes(symbol: str, days: int = 120) -> np.ndarray:
+    """
+    Fetch daily candles from Finnhub and return close prices as numpy array.
+    days=120 ensures we have enough data for 20-day averages + ML windows.
+    """
+    if not FINNHUB_API_KEY:
+        raise RuntimeError("FINNHUB_API_KEY is missing. Set it in your terminal env vars.")
+
+    symbol = symbol.strip().upper()
+
+    to_ts = int(time.time())
+    from_ts = to_ts - days * 24 * 60 * 60
+
+    url = "https://finnhub.io/api/v1/stock/candle"
+    params = {
+        "symbol": symbol,
+        "resolution": "D",   # Daily candles
+        "from": from_ts,
+        "to": to_ts,
+        "token": FINNHUB_API_KEY
+    }
+
+    resp = requests.get(url, params=params, timeout=15)
+    resp.raise_for_status()
+    payload = resp.json()
+
+    # Finnhub returns {"s":"ok", ...} when successful
+    if payload.get("s") != "ok":
+        return np.array([])
+
+    closes = payload.get("c") or []
+    return np.array(closes, dtype=float)
+
+
 
 def compute_trend_from_close_prices(close_prices: np.ndarray) -> tuple[str, float, float]:
     """
@@ -212,16 +253,20 @@ def stock_trend(symbol: str):
     Returns trend for a stock:
     GREEN / YELLOW / RED
     """
+    try:
+    close_prices = fetch_finnhub_daily_closes(symbol, days=45)
+except Exception:
+    close_prices = []
 
-    # 1) Download last 1 month of daily price data
-    data = yf.download(symbol, period="1mo", interval="1d")
+if len(close_prices) < 20:
+    return {
+        "symbol": symbol.upper(),
+        "trend": "UNKNOWN",
+        "reason": "Finnhub data unavailable or insufficient"
+    }
 
-    # Safety check
-    if data.empty or len(data) < 20:
-        return {"symbol": symbol.upper(), "trend": "UNKNOWN", "reason": "Not enough data"}
 
-    # 2) Extract closing prices
-    close_prices = data["Close"].values
+  
 
     # 3) Compute moving averages
     #short_avg = np.mean(close_prices[-5:])
@@ -251,50 +296,54 @@ def trending_stocks(symbols: str):
 
     for symbol in symbol_list:
         symbol = symbol.strip().upper()
-        data = yf.download(symbol, period="1mo", interval="1d")
+        try:
+            close_prices = fetch_finnhub_daily_closes(symbol, days=45)
+            except Exception:
+                close_prices = []
 
-        if data.empty or len(data) < 20:
-            results.append({
-                "symbol": symbol,
-                "trend": "UNKNOWN"
-                })
-            continue
+                if len(close_prices) < 20:
+                    results.append({
+                        "symbol": symbol,
+                        "trend": "UNKNOWN"
+                        })
+                    continue
 
-        close_prices = data["Close"].values
+                trend, _, _ = compute_trend_from_close_prices(close_prices)
 
-        trend, _, _ = compute_trend_from_close_prices(close_prices)
+                results.append({
+                    "symbol": symbol,
+                    "trend": trend
+                    })
 
-
-        results.append({
-            "symbol": symbol,
-            "trend": trend
-        })
-
-    return {
-        "count": len(results),
-        "results": results
-    }
+                return {
+                    "count": len(results),
+                    "results": results
+                    }
 
 @app.get("/risk")
 def stock_risk(symbol: str):
     """
     Simple risk estimation using volatility of daily returns (last ~1 month).
     """
-    data = yf.download(symbol, period="1mo", interval="1d")
+    try:
+        close_prices = fetch_finnhub_daily_closes(symbol, days=45)
+    except Exception:
+        close_prices = []
 
-    if data.empty or len(data) < 20:
-        return {"Symbol": symbol.upper(), "Risk": "UNKNOWN", "Reason": "Not Enough Data"}
-
-    close_prices = data["Close"].values
+    if len(close_prices) < 20:
+        return {
+            "Symbol": symbol.upper(),
+            "Risk": "UNKNOWN",
+            "Reason": "Finnhub data unavailable or insufficient"
+        }
 
     # 1. Compute daily returns
     returns = (close_prices[1:] - close_prices[:-1]) / close_prices[:-1]
 
-    #2. volatility = standard deviation of returns
+    # 2. volatility = standard deviation of returns
     vol = float(np.std(returns))
 
-    #3Convert volatility to label + score
-    # These thresholds are simple starter values for learning
+    # 3. Convert volatility to label + score
     if vol < 0.015:
         risk_label = "LOW"
         risk_score = 25
@@ -304,12 +353,14 @@ def stock_risk(symbol: str):
     else:
         risk_label = "HIGH"
         risk_score = 85
-    return{
+
+    return {
         "Symbol": symbol.upper(),
         "Volatility": round(vol, 4),
         "Risk": risk_label,
         "Risk_Score": risk_score
-        }
+    }
+
 
 @app.get("/prices")
 def stock_prices(symbol: str):
@@ -317,27 +368,54 @@ def stock_prices(symbol: str):
     Returns last 1 month daily close prices for charting.
     Example: /prices?symbol=AAPL
     """
-    data = yf.download(symbol, period="1mo", interval="1d")
+    try:
+        candles = fetch_finnhub_daily_closes(symbol, days=30)
+    except Exception:
+        candles = []
 
-    if data.empty:
-        return {"symbol": symbol.upper(), "dates": [], "closes": [], "reason": "No data found"}
+    if len(candles) == 0:
+        return {
+            "symbol": symbol.upper(),
+            "dates": [],
+            "closes": [],
+            "reason": "Finnhub data unavailable"
+        }
 
-    # Close can be Series OR a 1-column DataFrame depending on yfinance output
-    close_obj = data["Close"]
-    if hasattr(close_obj, "columns"):  # means it's a DataFrame
-        close_obj = close_obj.iloc[:, 0]  # take first column
+    to_ts = int(time.time())
+    from_ts = to_ts - 30 * 24 * 60 * 60
 
-    # Now close_obj is a Series -> convert to 1D float array
-    close_values = close_obj.to_numpy().astype(float)
+    url = "https://finnhub.io/api/v1/stock/candle"
+    params = {
+        "symbol": symbol.upper(),
+        "resolution": "D",
+        "from": from_ts,
+        "to": to_ts,
+        "token": FINNHUB_API_KEY
+    }
 
-    dates = [d.strftime("%Y-%m-%d") for d in data.index.to_pydatetime()]
-    closes = [round(x, 2) for x in close_values]
+    resp = requests.get(url, params=params, timeout=15)
+    payload = resp.json()
+
+    if payload.get("s") != "ok":
+        return {
+            "symbol": symbol.upper(),
+            "dates": [],
+            "closes": [],
+            "reason": "No candle data"
+        }
+
+    dates = [
+        time.strftime("%Y-%m-%d", time.gmtime(ts))
+        for ts in payload.get("t", [])
+    ]
+    closes = [round(float(x), 2) for x in payload.get("c", [])]
 
     return {
         "symbol": symbol.upper(),
         "dates": dates,
         "closes": closes
     }
+
 
 @app.get("/overview")
 def overview(symbols: str):
@@ -347,33 +425,21 @@ def overview(symbols: str):
     """
     symbol_list = [s.strip().upper() for s in symbols.split(",") if s.strip()]
     results = []
-
+   
     for symbol in symbol_list:
         try:
-            data = yf.download(
-                symbol,
-                period="3mo",
-                interval="1d",
-                progress=False,
-                threads=False
-                )
+            close_prices = fetch_finnhub_daily_closes(symbol, days=90)
         except Exception:
-            data = None
+            close_prices = []
 
-            if data is None or getattr(data, "empty", True) or len(data) < 20:
-                results.append({
-                    "symbol": symbol,
-                    "trend": "UNKNOWN",
-                    "risk": "UNKNOWN",
-                    "reason": "Download failed or insufficient data"
-                    })
-                continue
-
-        close_obj = data["Close"]
-        if hasattr(close_obj, "columns"):   # if Close is a 1-col DataFrame
-            close_obj = close_obj.iloc[:, 0]
-
-        close_prices = close_obj.to_numpy().astype(float)
+        if len(close_prices) < 20:
+            results.append({
+                "symbol": symbol,
+                "trend": "UNKNOWN",
+                "risk": "UNKNOWN",
+                "reason": "Finnhub data unavailable or insufficient"
+            })
+            continue
 
         trend, short_avg, long_avg = compute_trend_from_close_prices(close_prices)
         risk_label, risk_score, vol = compute_risk_from_close_prices(close_prices)
@@ -398,16 +464,19 @@ def predict_next_day(symbol: str):
     ML Prediction: Predict next-day return using Linear Regression.
     Example: /predict?symbol=AAPL
     """
-    data = yf.download(symbol, period="6mo", interval="1d")
+    try:
+    close_prices = fetch_finnhub_daily_closes(symbol, days=220)  # ~7 months buffer
+    except Exception:
+        close_prices = []
 
-    if data.empty or len(data) < 60:
-        return {"symbol": symbol.upper(), "status": "UNKNOWN", "reason": "Not enough data (need ~60+ days)"}
+        if len(close_prices) < 60:
+            return {
+                "symbol": symbol.upper(),
+                "status": "UNKNOWN",
+                "reason": "Not enough data from Finnhub (need ~60+ daily closes)"
+                }
 
-    # --- 1) Extract Close safely (same pattern you used earlier) ---
-    close_obj = data["Close"]
-    if hasattr(close_obj, "columns"):
-        close_obj = close_obj.iloc[:, 0]
-    close_prices = close_obj.to_numpy().astype(float)
+    
 
     # --- 2) Build daily returns ---
     returns = (close_prices[1:] - close_prices[:-1]) / close_prices[:-1]
@@ -488,16 +557,12 @@ def predict_many(symbols: str):
     for symbol in symbol_list:
         try:
             # reuse the single predict logic by calling the function body pattern again (simple for now)
-            data = yf.download(symbol, period="6mo", interval="1d")
-
-            if data.empty or len(data) < 60:
-                results.append({"symbol": symbol, "status": "UNKNOWN", "reason": "Not enough data"})
-                continue
-
-            close_obj = data["Close"]
-            if hasattr(close_obj, "columns"):
-                close_obj = close_obj.iloc[:, 0]
-            close_prices = close_obj.to_numpy().astype(float)
+            close_prices = fetch_finnhub_daily_closes(symbol, days=220)
+            except Exception:
+                close_prices = []
+                if len(close_prices) < 60:
+                    results.append({"symbol": symbol, "status": "UNKNOWN", "reason": "Not enough data"})
+                    continue
 
             returns = (close_prices[1:] - close_prices[:-1]) / close_prices[:-1]
             lag = 5
@@ -553,17 +618,13 @@ def predict_many_ridge(symbols: str):
 
     for symbol in symbol_list:
         try:
-            data = yf.download(symbol, period="6mo", interval="1d", progress=False, threads=False)
-
-            if data is None or getattr(data, "empty", True) or len(data) < 80:
-                results.append({"symbol": symbol, "status": "UNKNOWN", "reason": "Not enough data (~80 days needed)"})
-                continue
-
-            # Close safely
-            close_obj = data["Close"]
-            if hasattr(close_obj, "columns"):
-                close_obj = close_obj.iloc[:, 0]
-            close = close_obj.to_numpy().astype(float)
+            close = fetch_finnhub_daily_closes(symbol, days=260)  # bigger buffer for 80+ trading days
+            except Exception:
+                close = []
+                if len(close) < 80:
+                    results.append({"symbol": symbol, "status": "UNKNOWN", "reason": "Not enough data (~80 days needed)"})
+                    continue
+           
 
             # Returns
             returns = (close[1:] - close[:-1]) / close[:-1]
@@ -720,17 +781,13 @@ def predict_many_ridge_tuned(symbols: str):
 
     for symbol in symbol_list:
         try:
-            data = yf.download(symbol, period="6mo", interval="1d", progress=False, threads=False)
-
-            if data is None or getattr(data, "empty", True) or len(data) < 80:
-                results.append({"symbol": symbol, "status": "UNKNOWN", "reason": "Not enough data (~80 days needed)"})
-                continue
-
-            # Close safely
-            close_obj = data["Close"]
-            if hasattr(close_obj, "columns"):
-                close_obj = close_obj.iloc[:, 0]
-            close = close_obj.to_numpy().astype(float)
+            close = fetch_finnhub_daily_closes(symbol, days=260)
+            except Exception:
+                close = []
+                if len(close) < 80:
+                    results.append({"symbol": symbol, "status": "UNKNOWN", "reason": "Not enough data (~80 days needed)"})
+                    continue
+           
 
             # Returns
             returns = (close[1:] - close[:-1]) / close[:-1]
@@ -852,51 +909,3 @@ def predict_many_ridge_tuned(symbols: str):
             results.append({"symbol": symbol, "status": "ERROR", "reason": str(e)})
 
     return {"count": len(results), "results": results}
-           
-
-            
-
-                
-
-            
-    
-
-
-
-
-        
-        
-
-
-        
-            
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-        
-        
-        
-
-            
-            
-    
-        
-        
-
-
-        
-            
-
-
-
