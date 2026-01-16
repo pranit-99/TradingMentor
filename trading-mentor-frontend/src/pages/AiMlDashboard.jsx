@@ -6,23 +6,44 @@ export default function AiMlDashboard() {
   const [error, setError] = useState(null);
   const [predMap, setPredMap] = useState({});
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [allSymbols, setAllSymbols] = useState([]);
+const [pageIndex, setPageIndex] = useState(0);
+
+const PAGE_SIZE = 3;
+
+const totalPages = allSymbols.length
+  ? Math.ceil(allSymbols.length / PAGE_SIZE)
+  : 0;
+
+const visibleSymbols = allSymbols.slice(
+  pageIndex * PAGE_SIZE,
+  pageIndex * PAGE_SIZE + PAGE_SIZE
+);
+
+const symbols = visibleSymbols.join(",");
 
 
 
-  const symbols = "AAPL,MSFT,TSLA,NVDA";
-  const AI_BASE_URL = import.meta.env.VITE_AI_BASE_URL;
 
+
+  //const symbols = "AAPL,MSFT,TSLA,NVDA";
   useEffect(() => {
+    setAllSymbols([
+      "AAPL","MSFT","GOOGL","AMZN","TSLA","META","NVDA",
+      "JPM","BAC","NFLX","V","MA","DIS","KO","PEP"
+    ]);
+    
+    if (!symbols) return;
     let cancelled = false;
   
     const fetchAll = async () => {
       try {
         setError(null);
+  
         //const url = `http://localhost:8001/overview?symbols=${encodeURIComponent(symbols)}`;
     	//const predictUrl = `http://localhost:8001/predict_compare?symbols=${encodeURIComponent(symbols)}`;
-          const url = `${AI_BASE_URL}/overview?symbols=${encodeURIComponent(symbols)}`;
-          const predictUrl = `${AI_BASE_URL}/predict_compare?symbols=${encodeURIComponent(symbols)}`;
-
+      const url = `${AI_BASE_URL}/overview?symbols=${encodeURIComponent(symbols)}`;
+      const predictUrl = `${AI_BASE_URL}/predict_compare?symbols=${encodeURIComponent(symbols)}`;
   
         // 1) overview
         const ovRes = await fetch(url);
@@ -61,7 +82,19 @@ export default function AiMlDashboard() {
       clearInterval(id);
     };
   }, [symbols]);
+
+  useEffect(() => {
+    if (!totalPages) return;
   
+    const timer = setInterval(() => {
+      setPageIndex((prev) => (prev + 1) % totalPages);
+    }, 8000); // 8 seconds
+  
+    return () => clearInterval(timer);
+  }, [totalPages]);
+  
+  
+ 
   
 
   const trendBadgeClass = (trend) => {
@@ -96,7 +129,29 @@ export default function AiMlDashboard() {
       {data && (
         <div className="aiml-grid">
           {data.results.map((row) => (
+            
             <div key={row.symbol} className="aiml-card">
+              <div className="aiml-carousel">
+                
+              <div
+                className="aiml-track"
+                style={{ transform: `translateX(-${pageIndex * 100}%)` }}
+                >
+                {Array.from({ length: totalPages }).map((_, page) => {
+                const chunk = allSymbols.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
+                const chunkSymbols = chunk.join(",");
+
+                // IMPORTANT: Render same card UI, but for THIS chunk
+                // We will reuse existing rendering by mapping chunk results
+                return (
+                <div className="aiml-slide" key={chunkSymbols}>
+                  {/* render your 3 cards here for this chunk */}
+                </div>
+                  );
+                    })}
+                </div>
+              </div>
+
               <div className="aiml-card-top">
                 <div className="aiml-symbol">{row.symbol}</div>
 

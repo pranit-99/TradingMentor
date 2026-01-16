@@ -38,6 +38,8 @@ html, body, #root, .app-root {
   gap: 0.75rem;
 }
 
+
+
 .brand-logo {
   width: 42px;
   height: 42px;
@@ -167,7 +169,7 @@ html, body, #root, .app-root {
 .main-layout {
   flex: 1;
   display: flex;
-  width: 100%;            /* <— FORCE full width */
+  width: 100%;            /* <â€” FORCE full width */
   max-width: 100%;
   padding: 1.5rem 2.5rem 2rem;
   gap: 1.5rem;
@@ -272,8 +274,8 @@ html, body, #root, .app-root {
 
 .content {
   flex: 1;
-  width: 100%;            /* <— Add this */
-  max-width: 100%;        /* <— Add this */
+  width: 100%;            /* <â€” Add this */
+  max-width: 100%;        /* <â€” Add this */
   border-radius: 24px;
   padding: 1.6rem;
   background: radial-gradient(circle at top left, #020617, #020617 40%, #020617 100%);
@@ -434,6 +436,42 @@ html, body, #root, .app-root {
   background: rgba(22, 163, 74, 0.2);
   color: #bbf7d0;
 }
+
+.stocks-table-scroll {
+  max-height: 650px;          /* adjust based on screen */
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+/* Keep table width aligned */
+.stocks-table-scroll table {
+  width: 100%;
+  border-collapse: collapse;
+}
+/* Dark themed scrollbar */
+.stocks-table-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.stocks-table-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.stocks-table-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    #1db954,
+    #0f5132
+  );
+  border-radius: 10px;
+}
+
+.stocks-table-scroll::-webkit-scrollbar-thumb:hover {
+  background: #1ed760;
+}
+
+
 
 /* === TRADING ACCOUNT MODAL OVERLAY === */
 .modal-backdrop {
@@ -745,9 +783,3 @@ html, body, #root, .app-root {
   color: #ff4d4f;
   font-size: 0.95rem;
 }
-
-
-
-
-
-

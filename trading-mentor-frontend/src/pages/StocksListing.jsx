@@ -23,7 +23,6 @@ function StocksListing({ currentUser }) {
   const [placingOrder, setPlacingOrder] = useState(false);
   const [orderError, setOrderError] = useState("");
   const [orderSuccess, setOrderSuccess] = useState("");
-  const SPRING_BASE_URL = import.meta.env.VITE_SPRING_BASE_URL;
 
   // 1. Fetch data once when component mounts
   useEffect(() => {
@@ -145,7 +144,7 @@ function StocksListing({ currentUser }) {
       setOrderError("");
       setOrderSuccess("");
 
-      const resp = await fetch(`${SPRING_BASE_URL}/api/orders`, {
+      const resp = await fetch("http://localhost:8080/api/orders", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -207,6 +206,7 @@ function StocksListing({ currentUser }) {
       {/* Table */}
       {!loading && !error && (
         <div className="stocks-table-wrapper">
+          <div className="stocks-table-scroll">
           <table className="stocks-table">
             <thead>
               <tr>
@@ -270,6 +270,7 @@ function StocksListing({ currentUser }) {
               )}
             </tbody>
           </table>
+          </div>
 
           {/* BUY Modal */}
           {isOrderModalOpen && selectedStock && (
