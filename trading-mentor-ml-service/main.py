@@ -255,39 +255,35 @@ def stock_trend(symbol: str):
     """
     try:
     close_prices = fetch_finnhub_daily_closes(symbol, days=45)
-except Exception:
-    close_prices = []
+    except Exception:
+        close_prices = []
+        if len(close_prices) < 20:
+            return {
+                "symbol": symbol.upper(),
+                "trend": "UNKNOWN",
+                "reason": "Finnhub data unavailable or insufficient"
+                }
 
-if len(close_prices) < 20:
-    return {
-        "symbol": symbol.upper(),
-        "trend": "UNKNOWN",
-        "reason": "Finnhub data unavailable or insufficient"
-    }
-
-
-  
-
-    # 3) Compute moving averages
-    #short_avg = np.mean(close_prices[-5:])
-    #ong_avg = np.mean(close_prices[-20:])
-    trend, short_avg, long_avg = compute_trend_from_close_prices(close_prices)
+        # 3) Compute moving averages
+        #short_avg = np.mean(close_prices[-5:])
+        #ong_avg = np.mean(close_prices[-20:])
+        trend, short_avg, long_avg = compute_trend_from_close_prices(close_prices)
 
 
-    # 4) Determine trend with a 1% buffer to avoid noise
-    if short_avg > long_avg * 1.01:
+        # 4) Determine trend with a 1% buffer to avoid noise
+        if short_avg > long_avg * 1.01:
         trend = "GREEN"
-    elif short_avg < long_avg * 0.99:
-        trend = "RED"
-    else:
-        trend = "YELLOW"
+        elif short_avg < long_avg * 0.99:
+            trend = "RED"
+            else:
+                trend = "YELLOW"
 
-    return {
-        "symbol": symbol.upper(),
-        "short_avg": round(float(short_avg), 2),
-        "long_avg": round(float(long_avg), 2),
-        "trend": trend
-    }
+                return {
+                    "symbol": symbol.upper(),
+                    "short_avg": round(float(short_avg), 2),
+                    "long_avg": round(float(long_avg), 2),
+                    "trend": trend
+                    }
 
 @app.get("/trending")
 def trending_stocks(symbols: str):
