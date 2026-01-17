@@ -8,6 +8,11 @@ export default function AiMlDashboard() {
   const [lastUpdated, setLastUpdated] = useState(null);
   const [allSymbols, setAllSymbols] = useState([]);
 const [pageIndex, setPageIndex] = useState(0);
+const AI_BASE_URL = import.meta.env.VITE_AI_BASE_URL;
+
+if (!AI_BASE_URL) {
+  throw new Error("VITE_AI_BASE_URL is not defined");
+}
 
 const PAGE_SIZE = 3;
 
