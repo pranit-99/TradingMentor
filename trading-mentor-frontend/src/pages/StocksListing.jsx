@@ -23,6 +23,7 @@ function StocksListing({ currentUser }) {
   const [placingOrder, setPlacingOrder] = useState(false);
   const [orderError, setOrderError] = useState("");
   const [orderSuccess, setOrderSuccess] = useState("");
+  const SPRING_BASE_URL = import.meta.env.VITE_SPRING_BASE_URL;
 
   // 1. Fetch data once when component mounts
   useEffect(() => {
