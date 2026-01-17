@@ -1,14 +1,17 @@
 package com.tradingmentor.trading_mentor_backend.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tradingmentor.trading_mentor_backend.Service.StockPriceUpdateService;
 import com.tradingmentor.trading_mentor_backend.model.Stock;
 import com.tradingmentor.trading_mentor_backend.repository.StockRepository;
 
@@ -25,10 +28,13 @@ import com.tradingmentor.trading_mentor_backend.repository.StockRepository;
 public class StocksController {
 
     private final StockRepository stockRepository;
+    private final StockPriceUpdateService stockPriceUpdateService;
 
     // Constructor injection: Spring will automatically inject StockRepository
-    public StocksController(StockRepository stockRepository) {
+    public StocksController(StockRepository stockRepository,
+                StockPriceUpdateService stockPriceUpdateService) {
         this.stockRepository = stockRepository;
+        this.stockPriceUpdateService = stockPriceUpdateService;
     }
 
     /**
@@ -61,5 +67,12 @@ public class StocksController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @PostMapping("/refresh")
+public ResponseEntity<?> refreshPrices() {
+    stockPriceUpdateService.updateAllStockPrices();
+    return ResponseEntity.ok(Map.of("status", "prices updated"));
+}
+
 }
 

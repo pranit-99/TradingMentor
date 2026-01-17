@@ -16,52 +16,40 @@ import com.tradingmentor.trading_mentor_backend.repository.StockRepository;
 public class StockPriceUpdateService {
 
     private final StockRepository stockRepository;
-    private final AlphaVantageService alphaVantageService;
+    private final FinnhubQuoteService finnhubQuoteService;
 
     public StockPriceUpdateService(StockRepository stockRepository,
-                                   AlphaVantageService alphaVantageService) {
+                                   FinnhubQuoteService finnhubQuoteService) {
         this.stockRepository = stockRepository;
-        this.alphaVantageService = alphaVantageService;
+        this.finnhubQuoteService = finnhubQuoteService;
     }
 
-    /**
-     * Fetch latest prices for ALL stocks in stock_master and update them.
-     * Be careful with free API limits: avoid too many symbols.
-     */
     @Transactional
     public void updateAllStockPrices() {
+        System.out.println(" Scheduler started: Updating all stock prices...");
 
-        // You can later change this to "findByIsActiveTrue()" if you add that method.
-        List<Stock> stocks = stockRepository.findAll();
+        List<Stock> stocks = stockRepository.findByIsActiveTrue();
 
         for (Stock stock : stocks) {
-
             String symbol = stock.getSymbol();
-            if (symbol == null || symbol.isBlank()) {
-                continue;
-            }
+            if (symbol == null || symbol.isBlank()) continue;
 
-            AlphaVantageService.QuoteResult quote =
-                    alphaVantageService.fetchLatestPrice(symbol);
-
-            if (quote == null) {
-                // Could not fetch quote for this symbol, skip it.
-                continue;
-            }
-
-            // Update fields in entity
-            stock.setLastPrice(quote.getPrice());
-            stock.setLastPriceCurrency("USD");  // assuming US stocks
-            stock.setLastPriceUpdatedAt(LocalDateTime.now());
-
-            stockRepository.save(stock);
-
-            // Respect Alpha Vantage free tier limits: small delay between calls
             try {
-                Thread.sleep(4000); // 4 seconds between each symbol
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+                var price = finnhubQuoteService.fetchCurrentPrice(symbol);
+                if (price == null) continue;
+
+                stock.setLastPrice(price);
+                stock.setLastPriceCurrency("USD");
+                stock.setLastPriceUpdatedAt(LocalDateTime.now());
+                stockRepository.save(stock);
+
+                // small delay (optional)
+                //Thread.sleep(250);
+
+            } catch (Exception e) {
+                // skip this symbol; do not break all
             }
         }
+        System.out.println(" Scheduler finished: Stock prices updated.");
     }
 }
