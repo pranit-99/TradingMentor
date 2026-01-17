@@ -255,35 +255,33 @@ def stock_trend(symbol: str):
     """
     try:
         close_prices = fetch_finnhub_daily_closes(symbol, days=45)
-        except Exception:
-            close_prices = []
-            if len(close_prices) < 20:
-                return {
-                    "symbol": symbol.upper(),
-                    "trend": "UNKNOWN",
-                    "reason": "Finnhub data unavailable or insufficient"
-                    }
+    except Exception:
+        close_prices = []
 
-        # 3) Compute moving averages
-        #short_avg = np.mean(close_prices[-5:])
-        #ong_avg = np.mean(close_prices[-20:])
-        trend, short_avg, long_avg = compute_trend_from_close_prices(close_prices)
+    if len(close_prices) < 20:
+        return {
+            "symbol": symbol.upper(),
+            "trend": "UNKNOWN",
+            "reason": "Finnhub data unavailable or insufficient"
+        }
 
+    trend, short_avg, long_avg = compute_trend_from_close_prices(close_prices)
 
-        # 4) Determine trend with a 1% buffer to avoid noise
-        if short_avg > long_avg * 1.01:
+    # Determine trend with a 1% buffer to avoid noise
+    if short_avg > long_avg * 1.01:
         trend = "GREEN"
-        elif short_avg < long_avg * 0.99:
-            trend = "RED"
-            else:
-                trend = "YELLOW"
+    elif short_avg < long_avg * 0.99:
+        trend = "RED"
+    else:
+        trend = "YELLOW"
 
-                return {
-                    "symbol": symbol.upper(),
-                    "short_avg": round(float(short_avg), 2),
-                    "long_avg": round(float(long_avg), 2),
-                    "trend": trend
-                    }
+    return {
+        "symbol": symbol.upper(),
+        "short_avg": round(float(short_avg), 2),
+        "long_avg": round(float(long_avg), 2),
+        "trend": trend
+    }
+
 
 @app.get("/trending")
 def trending_stocks(symbols: str):
@@ -294,27 +292,27 @@ def trending_stocks(symbols: str):
         symbol = symbol.strip().upper()
         try:
             close_prices = fetch_finnhub_daily_closes(symbol, days=45)
-            except Exception:
-                close_prices = []
 
-                if len(close_prices) < 20:
-                    results.append({
-                        "symbol": symbol,
-                        "trend": "UNKNOWN"
-                        })
-                    continue
+        except Exception:
+            close_prices = []
 
-                trend, _, _ = compute_trend_from_close_prices(close_prices)
+        if len(close_prices) < 20:
+            results.append({
+                "symbol": symbol,
+                "trend": "UNKNOWN"
+                })
+            continue
+        
+        trend, _, _ = compute_trend_from_close_prices(close_prices)
 
-                results.append({
-                    "symbol": symbol,
-                    "trend": trend
-                    })
-
-                return {
-                    "count": len(results),
-                    "results": results
-                    }
+        results.append({
+            "symbol": symbol,
+            "trend": trend
+            })
+        return {
+            "count": len(results),
+            "results": results
+            }
 
 @app.get("/risk")
 def stock_risk(symbol: str):
@@ -461,16 +459,17 @@ def predict_next_day(symbol: str):
     Example: /predict?symbol=AAPL
     """
     try:
-    close_prices = fetch_finnhub_daily_closes(symbol, days=220)  # ~7 months buffer
+        close_prices = fetch_finnhub_daily_closes(symbol, days=220)  # ~7 months buffer
+        
     except Exception:
         close_prices = []
 
-        if len(close_prices) < 60:
-            return {
-                "symbol": symbol.upper(),
-                "status": "UNKNOWN",
-                "reason": "Not enough data from Finnhub (need ~60+ daily closes)"
-                }
+    if len(close_prices) < 60:
+        return {
+            "symbol": symbol.upper(),
+            "status": "UNKNOWN",
+            "reason": "Not enough data from Finnhub (need ~60+ daily closes)"
+            }
 
     
 
@@ -552,13 +551,12 @@ def predict_many(symbols: str):
 
     for symbol in symbol_list:
         try:
-            # reuse the single predict logic by calling the function body pattern again (simple for now)
             close_prices = fetch_finnhub_daily_closes(symbol, days=220)
-            except Exception:
-                close_prices = []
-                if len(close_prices) < 60:
-                    results.append({"symbol": symbol, "status": "UNKNOWN", "reason": "Not enough data"})
-                    continue
+            close_prices = np.array(close_prices, dtype=float)
+
+            if len(close_prices) < 60:
+                results.append({"symbol": symbol, "status": "UNKNOWN", "reason": "Not enough data"})
+                continue
 
             returns = (close_prices[1:] - close_prices[:-1]) / close_prices[:-1]
             lag = 5
@@ -569,14 +567,15 @@ def predict_many(symbols: str):
 
             X, y = [], []
             for t in range(lag, len(returns)):
-                past_returns = returns[t-lag:t]
+                past_returns = returns[t - lag:t]
                 vol = float(np.std(past_returns))
                 X.append(list(past_returns) + [vol])
                 y.append(float(returns[t]))
 
-            X = np.array(X)
-            y = np.array(y)
+            X = np.array(X, dtype=float)
+            y = np.array(y, dtype=float)
 
+            # train (time order)
             X_train, X_test, y_train, y_test = train_test_split(
                 X, y, test_size=0.2, shuffle=False
             )
@@ -586,10 +585,9 @@ def predict_many(symbols: str):
 
             latest_past_returns = returns[-lag:]
             latest_vol = float(np.std(latest_past_returns))
-            latest_features = np.array([list(latest_past_returns) + [latest_vol]])
+            latest_features = np.array([list(latest_past_returns) + [latest_vol]], dtype=float)
 
             predicted_return = float(model.predict(latest_features)[0])
-
             direction = "UP" if predicted_return > 0 else "DOWN" if predicted_return < 0 else "FLAT"
 
             results.append({
@@ -599,7 +597,11 @@ def predict_many(symbols: str):
             })
 
         except Exception as e:
-            results.append({"symbol": symbol, "status": "ERROR", "reason": str(e)})
+            results.append({
+                "symbol": symbol,
+                "status": "ERROR",
+                "reason": str(e)
+            })
 
     return {"count": len(results), "results": results}
 
@@ -614,41 +616,44 @@ def predict_many_ridge(symbols: str):
 
     for symbol in symbol_list:
         try:
-            close = fetch_finnhub_daily_closes(symbol, days=260)  # bigger buffer for 80+ trading days
-            except Exception:
-                close = []
-                if len(close) < 80:
-                    results.append({"symbol": symbol, "status": "UNKNOWN", "reason": "Not enough data (~80 days needed)"})
-                    continue
-           
+            close = fetch_finnhub_daily_closes(symbol, days=260)
+            close = np.array(close, dtype=float)
+
+            if len(close) < 80:
+                results.append({
+                    "symbol": symbol,
+                    "status": "UNKNOWN",
+                    "reason": "Not enough data (~80 days needed)"
+                })
+                continue
 
             # Returns
             returns = (close[1:] - close[:-1]) / close[:-1]
-
             lag = 5
+
             if len(returns) <= lag + 30:
-                results.append({"symbol": symbol, "status": "UNKNOWN", "reason": "Not enough returns for features"})
+                results.append({
+                    "symbol": symbol,
+                    "status": "UNKNOWN",
+                    "reason": "Not enough returns for features"
+                })
                 continue
 
             X, y = [], []
 
-            # Build dataset: for each t, predict return[t] using features from history up to t
+            # Build dataset
             for t in range(lag, len(returns)):
-                past5 = returns[t-lag:t]  # last 5 returns
-
-                # Extra features (computed from close history)
-                # Map return index t to close index (t corresponds to close[t+1])
-                close_slice = close[: t + 1]  # up to today
+                past5 = returns[t - lag:t]
+                close_slice = close[: t + 1]
                 if len(close_slice) < 30:
                     continue
 
                 sma5 = float(np.mean(close_slice[-5:]))
                 sma20 = float(np.mean(close_slice[-20:]))
-                momentum5 = float((close_slice[-1] / close_slice[-6]) - 1.0)  # last 5-day move
-                vol20 = float(np.std(returns[max(0, t-20):t]))  # volatility over last 20 returns
+                momentum5 = float((close_slice[-1] / close_slice[-6]) - 1.0)
+                vol20 = float(np.std(returns[max(0, t - 20):t]))
                 rsi14 = compute_rsi(close_slice, period=14)
 
-                # Feature vector
                 features = list(past5) + [
                     vol20,
                     (sma5 / sma20) - 1.0,
@@ -656,38 +661,42 @@ def predict_many_ridge(symbols: str):
                     rsi14
                 ]
 
-                # Target
                 X.append(features)
                 y.append(float(returns[t]))
 
             if len(X) < 50:
-                results.append({"symbol": symbol, "status": "UNKNOWN", "reason": "Not enough rows after feature build"})
+                results.append({
+                    "symbol": symbol,
+                    "status": "UNKNOWN",
+                    "reason": "Not enough rows after feature build"
+                })
                 continue
 
             X = np.array(X, dtype=float)
             y = np.array(y, dtype=float)
 
-            # Train/test split (time order)
+            # Time-based split
             split = int(len(X) * 0.8)
             X_train, X_test = X[:split], X[split:]
             y_train, y_test = y[:split], y[split:]
 
-            # Ridge + Scaling
             model = make_pipeline(StandardScaler(), Ridge(alpha=1.0))
             model.fit(X_train, y_train)
 
             # Predict next day using latest features
-            latest_close_slice = close
             latest_past5 = returns[-lag:]
-            sma5 = float(np.mean(latest_close_slice[-5:]))
-            sma20 = float(np.mean(latest_close_slice[-20:]))
-            momentum5 = float((latest_close_slice[-1] / latest_close_slice[-6]) - 1.0)
+            sma5 = float(np.mean(close[-5:]))
+            sma20 = float(np.mean(close[-20:]))
+            momentum5 = float((close[-1] / close[-6]) - 1.0)
             vol20 = float(np.std(returns[-20:]))
-            rsi14 = compute_rsi(latest_close_slice, period=14)
+            rsi14 = compute_rsi(close, period=14)
 
-            latest_features = np.array([list(latest_past5) + [vol20, (sma5 / sma20) - 1.0, momentum5, rsi14]], dtype=float)
+            latest_features = np.array(
+                [list(latest_past5) + [vol20, (sma5 / sma20) - 1.0, momentum5, rsi14]],
+                dtype=float
+            )
+
             pred_return = float(model.predict(latest_features)[0])
-
             direction = "UP" if pred_return > 0 else "DOWN" if pred_return < 0 else "FLAT"
 
             results.append({
@@ -704,9 +713,14 @@ def predict_many_ridge(symbols: str):
             })
 
         except Exception as e:
-            results.append({"symbol": symbol, "status": "ERROR", "reason": str(e)})
+            results.append({
+                "symbol": symbol,
+                "status": "ERROR",
+                "reason": str(e)
+            })
 
     return {"count": len(results), "results": results}
+
 
 @app.get("/predict_compare")
 def predict_compare(symbols: str):
@@ -762,8 +776,6 @@ def predict_compare(symbols: str):
 
     return {"count": len(merged), "results": merged}
 
-
-
 @app.get("/predict_many_ridge_tuned")
 def predict_many_ridge_tuned(symbols: str):
     """
@@ -772,31 +784,37 @@ def predict_many_ridge_tuned(symbols: str):
     """
     symbol_list = [s.strip().upper() for s in symbols.split(",") if s.strip()]
     results = []
-
     alphas_to_try = [0.1, 1.0, 10.0, 50.0]
 
     for symbol in symbol_list:
         try:
             close = fetch_finnhub_daily_closes(symbol, days=260)
-            except Exception:
-                close = []
-                if len(close) < 80:
-                    results.append({"symbol": symbol, "status": "UNKNOWN", "reason": "Not enough data (~80 days needed)"})
-                    continue
-           
+            close = np.array(close, dtype=float)
+
+            if len(close) < 80:
+                results.append({
+                    "symbol": symbol,
+                    "status": "UNKNOWN",
+                    "reason": "Not enough data (~80 days needed)"
+                })
+                continue
 
             # Returns
             returns = (close[1:] - close[:-1]) / close[:-1]
             lag = 5
 
             if len(returns) <= lag + 30:
-                results.append({"symbol": symbol, "status": "UNKNOWN", "reason": "Not enough returns for features"})
+                results.append({
+                    "symbol": symbol,
+                    "status": "UNKNOWN",
+                    "reason": "Not enough returns for features"
+                })
                 continue
 
             # Build dataset
             X, y = [], []
             for t in range(lag, len(returns)):
-                past5 = returns[t-lag:t]
+                past5 = returns[t - lag:t]
                 close_slice = close[: t + 1]
                 if len(close_slice) < 30:
                     continue
@@ -804,7 +822,7 @@ def predict_many_ridge_tuned(symbols: str):
                 sma5 = float(np.mean(close_slice[-5:]))
                 sma20 = float(np.mean(close_slice[-20:]))
                 momentum5 = float((close_slice[-1] / close_slice[-6]) - 1.0)
-                vol20 = float(np.std(returns[max(0, t-20):t]))
+                vol20 = float(np.std(returns[max(0, t - 20):t]))
                 rsi14 = compute_rsi(close_slice, period=14)
 
                 features = list(past5) + [
@@ -818,7 +836,11 @@ def predict_many_ridge_tuned(symbols: str):
                 y.append(float(returns[t]))
 
             if len(X) < 60:
-                results.append({"symbol": symbol, "status": "UNKNOWN", "reason": "Not enough rows after feature build"})
+                results.append({
+                    "symbol": symbol,
+                    "status": "UNKNOWN",
+                    "reason": "Not enough rows after feature build"
+                })
                 continue
 
             X = np.array(X, dtype=float)
@@ -831,6 +853,8 @@ def predict_many_ridge_tuned(symbols: str):
 
             best_alpha = None
             best_mae = None
+            confidence_label = "LOW"
+            confidence_pct = 40
 
             for a in alphas_to_try:
                 model = make_pipeline(StandardScaler(), Ridge(alpha=a))
@@ -842,32 +866,28 @@ def predict_many_ridge_tuned(symbols: str):
                     best_mae = mae
                     best_alpha = a
 
-                # Confidence from validation MAE (learning baseline)
-                if best_mae <= 0.010:
-                    confidence_label = "HIGH"
-                    confidence_pct = 80
-                elif best_mae <= 0.020:
-                    confidence_label = "MEDIUM"
-                    confidence_pct = 60
-                else:
-                    confidence_label = "LOW"
-                    confidence_pct = 40
-                    
+                    # Update confidence based on *current best* MAE
+                    if best_mae <= 0.010:
+                        confidence_label = "HIGH"
+                        confidence_pct = 80
+                    elif best_mae <= 0.020:
+                        confidence_label = "MEDIUM"
+                        confidence_pct = 60
+                    else:
+                        confidence_label = "LOW"
+                        confidence_pct = 40
 
-            # Train final model with best alpha on all available data (train+val)
+            # Train final model on all data
             final_model = make_pipeline(StandardScaler(), Ridge(alpha=best_alpha))
             final_model.fit(X, y)
 
-            # Build latest features for next-day prediction
-            latest_close_slice = close
+            # Latest features for next-day prediction
             latest_past5 = returns[-lag:]
-            sma5 = float(np.mean(latest_close_slice[-5:]))
-            sma20 = float(np.mean(latest_close_slice[-20:]))
-            momentum5 = float((latest_close_slice[-1] / latest_close_slice[-6]) - 1.0)
+            sma5 = float(np.mean(close[-5:]))
+            sma20 = float(np.mean(close[-20:]))
+            momentum5 = float((close[-1] / close[-6]) - 1.0)
             vol20 = float(np.std(returns[-20:]))
-            rsi14 = compute_rsi(latest_close_slice, period=14)
-            
-
+            rsi14 = compute_rsi(close, period=14)
 
             latest_features = np.array(
                 [list(latest_past5) + [vol20, (sma5 / sma20) - 1.0, momentum5, rsi14]],
@@ -876,32 +896,38 @@ def predict_many_ridge_tuned(symbols: str):
 
             pred_return = float(final_model.predict(latest_features)[0])
             direction = "UP" if pred_return > 0 else "DOWN" if pred_return < 0 else "FLAT"
+
             feature_snapshot = {
                 "vol20": round(vol20, 4),
                 "sma5_vs_sma20": round((sma5 / sma20) - 1.0, 4),
                 "momentum5": round(momentum5, 4),
                 "rsi14": None if np.isnan(rsi14) else round(rsi14, 2)
-                }
-            explanation = explain_tuned_prediction(feature_snapshot, direction)
-            
+            }
 
+            explanation = explain_tuned_prediction(feature_snapshot, direction)
 
             results.append({
                 "symbol": symbol,
                 "model": "Ridge+StandardScaler (tuned)",
                 "best_alpha": best_alpha,
-                "val_mae": round(best_mae, 6),
+                "val_mae": round(float(best_mae), 6),
                 "direction": direction,
                 "predicted_next_day_return": round(pred_return, 6),
                 "confidence": {
                     "label": confidence_label,
                     "percent": confidence_pct
-                    },
+                },
                 "feature_snapshot": feature_snapshot,
                 "explanation": explanation
             })
 
         except Exception as e:
-            results.append({"symbol": symbol, "status": "ERROR", "reason": str(e)})
+            results.append({
+                "symbol": symbol,
+                "status": "ERROR",
+                "reason": str(e)
+            })
 
     return {"count": len(results), "results": results}
+
+
