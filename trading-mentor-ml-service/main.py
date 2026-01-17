@@ -254,15 +254,15 @@ def stock_trend(symbol: str):
     GREEN / YELLOW / RED
     """
     try:
-    close_prices = fetch_finnhub_daily_closes(symbol, days=45)
-    except Exception:
-        close_prices = []
-        if len(close_prices) < 20:
-            return {
-                "symbol": symbol.upper(),
-                "trend": "UNKNOWN",
-                "reason": "Finnhub data unavailable or insufficient"
-                }
+        close_prices = fetch_finnhub_daily_closes(symbol, days=45)
+        except Exception:
+            close_prices = []
+            if len(close_prices) < 20:
+                return {
+                    "symbol": symbol.upper(),
+                    "trend": "UNKNOWN",
+                    "reason": "Finnhub data unavailable or insufficient"
+                    }
 
         # 3) Compute moving averages
         #short_avg = np.mean(close_prices[-5:])
