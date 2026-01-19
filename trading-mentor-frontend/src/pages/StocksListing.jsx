@@ -151,7 +151,7 @@ function StocksListing({ currentUser }) {
       setOrderError("");
       setOrderSuccess("");
 
-      const resp = await fetch("http://localhost:8080/api/orders", {
+      const resp = await fetch(`${SPRING_BASE_URL}/api/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
