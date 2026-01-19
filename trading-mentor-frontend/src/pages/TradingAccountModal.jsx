@@ -101,6 +101,7 @@ function TradingAccountModal({ currentUser, onClose }) {
       setSuccess(
         `Trading account created successfully. Account No: ${data.accountNumber || "generated"}`
       );
+      setShowBonusModal(true);
 
       // Optionally: close modal after short delay
       // setTimeout(onClose, 1500);
