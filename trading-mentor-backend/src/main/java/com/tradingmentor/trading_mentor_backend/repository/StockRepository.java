@@ -1,11 +1,12 @@
 package com.tradingmentor.trading_mentor_backend.repository;
 
-import com.tradingmentor.trading_mentor_backend.model.Stock;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
+import com.tradingmentor.trading_mentor_backend.model.Stock;
 
 /**
  * Repository for accessing stock_master data.

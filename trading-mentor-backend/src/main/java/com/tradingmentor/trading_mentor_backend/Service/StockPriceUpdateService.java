@@ -44,10 +44,10 @@ public class StockPriceUpdateService {
                 stockRepository.save(stock);
 
                 // small delay (optional)
-                //Thread.sleep(250);
+                Thread.sleep(1200);
 
-            } catch (Exception e) {
-                // skip this symbol; do not break all
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
         }
         System.out.println(" Scheduler finished: Stock prices updated.");
