@@ -50,6 +50,12 @@ function StocksListing({ currentUser }) {
     };
 
     fetchStocks();
+
+    const id = setInterval(() => {
+      fetchStocks();
+    }, 60 * 1000); // 60 seconds
+
+    return() => clearInterval(id);
   }, []);
 
   // 2. When search text changes, update the filtered list

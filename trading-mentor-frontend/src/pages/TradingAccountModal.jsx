@@ -1,5 +1,6 @@
 // src/pages/TradingAccountModal.jsx
 import { useState } from "react";
+import SignupBonusModal from "./SignupBonusModal";
 import "./TradingAccountModal.css"; // we'll add this in step 3
 
 function TradingAccountModal({ currentUser, onClose }) {
@@ -22,6 +23,7 @@ function TradingAccountModal({ currentUser, onClose }) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [showBonusModal, setShowBonusModal] = useState(false);
   const SPRING_BASE_URL = import.meta.env.VITE_SPRING_BASE_URL;
 
 
@@ -275,6 +277,12 @@ function TradingAccountModal({ currentUser, onClose }) {
           </button>
         </div>
       </form>
+      {showBonusModal && (
+  <SignupBonusModal
+    firstName={form.firstName}
+    onClose={() => setShowBonusModal(false)}
+  />
+)}
     </div>
   );
 }

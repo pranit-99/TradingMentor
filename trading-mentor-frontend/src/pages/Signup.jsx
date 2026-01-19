@@ -18,6 +18,8 @@ function Signup() {
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [showSignupPopup, setShowSignupPopup] = useState(false);
+  const [createdUserName, setCreatedUserName] = useState("");
   const SPRING_BASE_URL = import.meta.env.VITE_SPRING_BASE_URL;
 
   // handle input updates
@@ -76,6 +78,11 @@ function Signup() {
         setErrorMsg(text || "Signup failed.");
       } else {
         setSuccessMsg(text || "Signup successful!");
+        setCreatedUserName(form.firstName);
+        setShowSignupPopup(true);setTimeout(() => {
+          window.location.href = "/login";
+        }, 15000);
+
         // clear the form
         setForm({
           firstName: "",
@@ -94,7 +101,7 @@ function Signup() {
       setLoading(false);
     }
   };
-
+  
   return (
     <div className="signup-page">
       <div className="signup-card">
@@ -196,7 +203,43 @@ function Signup() {
             Already have an account? We’ll connect the Login page next.
           </p>
         </form>
+        
+
+        
       </div>
+      {showSignupPopup && (
+        
+  <div className="signup-popup-backdrop" onClick={() => setShowSignupPopup(false)}>
+    <form className="signup-form" onSubmit={handleSubmit}>
+    <div className="signup-popup" onClick={(e) => e.stopPropagation()}>
+      <button className="signup-popup-close" onClick={() => setShowSignupPopup(false)}>
+        ✕
+      </button>
+
+      <div className="signup-popup-badge"> Signup Successful</div>
+
+      <h3 className="signup-popup-title">
+        Welcome {createdUserName || "to Trading Mentor"}!
+      </h3>
+
+      <p className="signup-popup-text">
+        Your login is ready. Next steps:
+        <br />• Login to your account
+        <br />• Create your Trading Account to start trading
+        <h3>Educational use only. Data sourced from third-party APIs (e.g., Yahoo Finance) may be delayed or inaccurate. Not financial advice. 
+          Do not use for real trading.</h3>
+      </p>
+
+      <button
+        className="signup-submit"
+        onClick={() => (window.location.href = "/login")}
+      >
+        Go to Login
+      </button>
+    </div>
+    </form>
+  </div>
+)}
     </div>
   );
 }
