@@ -80,7 +80,7 @@ const fetchFunds = async () => {
     setSpinResult(null);
   
     // 🎯 Spin values
-    const amounts = [10, 25, 50, 75, 100, 150, 200, 300];
+    const amounts = [1000, 250, 500, 550, 100, 1500, 800, 300];
     const randomAmount = amounts[Math.floor(Math.random() * amounts.length)];
   
     // 🎡 Rotate wheel
