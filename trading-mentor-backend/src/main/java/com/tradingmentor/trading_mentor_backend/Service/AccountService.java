@@ -9,19 +9,26 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.tradingmentor.trading_mentor_backend.dto.AccountCreationRequest;
 import com.tradingmentor.trading_mentor_backend.model.TradingAccount;
+import com.tradingmentor.trading_mentor_backend.model.Transact;
 import com.tradingmentor.trading_mentor_backend.repository.TradingAccountRepository;
+import com.tradingmentor.trading_mentor_backend.repository.TransactRepository;
 
 @Service
 public class AccountService {
 
     private final TradingAccountRepository tradingAccountRepository;
+    private final TransactRepository transactRepository;
 
-    public AccountService(TradingAccountRepository tradingAccountRepository) {
+    public AccountService(TradingAccountRepository tradingAccountRepository,
+                          TransactRepository transactRepository) {
         this.tradingAccountRepository = tradingAccountRepository;
+        this.transactRepository = transactRepository;
     }
 
     @Transactional
     public TradingAccount createTradingAccount(AccountCreationRequest request) {
+
+        LocalDateTime now = LocalDateTime.now();
 
         // If account already exists for this user, you can either throw or return existing
         tradingAccountRepository.findByUserId(request.getUserId())
@@ -58,7 +65,29 @@ public class AccountService {
         account.setCreatedAt(LocalDateTime.now());
         account.setUpdatedAt(LocalDateTime.now());
 
-        return tradingAccountRepository.save(account);
+        //return tradingAccountRepository.save(account);
+        TradingAccount saved = tradingAccountRepository.save(account);
+
+        Transact t = new Transact();
+        t.setUserId(saved.getUserId());
+        t.setAccountNumber(saved.getAccountNumber());
+        t.setSecurityType("C");         // CASH (your decision ✅)
+        t.setInstrumentType("CASH");
+        t.setCreditDebitFlag("C");      // credit
+        t.setAmount(new BigDecimal("500.00"));
+        t.setTransactionType("SIGNUP_BONUS"); // or "DEPOSIT"
+        t.setDescription("Initial virtual cash credited on account creation");
+        t.setRemarks("Auto Credit");
+        t.setSymbol(null);
+        t.setBuySellFlag(null);
+        t.setOrderId(null);
+        t.setTradeId(null);
+        t.setTransactionDate(now);       // ✅ ledger-friendly timestamp
+        t.setTradeDate(now);
+
+        transactRepository.save(t);
+
+        return saved;
     }
 
     private String generateAccountNumber() {

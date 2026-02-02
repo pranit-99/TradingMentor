@@ -1,9 +1,10 @@
 package com.tradingmentor.trading_mentor_backend.repository;
 
-import com.tradingmentor.trading_mentor_backend.model.AccountMaster;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+import com.tradingmentor.trading_mentor_backend.model.AccountMaster;
 
 public interface AccountMasterRepository extends JpaRepository<AccountMaster, Long> {
 

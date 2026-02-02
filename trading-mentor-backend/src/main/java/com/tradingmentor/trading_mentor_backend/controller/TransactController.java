@@ -44,7 +44,7 @@ public class TransactController {
      */
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Transact>> getRecentByUser(
-            @PathVariable Long userId,
+            @PathVariable Integer userId,
             @RequestParam(defaultValue = "5") int limit
     ) {
         if (limit <= 0) limit = 5;

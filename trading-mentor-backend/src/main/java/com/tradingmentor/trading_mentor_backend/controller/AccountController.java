@@ -1,8 +1,10 @@
 package com.tradingmentor.trading_mentor_backend.controller;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,13 +19,16 @@ import com.tradingmentor.trading_mentor_backend.dto.AccountCreationRequest;
 import com.tradingmentor.trading_mentor_backend.dto.FundCreditRequest;
 import com.tradingmentor.trading_mentor_backend.model.AccountMaster;
 import com.tradingmentor.trading_mentor_backend.model.TradingAccount;
+import com.tradingmentor.trading_mentor_backend.model.Transact;
 import com.tradingmentor.trading_mentor_backend.repository.AccountMasterRepository;
+import com.tradingmentor.trading_mentor_backend.repository.TransactRepository;
 
 @RestController
 @RequestMapping("/api/accounts")
 @CrossOrigin(origins = "*")
 public class AccountController {
-
+    @Autowired
+    private TransactRepository transactRepository;
     private final AccountService accountService;
     private final AccountMasterRepository accountMasterRepository;
 
@@ -70,6 +75,27 @@ public ResponseEntity<?> creditFunds(@RequestBody FundCreditRequest req) {
     account.setCashBalance(account.getCashBalance().add(req.getAmount()));
 
     accountMasterRepository.save(account);
+    // ✅ Create ledger entry for deposit
+    Transact tx = new Transact();
+    tx.setUserId(req.getUserId().intValue());                    // ✅ FIXED (was request)
+    tx.setAccountNumber(account.getAccountNumber());  // NOT NULL
+    tx.setSecurityType("C");                          // cash
+    tx.setCreditDebitFlag("C");                       // credit
+    tx.setAmount(req.getAmount());                    // ✅ FIXED (was request)
+    tx.setTransactionType("DEPOSIT");                 // or "SPIN_REWARD"
+    tx.setDescription("Funds credited via spin transfer");
+    tx.setRemarks("Auto credit");
+    tx.setTransactionDate(LocalDateTime.now());
+
+    // Optional: only keep these if they exist in your Transact entity
+    tx.setSymbol(null);
+    tx.setBuySellFlag(null);
+    tx.setOrderId(null);
+    tx.setTradeId(null);
+    tx.setInstrumentType("CASH");
+
+    transactRepository.save(tx);
+
 
     return ResponseEntity.ok(account);
 }

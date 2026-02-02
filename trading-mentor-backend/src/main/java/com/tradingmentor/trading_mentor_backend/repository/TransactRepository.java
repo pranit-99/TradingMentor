@@ -13,7 +13,7 @@ import com.tradingmentor.trading_mentor_backend.model.Transact;
 public interface TransactRepository extends JpaRepository<Transact, Long> {
 
     // Fetch latest transactions for a user (newest first)
-    List<Transact> findByUserIdOrderByTransactionDateDesc(Long userId, Pageable pageable);
+    List<Transact> findByUserIdOrderByTransactionDateDesc(Integer userId, Pageable pageable);
 
     //  Ledger: date range filter
     List<Transact> findByUserIdAndTransactionDateBetweenOrderByTransactionDateDesc(
