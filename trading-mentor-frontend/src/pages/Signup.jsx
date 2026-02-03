@@ -1,6 +1,7 @@
 // src/pages/Signup.jsx
 import { useState } from "react";
 import "./Signup.css"; // we’ll create this next
+import LoginPage from "./LoginPage.jsx";
 
 function Signup() {
   // form state
@@ -18,7 +19,7 @@ function Signup() {
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
-  const [showSignupPopup, setShowSignupPopup] = useState(false);
+  const [showPopup, setShowSignupPopup] = useState(false);
   const [createdUserName, setCreatedUserName] = useState("");
   const SPRING_BASE_URL = import.meta.env.VITE_SPRING_BASE_URL;
 
@@ -80,7 +81,7 @@ function Signup() {
         setSuccessMsg(text || "Signup successful!");
         setCreatedUserName(form.firstName);
         setShowSignupPopup(true);setTimeout(() => {
-          window.location.href = "/login";
+          window.location.href = LoginPage;
         }, 15000);
 
         // clear the form
@@ -212,8 +213,10 @@ function Signup() {
     <div className="signup-popup" onClick={(e) => e.stopPropagation()}>
       <button className="signup-popup-close" onClick={closePopup}>×</button>
 
-      <div className="signup-popup-badge">✅ Account Created</div>
-      <h2 className="signup-popup-title">Welcome to Trading Mentor</h2>
+      <div className="signup-popup-badge"> Account Created</div>
+      <h2 className="signup-popup-title">
+        Welcome {createdUserName || "to Trading Mentor"}!
+      </h2>
 
       <p className="signup-popup-text">
         Your account is ready. You can now explore the platform and start learning step-by-step.
