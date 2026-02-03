@@ -86,9 +86,12 @@ const handleLoginSuccess = (user) => {
         return(
           <>
           <h1>Welcome to Trading Mentor</h1>
+          <div className="dashboard-warning">
+            ⚠️ This platform is for learning purposes only. Stock data may be delayed or inaccurate. 
+            This is NOT financial advice or real trading.
+          </div>
             <p>
-              Learn trading with zero real money risk. We’ll plug in live/
-              trending AI-picked stocks and catchy copy here later.
+              Learn trading with zero real money risk.
             </p>
             <AiMlDashboard />
           </>
