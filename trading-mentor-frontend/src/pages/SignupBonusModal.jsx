@@ -12,7 +12,7 @@ export default function SignupBonusModal({firstName = "Trader", onClose}){
                     Your Trading account is created successfully.
                     <br />
                 We’ve credited <span className="bonus-amount">$500</span> to your{" "}
-          <     span className="bonus-highlight">paper trading</span> wallet.
+                <span className="bonus-highlight">paper trading</span> wallet.
                 </p>
 
                 <div className="bonus-actions">

@@ -207,39 +207,30 @@ function Signup() {
 
         
       </div>
-      {showSignupPopup && (
-        
-  <div className="signup-popup-backdrop" onClick={() => setShowSignupPopup(false)}>
-    <form className="signup-form" onSubmit={handleSubmit}>
+      {showPopup && (
+  <div className="signup-popup-backdrop" onClick={closePopup}>
     <div className="signup-popup" onClick={(e) => e.stopPropagation()}>
-      <button className="signup-popup-close" onClick={() => setShowSignupPopup(false)}>
-        ✕
-      </button>
+      <button className="signup-popup-close" onClick={closePopup}>×</button>
 
-      <div className="signup-popup-badge"> Signup Successful</div>
-
-      <h3 className="signup-popup-title">
-        Welcome {createdUserName || "to Trading Mentor"}!
-      </h3>
+      <div className="signup-popup-badge">✅ Account Created</div>
+      <h2 className="signup-popup-title">Welcome to Trading Mentor</h2>
 
       <p className="signup-popup-text">
-        Your login is ready. Next steps:
-        <br />• Login to your account
-        <br />• Create your Trading Account to start trading
-        <h3>Educational use only. Data sourced from third-party APIs (e.g., Yahoo Finance) may be delayed or inaccurate. Not financial advice. 
-          Do not use for real trading.</h3>
+        Your account is ready. You can now explore the platform and start learning step-by-step.
       </p>
 
-      <button
-        className="signup-submit"
-        onClick={() => (window.location.href = "/login")}
-      >
-        Go to Login
+      <div className="signup-popup-warning">
+        <strong>Learning Disclaimer:</strong> This platform is for education only. Predictions/signals are experimental
+        and not financial advice. Do your own research before making real trades.
+      </div>
+
+      <button className="signup-popup-cta" onClick={closePopup}>
+        Continue
       </button>
     </div>
-    </form>
   </div>
 )}
+
     </div>
   );
 }
