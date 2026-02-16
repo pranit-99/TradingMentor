@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import "./AiMlDashboard.css";
 
 export default function AiMlDashboard() {
@@ -10,6 +10,7 @@ export default function AiMlDashboard() {
 const [pageIndex, setPageIndex] = useState(0);
 const [chatInput, setChatInput] = useState("");
 const [chatOpen, setChatOpen] = useState(false);
+const chatRef = useRef(null);
 const [chatMessages, setChatMessages] = useState([
   {
     role: "assistant",
@@ -109,7 +110,21 @@ const symbols = visibleSymbols.join(",");
   
     return () => clearInterval(timer);
   }, [totalPages]);
+
+  // Set to close chatbox when click out of window
+  useEffect(() => {
+    if (!chatOpen) return;
   
+    const onDown = (e) => {
+      // if click is outside the chat panel => close
+      if (chatRef.current && !chatRef.current.contains(e.target)) {
+        setChatOpen(false);
+      }
+    };
+  
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
+  }, [chatOpen]);
   
  
   
@@ -376,7 +391,9 @@ const symbols = visibleSymbols.join(",");
         <div className="chatbot-window">
         <div>
         Trading Mentor
-        <span onClick={() => setChatOpen(false)}>✕</span>
+        <button className="tm-chat-close" onClick={() => setChatOpen(false)}>
+        X
+        </button>
         </div>
 
         <div className="chatbot-body">

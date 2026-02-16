@@ -241,20 +241,21 @@ to   { opacity: 1; transform: translateX(0); }
 
 /*-------------Chat bot-------------*/
 /*-------------This for Floating Button-------------*/
-.chatbot-toggle {
-  position: absolute;      /* IMPORTANT: inside canvas, not browser */
-  right: 22px;
-  bottom: 22px;
-  width: 54px;
-  height: 54px;
+.chatbot-toggle{
+  position: fixed;
+  right: 28px;   /* was probably too close like 10px */
+  bottom: 28px;  /* move inside */
+  z-index: 9999;
+
+  width: 52px;
+  height: 52px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(0, 255, 160, 0.15);
-  backdrop-filter: blur(8px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   cursor: pointer;
-  display: grid;
-  place-items: center;
-  z-index: 30;
 }
 
 .chatbot-toggle:hover {
@@ -262,6 +263,12 @@ to   { opacity: 1; transform: translateX(0); }
 }
 
 /*-------------Chat Window-------------*/
+.chatbot-overlay{
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: transparent; /* keep theme; no dark overlay */
+}
 .chatbot-window {
   position: fixed;
   bottom: 100px;
