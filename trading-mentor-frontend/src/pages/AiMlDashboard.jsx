@@ -9,7 +9,7 @@ export default function AiMlDashboard() {
   const [allSymbols, setAllSymbols] = useState([]);
 const [pageIndex, setPageIndex] = useState(0);
 const [chatInput, setChatInput] = useState("");
-const [chatOpen, setChatOpen] = useSate(false);
+const [chatOpen, setChatOpen] = useState(false);
 const [chatMessages, setChatMessages] = useState([
   {
     role: "assistant",
