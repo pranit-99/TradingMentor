@@ -9,6 +9,7 @@ export default function AiMlDashboard() {
   const [allSymbols, setAllSymbols] = useState([]);
 const [pageIndex, setPageIndex] = useState(0);
 const [chatInput, setChatInput] = useState("");
+const [chatOpen, setChatOpen] = useSate(false);
 const [chatMessages, setChatMessages] = useState([
   {
     role: "assistant",
@@ -364,31 +365,35 @@ const symbols = visibleSymbols.join(",");
           ))}
         </div>
       )}
-      <div className="aiml-chat">
-        <div className="aiml-chat-header">Trading Mentor</div>
-        <div className="aiml-chat-body">
-          {chatMessages.map((m, idx) => (
-            <div 
-            key={idx}
-            className={`aiml-chat-msg ${m.role === "user" ? "user" : "bot"}`}
-            >
-            {m.text}
-            </div>
-          ))}
-        </div>
-        <div className="aiml-chat-input">
-        <input
-        value={chatInput}
-        onChange={(e) => setChatInput(e.target.value)}
-        placeholder="Ask about signals or trading concepts..."
-        onKeyDown={(e) => {
-          if (e.key === "Enter") handleSend();
-        }}
-      />
-      <button onClick={handleSend}>Send</button>
-        </div>
+      {/* This Will be Chat Button */}
+      <div className="chatbot-toggle"
+      onClick={() => setChatOpen(!chatOpen)}
+      >
+      💬
       </div>
+      {/* This part is for Chat Window*/}
+      {chatOpen && (
+        <div className="chatbot-window">
+        <div>
+        Trading Mentor
+        <span onClick={() => setChatOpen(false)}>✕</span>
+        </div>
+
+        <div className="chatbot-body">
+        <p>
+        Hi! I’m your Trading Mentor. Ask about signals or trading concepts like
+        "What is equity?"
+        </p>
+        </div>
+
+        <div className="chatbot-input">
+      <input placeholder="Ask about trading..." />
+      <button>Send</button>
     </div>
+        </div>
+      )}
+    </div>
+    
 
   );
 }
