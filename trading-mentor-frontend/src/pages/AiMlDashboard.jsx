@@ -8,7 +8,18 @@ export default function AiMlDashboard() {
   const [lastUpdated, setLastUpdated] = useState(null);
   const [allSymbols, setAllSymbols] = useState([]);
 const [pageIndex, setPageIndex] = useState(0);
+const [chatInput, setChatInput] = useState("");
+const [chatMessages, setChatMessages] = useState([
+  {
+    role: "assistant",
+    text: "Hi! I’m your Trading Mentor. Ask me about signals (Trend/Risk/Prediction/Anomaly) or trading concepts like: What is equity?"
+  }
+])
+
+
+
 const AI_BASE_URL = import.meta.env.VITE_AI_BASE_URL;
+
 
 if (!AI_BASE_URL) {
   throw new Error("VITE_AI_BASE_URL is not defined");
@@ -114,6 +125,22 @@ const symbols = visibleSymbols.join(",");
     if (risk === "MEDIUM") return "fill-medium";
     if (risk === "HIGH") return "fill-high";
     return "fill-unknown";
+  };
+
+  const handleSend = () =>{
+    const msg = chatInput.trim();
+    if (!msg) return;
+
+    setChatMessages((prev) => [...prev, { role: "user", text: msg }]);
+    setTimeout(() => {
+      setChatMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+        text: "Got it. (Step 1 dummy reply) Next we will connect this to your /chat API."
+        }
+      ]);
+    }, 300)
   };
 
   return (
@@ -337,6 +364,31 @@ const symbols = visibleSymbols.join(",");
           ))}
         </div>
       )}
+      <div className="aiml-chat">
+        <div className="aiml-chat-header">Trading Mentor</div>
+        <div className="aiml-chat-body">
+          {chatMessages.map((m, idx) => (
+            <div 
+            key={idx}
+            className={`aiml-chat-msg ${m.role === "user" ? "user" : "bot"}`}
+            >
+            {m.text}
+            </div>
+          ))}
+        </div>
+        <div className="aiml-chat-input">
+        <input
+        value={chatInput}
+        onChange={(e) => setChatInput(e.target.value)}
+        placeholder="Ask about signals or trading concepts..."
+        onKeyDown={(e) => {
+          if (e.key === "Enter") handleSend();
+        }}
+      />
+      <button onClick={handleSend}>Send</button>
+        </div>
+      </div>
     </div>
+
   );
 }
