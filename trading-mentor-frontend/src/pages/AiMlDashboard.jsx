@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { FaRobot } from "react-icons/fa"
 import "./AiMlDashboard.css";
 
 export default function AiMlDashboard() {
@@ -11,6 +12,7 @@ const [pageIndex, setPageIndex] = useState(0);
 const [chatInput, setChatInput] = useState("");
 const [chatOpen, setChatOpen] = useState(false);
 const chatRef = useRef(null);
+const [chatMaximized, setChatMaximized] = useState(false);
 const [chatMessages, setChatMessages] = useState([
   {
     role: "assistant",
@@ -384,16 +386,23 @@ const symbols = visibleSymbols.join(",");
       <div className="chatbot-toggle"
       onClick={() => setChatOpen(!chatOpen)}
       >
-      💬
+      <FaRobot size={30} />
       </div>
       {/* This part is for Chat Window*/}
       {chatOpen && (
-        <div className="chatbot-window">
+        <div className={`chatbot-window ${chatMaximized ? "max" : ""}`}>
         <div className="chatbot-header">
         <span>Nirmala</span>
+
+        <div className="chat-actions">
+          <button onClick={() => setChatMaximized(!chatMaximized)}
+          className="tm-chat-max">
+            +
+          </button>
         <button className="tm-chat-close" onClick={() => setChatOpen(false)}>
         X
         </button>
+        </div>
         </div>
 
         <div className="chatbot-body">
