@@ -21,7 +21,7 @@ const [chatMessages, setChatMessages] = useState([
 
 
 const AI_BASE_URL = import.meta.env.VITE_AI_BASE_URL;
-const CHAT_BASE = import.meta.env.VITE_ML_BASE_URL || "http://127.0.0.1:8001";
+const CHAT_BASE = import.meta.env.VITE_AI_BASE_URL || "http://127.0.0.1:8001";
 
 if (!AI_BASE_URL) {
   throw new Error("VITE_AI_BASE_URL is not defined");
