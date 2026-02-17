@@ -1,0 +1,18 @@
+{
+  "equity": {
+    "title": "Equity",
+    "simple": "Equity means ownership. If you buy a company's stock, you own a small part of that company.",
+    "example": "Example: If you buy 1 share of Apple (AAPL), you own a tiny fraction of Apple."
+  },
+  "volatility": {
+    "title": "Volatility",
+    "simple": "Volatility means how much the price moves up and down over time. Higher volatility means bigger price swings.",
+    "example": "Example: TSLA usually moves more per day than KO, so TSLA is more volatile."
+  },
+  "moving average": {
+    "title": "Moving Average",
+    "simple": "A moving average is the average price over a time window like 5 days or 20 days. It helps identify trends.",
+    "example": "Example: SMA5 uses last 5 closing prices, SMA20 uses last 20 closing prices."
+  }
+}
+

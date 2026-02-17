@@ -23,6 +23,8 @@ const [chatMessages, setChatMessages] = useState([
 
 
 const AI_BASE_URL = import.meta.env.VITE_AI_BASE_URL;
+const CHAT_BASE = import.meta.env.VITE_ML_BASE_URL || "http://127.0.0.1:8001";
+
 
 
 if (!AI_BASE_URL) {
@@ -145,21 +147,40 @@ const symbols = visibleSymbols.join(",");
     return "fill-unknown";
   };
 
-  const handleSend = () =>{
-    const msg = chatInput.trim();
-    if (!msg) return;
-
-    setChatMessages((prev) => [...prev, { role: "user", text: msg }]);
-    setTimeout(() => {
+  const handleSend = async () => {
+    const text = chatInput.trim();
+    if (!text) return;
+  
+    // 1) show user message immediately
+    setChatMessages((prev) => [...prev, { role: "user", text }]);
+    setChatInput("");
+  
+    try {
+      // 2) call backend /chat
+      const res = await fetch(`${CHAT_BASE}/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text }),
+      });
+  
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(`HTTP ${res.status}: ${errText}`);
+      }
+  
+      const data = await res.json();
+  
+      // 3) show bot answer
+      const botText = data?.answer || "I didn’t get an answer. Try again.";
+      setChatMessages((prev) => [...prev, { role: "bot", text: botText }]);
+    } catch (e) {
       setChatMessages((prev) => [
         ...prev,
-        {
-          role: "assistant",
-        text: "Got it. (Step 1 dummy reply) Next we will connect this to your /chat API."
-        }
+        { role: "bot", text: `⚠️ Chat service error: ${e.message}` },
       ]);
-    }, 300)
+    }
   };
+  
 
   return (
     <div className="aiml-wrap">

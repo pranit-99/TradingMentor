@@ -7,9 +7,12 @@ from sklearn.linear_model import Ridge
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_absolute_error
+from pydantic import BaseModel
 
 import yfinance as yf
 import numpy as np
+import os, json, re
+
 
 app = FastAPI()
 
@@ -25,6 +28,151 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+KNOWN_SYMBOLS = {
+    "AAPL","MSFT","GOOGL","AMZN","TSLA","META","NVDA","JPM","BAC","NFLX","V","MA","DIS","KO","PEP"
+}
+
+def extract_symbol(msg: str) -> str | None:
+    # Look for tokens like AAPL, NVDA
+    tokens = re.findall(r"[A-Z]{1,6}", msg.upper())
+    for t in tokens:
+        if t in KNOWN_SYMBOLS:
+            return t
+    return None
+
+class ChatRequest(BaseModel):
+    message: str
+    symbol: str | None = None
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FAQ_PATH = os.path.join(BASE_DIR, "knowledge", "trading_faq.json")
+
+def load_faq():
+    with open(FAQ_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+FAQ = load_faq()
+
+def normalize(text: str) -> str:
+    return re.sub(r"[^a-z0-9\s]", "", text.lower()).strip()
+
+def explain_trend_calc(trend: str) -> str:
+    return(
+        "Trend is based on moving averages:\n"
+        "- SMA5 = average of last 5 closing prices\n"
+        "- SMA20 = average of last 20 closing prices\n"
+        "Rules:\n"
+        "- GREEN if SMA5 > SMA20 by 1%+ (SMA5 > 1.01 * SMA20)\n"
+        "- RED if SMA5 < SMA20 by 1%+ (SMA5 < 0.99 * SMA20)\n"
+        "- YELLOW otherwise (close/sideways)\n"
+        f"Current trend label: {trend}"
+        )
+
+def explain_volatility_calc(vol: float | None) -> str:
+    return(
+        "Volatility here means: standard deviation of daily returns.\n"
+        "Daily return formula:\n"
+        "return[t] = (Close[t] - Close[t-1]) / Close[t-1]\n"
+        "Then volatility = std(return over recent days)\n"
+        f"Current volatility value: {vol if vol is not None else 'N/A'}"
+        )
+
+@app.post("/chat")
+def chat(req: ChatRequest):
+    msg = normalize(req.message)
+
+    wants_volatility_explain = any(k in msg for k in ["volatility", "risk calculation", "calculate risk", "std", "standard deviation"])
+    wants_trend_explain = any(k in msg for k in ["trend calculation", "moving average", "sma", "how trend", "why trend"])
+
+    symbol = req.symbol.upper().strip() if req.symbol else None
+
+    if not symbol:
+        symbol = extract_symbol(req.message) #use original message for uppercase symbol extraction
+
+    if symbol:
+        try:
+            ov = overview(symbols = symbol)
+            row = ov["results"][0]
+
+            trend = row.get("trend", "UNKOWN")
+            risk = row.get("risk", "UNKOWN")
+            vol = row.get("volatility", None)
+            anomaly = row.get("anomaly", {})
+            calc_parts = []
+            if wants_trend_explain:
+                calc_parts.append(explain_trend_calc(trend))
+            if wants_volatility_explain:
+                calc_parts.append(explain_volatility_calc(vol))
+
+            vol_text = f"{vol:.4f}" if isinstance(vol, (float,int)) else "N/A"
+            anomaly_flag = anomaly.get("flag", False)
+            anomaly_reason = anomaly.get("reason", "")
+
+            explain = (
+                f"For {symbol}: Trend is {trend}, Risk is {risk}, Volatility is {vol_text}."
+                )
+
+            if anomaly_flag:
+                explain += f"⚠️ Anomaly detected: {anomaly_reason}."
+            else:
+                if anomaly_reason:
+                    explain += f"Anomaly: {anomaly_reason}."
+                else:
+                    explain += "No anomaly detected."
+
+            
+            trend_meaning = {
+                "GREEN": "Short-term average is above long-term average (bullish).",
+                "YELLOW": "Short-term and long-term averages are close (sideways/unclear).",
+                "RED": "Short-term average is below long-term average (bearish).",
+                }.get(trend, "Trend could not be determined.")
+
+            risk_meaning = {
+                "LOW": "Lower recent price swings.",
+                "MEDIUM": "Moderate swings; be cautious.",
+                "HIGH": "Large swings; higher uncertainty.",
+                }.get(risk, "Risk could not be determined.")
+
+            return {
+            "mode": "signal",
+            "symbol": symbol,
+            "answer": explain,
+            "details": {
+                "trend": trend,
+                "trend_meaning": trend_meaning,
+                "risk": risk,
+                "risk_meaning": risk_meaning,
+                "volatility": vol
+                },
+            "calc_explain": "\n\n".join(calc_parts) if calc_parts else None
+        }
+                
+        except Exception as e:
+            return {
+            "mode": "signal",
+            "symbol": symbol,
+            "answer": f"I couldn't fetch signals for {symbol} right now.",
+            "error": str(e)
+        }    
+
+            
+
+    # simple concept match
+    for key, item in FAQ.items():
+        if key in msg:
+            return {
+                "mode": "concept",
+                "answer": f"{item['simple']} {item['example']}",
+                "topic": item["title"]
+            }
+
+    return {
+        "mode": "fallback",
+        "answer": "I can explain trading concepts (equity, volatility, moving average) and your dashboard signals. Try asking: 'What is equity?'"
+    }
+
+
 
 @app.get("/health")
 def health():
@@ -360,14 +508,14 @@ def overview(symbols: str):
         except Exception:
             data = None
 
-            if data is None or getattr(data, "empty", True) or len(data) < 20:
-                results.append({
-                    "symbol": symbol,
-                    "trend": "UNKNOWN",
-                    "risk": "UNKNOWN",
-                    "reason": "Download failed or insufficient data"
-                    })
-                continue
+        if data is None or getattr(data, "empty", True) or len(data) < 20:
+            results.append({
+                "symbol": symbol,
+                "trend": "UNKNOWN",
+                "risk": "UNKNOWN",
+                "reason": "Download failed or insufficient data"
+                })
+            continue
 
         close_obj = data["Close"]
         if hasattr(close_obj, "columns"):   # if Close is a 1-col DataFrame
