@@ -14,18 +14,14 @@ const [chatOpen, setChatOpen] = useState(false);
 const chatRef = useRef(null);
 const [chatMaximized, setChatMaximized] = useState(false);
 const [chatMessages, setChatMessages] = useState([
-  {
-    role: "assistant",
-    text: "Hi! I’m your Trading Mentor. Ask me about signals (Trend/Risk/Prediction/Anomaly) or trading concepts like: What is equity?"
-  }
-])
+  { role: "bot", text: "Hi! I’m your Trading Mentor..." }
+]);
+
 
 
 
 const AI_BASE_URL = import.meta.env.VITE_AI_BASE_URL;
 const CHAT_BASE = import.meta.env.VITE_ML_BASE_URL || "http://127.0.0.1:8001";
-
-
 
 if (!AI_BASE_URL) {
   throw new Error("VITE_AI_BASE_URL is not defined");
@@ -433,18 +429,18 @@ const symbols = visibleSymbols.join(",");
         </p>
         </div>
         <div className="chatbot-input">
-        <input
-          value={chatInput}
-          onChange={(e) => setChatInput(e.target.value)}
-          placeholder="Ask about trading..."
-          onKeyDown={(e) => {
-          if (e.key === "Enter") handleSend();
-          }}
-          />
-        <button onClick={handleSend} disabled={!chatInput.trim()}>
-        Send
-        </button>
-        </div>
+  <input
+    value={chatInput}
+    onChange={(e) => setChatInput(e.target.value)}
+    onKeyDown={(e) => {
+      if (e.key === "Enter") handleSend();
+    }}
+    placeholder="Ask about trading..."
+  />
+  <button onClick={handleSend} disabled={!chatInput.trim()}>
+    Send
+  </button>
+</div>
         </div>
       )}
     </div>
