@@ -389,8 +389,8 @@ const symbols = visibleSymbols.join(",");
       {/* This part is for Chat Window*/}
       {chatOpen && (
         <div className="chatbot-window">
-        <div>
-        Trading Mentor
+        <div className="chatbot-header">
+        <span>Nirmala</span>
         <button className="tm-chat-close" onClick={() => setChatOpen(false)}>
         X
         </button>
