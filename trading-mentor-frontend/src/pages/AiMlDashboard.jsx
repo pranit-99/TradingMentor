@@ -432,11 +432,19 @@ const symbols = visibleSymbols.join(",");
         "What is equity?"
         </p>
         </div>
-
         <div className="chatbot-input">
-      <input placeholder="Ask about trading..." />
-      <button>Send</button>
-    </div>
+        <input
+          value={chatInput}
+          onChange={(e) => setChatInput(e.target.value)}
+          placeholder="Ask about trading..."
+          onKeyDown={(e) => {
+          if (e.key === "Enter") handleSend();
+          }}
+          />
+        <button onClick={handleSend} disabled={!chatInput.trim()}>
+        Send
+        </button>
+        </div>
         </div>
       )}
     </div>
