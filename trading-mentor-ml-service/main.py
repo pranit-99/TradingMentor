@@ -154,6 +154,15 @@ def handle_symbol_queries(text: str):
         risk = row.get("risk", "UNKNOWN")
         risk_score = row.get("risk_score", "N/A")
         volatility = row.get("volatility", "N/A")
+        anomaly = row.get("anomaly")
+
+        anomaly_text = ""
+
+        if anomaly and anomaly.get("flag"):
+            label = anomaly.get("label", "UNKNOWN")
+            reason = anomaly.get("reason","Unusual market activity detected")
+
+            anomaly_text = f" An anomaly signal ({label}) was detected, which may indicate unusual market behavior. {reason}."
 
         trend_explanation = explain_trend_label(trend)
         risk_explanation = explain_risk_label(risk)
@@ -162,6 +171,7 @@ def handle_symbol_queries(text: str):
             f"{symbol} currently shows a {trend} trend, {trend_explanation}. "
             f"Its risk is {risk}, {risk_explanation}. "
             f"The risk score is {risk_score}, and the volatility is {volatility}."
+            f"{anomaly_text}"
         )
 
     except Exception as e:
