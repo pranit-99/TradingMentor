@@ -143,7 +143,7 @@ def extract_known_symbol(text: str):
     words = re.findall(r"[A-Za-z]+", text.upper())
 
     for word in words:
-        if word in known_symbols:
+        if word in KNOWN_SYMBOLS:
             return word
     return None
         
