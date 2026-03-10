@@ -48,9 +48,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 def health():
     return {"status": "ok"}
 
-def get_basic_chat_response(message: str) -> str:
-    text = message.strip().lower()
-
+def handle_greetings(text: str):
     if text in ["hi", "hello", "hey", "hii", "helo"]:
         return "Hi! I'm your Trading Mentor Nirmala. How can I help you today?"
 
@@ -67,7 +65,68 @@ def get_basic_chat_response(message: str) -> str:
         return "I’m doing great and ready to help you with trading concepts step by step."
 
     if text in ["who are you", "who are you?"]:
-        return "I’m Nirmala, your Trading Mentor chatbot. Right now I can help with basic greetings, and I am getting Trained, so that i can clear your doubts regarding trading concepts.. Wish Me Luck"
+        return "I’m Nirmala, your Trading Mentor chatbot. Right now I can help with basic greetings, and I am getting Trained, so that i can clear your doubts regarding trading concepts.. Wish Me Luck."
+
+    return None
+
+def handle_trading_concepts(text: str):
+    if "equity" in text:
+        return "Equity means ownership in a company. If you buy a stock, you own a small part of that company."
+
+    if "stock" in text:
+        return "A stock is a share of ownership in a company. Its value can go up or down based on company performance and market conditions."
+
+    if "trading" in text:
+        return "Trading means buying and selling financial assets like stocks to make a profit from price changes."
+
+    if "volatility" in text:
+        return "Volatility shows how much a stock price moves up and down. Higher volatility means bigger price swings and usually higher risk."
+
+    if "risk" in text:
+        return "Risk is the chance of losing money or getting a lower return than expected in an investment."
+
+    if "investment" in text:
+        return "Investment means putting money into an asset like stocks, bonds, or funds with the goal of growing it over time."
+
+    return None
+
+def handle_dashboard_concepts(text: str):
+    if "buy signal" in text:
+        return "A buy signal suggests that a stock may have a favorable chance of moving upward based on the model or indicators being used."
+
+    if "sell signal" in text:
+        return "A sell signal suggests that a stock may be weakening or may have a higher chance of moving downward."
+
+    if "trend" in text:
+        return "Trend shows the overall market direction of a stock, such as upward, downward, or neutral movement."
+
+    if "risk score" in text:
+        return "Risk score is a simplified value used to represent how risky a stock currently appears. A higher risk score usually means more uncertainty or price movement."
+
+    if "prediction" in text:
+        return "Prediction is the model’s estimate of how the stock may move next based on historical data and selected features."
+
+    if "confidence" in text:
+        return "Confidence shows how strongly the model believes in its prediction. Higher confidence usually means the signal is more reliable, but it is never a guarantee."
+
+    return None
+    
+    
+
+def get_basic_chat_response(message: str) -> str:
+    text = message.strip().lower()
+
+    greeting_reply = handle_greetings(text)
+    if greeting_reply:
+        return greeting_reply
+
+    concept_reply = handle_trading_concepts(text)
+    if concept_reply:
+        return concept_reply
+
+    dashboard_reply = handle_dashboard_concepts(text)
+    if dashboard_reply:
+        return dashboard_reply
 
     return "I am still learning. Please start with a greeting like hi or hello."
 
