@@ -111,6 +111,32 @@ def handle_dashboard_concepts(text: str):
 
     return None
 
+def extract_known_symbol(text: str):
+    words = re.findall(r"[A-Za-z]+", text.upper())
+
+    for word in words:
+        if word in KNOWN_SYMBOLS:
+            return word
+    return None
+
+def explain_trend_label(trend: str) -> str:
+    if trend == "GREEN":
+        return "Which suggests positive or upward momentum"
+    if trend == "RED":
+        return "Which Suggests weaker or downward momentum"
+    if trend == "YELLOW":
+        return "which suggests a neutral or cautious market direction"
+    return "whose current direction is unclear"
+
+def explain_risk_label(risk: str) -> str:
+    if risk == "LOW":
+        return "meaning the stock appears relatively stable right now"
+    if risk == "MEDIUM":
+        return "meaning there is moderate uncertainty or price movement"
+    if risk == "HIGH":
+        return "meaning there is higher uncertainty and stronger price swings"
+    return "but the current risk level is unclear"
+
 def handle_symbol_queries(text: str):
     symbol = extract_known_symbol(text)
     if not symbol:
@@ -129,26 +155,17 @@ def handle_symbol_queries(text: str):
         risk_score = row.get("risk_score", "N/A")
         volatility = row.get("volatility", "N/A")
 
+        trend_explanation = explain_trend_label(trend)
+        risk_explanation = explain_risk_label(risk)
+
         return (
-            f"{symbol} currently shows trend: {trend}, risk: {risk}, "
-            f"risk score: {risk_score}, and volatility: {volatility}."
+            f"{symbol} currently shows a {trend} trend, {trend_explanation}. "
+            f"Its risk is {risk}, {risk_explanation}. "
+            f"The risk score is {risk_score}, and the volatility is {volatility}."
         )
 
     except Exception as e:
         return f"I found the symbol {symbol}, but there was an error fetching live data: {str(e)}"
-
-        
-
-def extract_known_symbol(text: str):
-    words = re.findall(r"[A-Za-z]+", text.upper())
-
-    for word in words:
-        if word in KNOWN_SYMBOLS:
-            return word
-    return None
-        
-    
-    
 
 def get_basic_chat_response(message: str) -> str:
     text = message.strip().lower()
@@ -998,51 +1015,3 @@ def predict_many_ridge_tuned(symbols: str):
             results.append({"symbol": symbol, "status": "ERROR", "reason": str(e)})
 
     return {"count": len(results), "results": results}
-           
-
-            
-
-                
-
-            
-    
-
-
-
-
-        
-        
-
-
-        
-            
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-        
-        
-        
-
-            
-            
-    
-        
-        
-
-
-        
-            
-
-
-
