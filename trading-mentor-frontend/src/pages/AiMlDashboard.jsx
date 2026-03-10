@@ -433,7 +433,7 @@ const symbols = visibleSymbols.join(",");
     onKeyDown={(e) => {
       if (e.key === "Enter") handleSend();
     }}
-    placeholder="Ask about trading..."
+    placeholder="Say Hi..."
   />
   <button onClick={handleSend} disabled={!chatInput.trim()}>
     Send
