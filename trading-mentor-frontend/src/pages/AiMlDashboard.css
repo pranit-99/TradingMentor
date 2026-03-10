@@ -356,3 +356,26 @@ to   { opacity: 1; transform: translateX(0); }
   padding: 10px 16px;
   cursor: pointer;
 }
+
+.chat-msg {
+  max-width: 80%;
+  margin: 8px 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  line-height: 1.4;
+  font-size: 14px;
+  word-wrap: break-word;
+}
+
+.chat-msg.user {
+  margin-left: auto;
+  background: #00ff9f;
+  color: #061018;
+  text-align: right;
+}
+
+.chat-msg.bot {
+  margin-right: auto;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}

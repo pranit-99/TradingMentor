@@ -14,14 +14,14 @@ const [chatOpen, setChatOpen] = useState(false);
 const chatRef = useRef(null);
 const [chatMaximized, setChatMaximized] = useState(false);
 const [chatMessages, setChatMessages] = useState([
-  { role: "bot", text: "Hi! I’m your Trading Mentor..." }
+  { role: "bot", text: "Hi! I’m your Trading Mentor Nirmala. Say hi or hello to begin." }
 ]);
 
 
 
 
 const AI_BASE_URL = import.meta.env.VITE_AI_BASE_URL;
-const CHAT_BASE = import.meta.env.VITE_AI_BASE_URL || "http://127.0.0.1:8001";
+const CHAT_BASE = import.meta.env.VITE_ML_BASE_URL || "http://127.0.0.1:8001";
 
 if (!AI_BASE_URL) {
   throw new Error("VITE_AI_BASE_URL is not defined");
@@ -145,34 +145,30 @@ const symbols = visibleSymbols.join(",");
 
   const handleSend = async () => {
     const text = chatInput.trim();
-    if (!text) return;
-  
-    // 1) show user message immediately
-    setChatMessages((prev) => [...prev, { role: "user", text }]);
+    if(!text) return;
+
+    setChatMessages((prev) => [...prev, {role: "user", text}]);
     setChatInput("");
-  
-    try {
-      // 2) call backend /chat
+
+    try{
       const res = await fetch(`${CHAT_BASE}/chat`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text }),
+        headers: { "Content-Type": "application/json"},
+        body: JSON.stringify({message: text}),
       });
-  
-      if (!res.ok) {
+
+      if(!res.ok){
         const errText = await res.text();
         throw new Error(`HTTP ${res.status}: ${errText}`);
       }
-  
+
       const data = await res.json();
-  
-      // 3) show bot answer
       const botText = data?.answer || "I didn’t get an answer. Try again.";
-      setChatMessages((prev) => [...prev, { role: "bot", text: botText }]);
+
+      setChatMessages((prev) => [...prev, {role: "bot", text: botText}]);
     } catch (e) {
       setChatMessages((prev) => [
-        ...prev,
-        { role: "bot", text: `⚠️ Chat service error: ${e.message}` },
+        ...prev,{role: "bot", text: `⚠️ Chat service error: ${e.message}` },
       ]);
     }
   };
@@ -407,7 +403,8 @@ const symbols = visibleSymbols.join(",");
       </div>
       {/* This part is for Chat Window*/}
       {chatOpen && (
-        <div className={`chatbot-window ${chatMaximized ? "max" : ""}`}>
+        <div ref={chatRef}
+        className={`chatbot-window ${chatMaximized ? "max" : ""}`}>
         <div className="chatbot-header">
         <span>Nirmala</span>
 
@@ -423,10 +420,11 @@ const symbols = visibleSymbols.join(",");
         </div>
 
         <div className="chatbot-body">
-        <p>
-        Hi! I’m your Trading Mentor. Ask about signals or trading concepts like
-        "What is equity?"
-        </p>
+        {chatMessages.map((msg, index) => (
+        <div key={index} className={`chat-msg ${msg.role}`}>
+         {msg.text}
+        </div>
+        ))}
         </div>
         <div className="chatbot-input">
   <input
