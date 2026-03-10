@@ -110,6 +110,16 @@ def handle_dashboard_concepts(text: str):
         return "Confidence shows how strongly the model believes in its prediction. Higher confidence usually means the signal is more reliable, but it is never a guarantee."
 
     return None
+
+def handle_symbol_queries(text: str):
+    words = text.upper().split()
+
+    for word in words:
+        if word in KNOWN_SYMBOLS:
+            return f"{word} is a recognized stock symbol in your dashboard. Next, we can connect it to live trend, risk, and prediction details."
+
+        return None
+        
     
     
 
@@ -127,6 +137,10 @@ def get_basic_chat_response(message: str) -> str:
     dashboard_reply = handle_dashboard_concepts(text)
     if dashboard_reply:
         return dashboard_reply
+
+    symbol_reply = handle_symbol_queries(text)
+    if symbol_reply:
+        return symbol_reply
 
     return "I am still learning. Please start with a greeting like hi or hello."
 
