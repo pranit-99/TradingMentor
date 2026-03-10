@@ -154,7 +154,7 @@ def build_prediction_summary(pred_row: dict) -> str:
 
     pct = round(predicted_return * 100, 2)
     conf_label = confidence.get("label")
-    conf_percent = confidence.get(percent)
+    conf_percent = confidence.get("percent")
 
     prediction_text = f" The tuned prediction currently suggests {direction} by {pct}%"
 
