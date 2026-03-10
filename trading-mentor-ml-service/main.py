@@ -137,6 +137,35 @@ def explain_risk_label(risk: str) -> str:
         return "meaning there is higher uncertainty and stronger price swings"
     return "but the current risk level is unclear"
 
+def build_prediction_sumary(pred_row: dict) -> str:
+    if not pred_row:
+        return ""
+
+    tuned = pred_row.get("ridge_tuned")
+    if not tuned:
+        return ""
+
+    direction = tuned.get("direction")
+    predicted_return = tuned.get("predicted_next_day_return")
+    confidence = tuned.get("confidence", {})
+
+    if not direction or not isinstance(predicted_return, (int, float)):
+        return""
+
+    pct = round(predicted_return * 100, 2)
+    conf_label = confidence.get("label")
+    conf_percent = confidence.get(percent)
+
+    prediction_text = f" The tuned prediction currently suggests {direction} by {pct}%"
+
+    if conf_label and conf_percent is not None:
+        prediction_text += f" with {conf_label} confidence at {conf_percent}%"
+
+    prediction_text += "."
+
+    return prediction_text
+        
+
 def handle_symbol_queries(text: str):
     symbol = extract_known_symbol(text)
     if not symbol:
@@ -155,9 +184,17 @@ def handle_symbol_queries(text: str):
         risk_score = row.get("risk_score", "N/A")
         volatility = row.get("volatility", "N/A")
         anomaly = row.get("anomaly")
+        pred_result = predict_compare(symbols=symbol)
+        pred_row = None
+
+        if pred_result and "results" in pred_result and pred_result["results"]:
+            pred_row = pred_result["results"] [0]
+
+        prediction_text = build_prediction_summary(pred_row)
+
+        
 
         anomaly_text = ""
-
         if anomaly and anomaly.get("flag"):
             label = anomaly.get("label", "UNKNOWN")
             reason = anomaly.get("reason","Unusual market activity detected")
@@ -172,6 +209,7 @@ def handle_symbol_queries(text: str):
             f"Its risk is {risk}, {risk_explanation}. "
             f"The risk score is {risk_score}, and the volatility is {volatility}."
             f"{anomaly_text}"
+            f"{prediction_text}"
         )
 
     except Exception as e:
