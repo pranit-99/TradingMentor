@@ -137,7 +137,7 @@ def explain_risk_label(risk: str) -> str:
         return "meaning there is higher uncertainty and stronger price swings"
     return "but the current risk level is unclear"
 
-def build_prediction_sumary(pred_row: dict) -> str:
+def build_prediction_summary(pred_row: dict) -> str:
     if not pred_row:
         return ""
 
