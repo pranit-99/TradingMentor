@@ -60,6 +60,15 @@ def get_basic_chat_response(message: str) -> str:
     if "good evening" in text:
         return "Good Evening! I'm your Trading Mentor Nirmala. How can I help you today?"
 
+    if "good afternoon" in text:
+        return "Good Afternoon! I'm your Trading Mentor Nirmala. How can I help you today?"
+
+    if text in ["how are you", "how are you?"]:
+        return "I’m doing great and ready to help you with trading concepts step by step."
+
+    if text in ["who are you", "who are you?"]:
+        return "I’m Nirmala, your Trading Mentor chatbot. Right now I can help with basic greetings, and I am getting Trained, so that i can clear your doubts regarding trading concepts.. Wish Me Luck"
+
     return "I am still learning. Please start with a greeting like hi or hello."
 
 
