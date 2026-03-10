@@ -112,13 +112,40 @@ def handle_dashboard_concepts(text: str):
     return None
 
 def handle_symbol_queries(text: str):
-    words = text.upper().split()
+    symbol = extract_known_symbol(text)
+    if not symbol:
+        return None
+
+    try:
+        result = overview(symbols=symbol)
+
+        if not result or "results" not in result or not result["results"]:
+            return f"I found the symbol {symbol}, but I could not fetch its live dashboard details right now."
+
+        row = result["results"][0]
+
+        trend = row.get("trend", "UNKNOWN")
+        risk = row.get("risk", "UNKNOWN")
+        risk_score = row.get("risk_score", "N/A")
+        volatility = row.get("volatility", "N/A")
+
+        return (
+            f"{symbol} currently shows trend: {trend}, risk: {risk}, "
+            f"risk score: {risk_score}, and volatility: {volatility}."
+        )
+
+    except Exception as e:
+        return f"I found the symbol {symbol}, but there was an error fetching live data: {str(e)}"
+
+        
+
+def extract_known_symbol(text: str):
+    words = re.findall(r"[A-Za-z]+", text.upper())
 
     for word in words:
-        if word in KNOWN_SYMBOLS:
-            return f"{word} is a recognized stock symbol in your dashboard. Next, we can connect it to live trend, risk, and prediction details."
-
-        return None
+        if word in known_symbols:
+            return word
+    return None
         
     
     
