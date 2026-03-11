@@ -278,6 +278,10 @@ def get_basic_chat_response(message: str) -> str:
     if greeting_reply:
         return greeting_reply
 
+    symbol_reply = handle_symbol_queries(text)
+    if symbol_reply:
+        return symbol_reply
+
     concept_reply = handle_trading_concepts(text)
     if concept_reply:
         return concept_reply
@@ -285,10 +289,6 @@ def get_basic_chat_response(message: str) -> str:
     dashboard_reply = handle_dashboard_concepts(text)
     if dashboard_reply:
         return dashboard_reply
-
-    symbol_reply = handle_symbol_queries(text)
-    if symbol_reply:
-        return symbol_reply
 
     return "I am still learning. Please start with a greeting like hi or hello."
 
