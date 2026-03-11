@@ -167,7 +167,7 @@ def build_prediction_summary(pred_row: dict) -> str:
 
 #--To Detect Symbols type Questions:-This function checks the user’s question and decides what they are mainly asking about.
 def detect_symbol_question_intent(text: str) -> str:
-    text = text.lower
+    text = text.lower()
     if "risk score" in text:
         return "risk_score"
     if "risk" in text or "risky" in text:
