@@ -166,8 +166,19 @@ def build_prediction_summary(pred_row: dict) -> str:
     return prediction_text
 
 #--To Detect Symbols type Questions:-This function checks the user’s question and decides what they are mainly asking about.
+#--Function to explain symbols in smarter way in proper understandable language
 def detect_symbol_question_intent(text: str) -> str:
     text = text.lower()
+
+    if "why" in text and ("risk" in text or "risky" in text):
+        return "why_risk"
+    if "why" in text and "trend" in text:
+        return "why_trend"
+    if "why" in text and ("anomaly" in text or "anomalous" in text):
+        return "why_anomaly"
+    if "why" in text and ("riskprediction" in text or "predict" in text):
+        return "why_prediction"
+
     if "risk score" in text:
         return "risk_score"
     if "risk" in text or "risky" in text:
@@ -184,6 +195,79 @@ def detect_symbol_question_intent(text: str) -> str:
         return "anomaly"
 
     return "summary"
+
+def build_why_risk_response(symbol: str, risk: str, risk_score, volatility) -> str:
+    if risk == "LOW":
+        return(
+            f"{symbol} appears less risky right now because its dashboard signals suggest relatively stable movement. "
+            f"Its risk score is {risk_score}, and volatility is {volatility}, which indicates milder price swings."
+            )
+    
+    if risk == "MEDIUM":
+        return (
+            f"{symbol} has moderate risk right now because its dashboard signals show some uncertainty and noticeable price movement. "
+            f"Its risk score is {risk_score}, and volatility is {volatility}, suggesting balanced but watchful conditions."
+        )
+
+    if risk == "HIGH":
+        return (
+            f"{symbol} is considered risky right now because its dashboard signals show higher uncertainty and stronger price swings. "
+            f"Its risk score is {risk_score}, and volatility is {volatility}, which suggests the stock may be moving more aggressively than usual."
+        )
+
+    return f"{symbol} has an unclear risk profile right now because the available dashboard signals are not conclusive."
+
+def build_why_trend_response(symbol: str, trend: str) -> str:
+    if trend == "GREEN":
+        return f"{symbol} is showing a GREEN trend because the recent dashboard signals suggest positive or upward momentum."
+
+    if trend == "RED":
+        return f"{symbol} is showing a RED trend because the recent dashboard signals suggest weaker or downward momentum."
+
+    if trend == "YELLOW":
+        return f"{symbol} is showing a YELLOW trend because the recent dashboard signals suggest neutral or cautious movement rather than a strong direction."
+
+    return f"{symbol} has no clear trend explanation right now because the signal is not strongly defined."
+
+def build_why_anomaly_response(symbol: str, anomaly) -> str:
+    if anomaly and anomaly.get("flag"):
+        label = anomaly.get("label", "UNKNOWN")
+        reason = anomaly.get("reason", "Unusual market activity detected")
+        return (
+            f"{symbol} is flagged with an anomaly signal of {label} because the dashboard detected unusual market behavior. "
+            f"{reason}"
+        )
+
+    return f"{symbol} is not currently marked anomalous because the dashboard has not detected unusual market behavior."
+
+def build_why_prediction_response(symbol: str, pred_row: dict) -> str:
+    if not pred_row:
+        return f"I found {symbol}, but prediction details are not available right now."
+
+    tuned = pred_row.get("ridge_tuned")
+    if not tuned:
+        return f"I found {symbol}, but tuned prediction details are not available right now."
+
+    direction = tuned.get("direction")
+    predicted_return = tuned.get("predicted_next_day_return")
+    confidence = tuned.get("confidence", {})
+
+    if not direction or not isinstance(predicted_return, (int, float)):
+        return f"I found {symbol}, but the prediction output is incomplete right now."
+
+    pct = round(predicted_return * 100, 2)
+    conf_label = confidence.get("label")
+    conf_percent = confidence.get("percent")
+
+    response = (
+        f"{symbol} is predicted to move {direction} because the tuned model estimates a next-day return of {pct}%."
+    )
+
+    if conf_label and conf_percent is not None:
+        response += f" The model confidence is {conf_label} at {conf_percent}%, which shows how strongly the model supports this prediction."
+
+    return response
+
 
 def handle_symbol_queries(text: str):
     symbol = extract_known_symbol(text)
@@ -241,6 +325,18 @@ def handle_symbol_queries(text: str):
             if prediction_text:
                 return f"For {symbol},{prediction_text}"
             return f"I found {symbol}, but prediction details are not available right now."
+
+        if intent == "why_risk":
+            return build_why_risk_response(symbol, risk, risk_score, volatility)
+
+        if intent == "why_trend":
+            return build_why_trend_response(symbol, trend)
+
+        if intent == "why_anomaly":
+            return build_why_anomaly_response(symbol, anomaly)
+
+        if intent == "why_prediction":
+            return build_why_prediction_response(symbol, pred_row)
 
         if intent == "confidence":
             if pred_row:
