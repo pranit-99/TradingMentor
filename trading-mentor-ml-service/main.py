@@ -172,11 +172,21 @@ def detect_symbol_question_intent(text: str) -> str:
 
     if "why" in text and ("risk" in text or "risky" in text):
         return "why_risk"
-    if "why" in text and "trend" in text:
+    
+    if "why" in text and ("trend" in text or
+                          "red" in text or
+                          "green" in text or
+                          "yellow" in text):
         return "why_trend"
+
+    
     if "why" in text and ("anomaly" in text or "anomalous" in text):
         return "why_anomaly"
-    if "why" in text and ("riskprediction" in text or "predict" in text):
+    
+    if "why" in text and ("prediction" in text or
+                          "predict" in text or
+                          "up" in text or
+                          "down" in text):
         return "why_prediction"
 
     if "risk score" in text:
