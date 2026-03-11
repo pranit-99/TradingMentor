@@ -164,10 +164,31 @@ def build_prediction_summary(pred_row: dict) -> str:
     prediction_text += "."
 
     return prediction_text
-        
+
+#--To Detect Symbols type Questions:-This function checks the user’s question and decides what they are mainly asking about.
+def detect_symbol_question_intent(text: str) -> str:
+    text = text.lower
+    if "risk score" in text:
+        return "risk_score"
+    if "risk" in text or "risky" in text:
+        return "risk"
+    if "volatility" in text:
+        return "volatility"
+    if "trend" in text:
+        return "trend"
+    if "prediction" in text or "predict" in text:
+        return "prediction"
+    if "confidence" in text:
+        return "confidence"
+    if "anomaly" in text or "anomalous" in text:
+        return "anomaly"
+
+    return "summary"
 
 def handle_symbol_queries(text: str):
     symbol = extract_known_symbol(text)
+    intent = detect_symbol_question_intent(text)
+    
     if not symbol:
         return None
 
@@ -203,6 +224,41 @@ def handle_symbol_queries(text: str):
 
         trend_explanation = explain_trend_label(trend)
         risk_explanation = explain_risk_label(risk)
+
+        if intent == "trend":
+            return f"{symbol} currently shows a {trend} trend, {trend_explanation}."
+
+        if intent == "risk":
+            return f"{symbol} currently has {risk} risk, {risk_explanation}. Its risk score is {risk_score}."
+
+        if intent == "risk_score":
+            return f"{symbol} currently has a risk score of {risk_score}. Higher scores usually suggest more uncertainty or stronger price movement."
+
+        if intent == "volatility":
+            return f"{symbol} currently has volatility of {volatility}. Volatility shows how much the stock price may move up or down."
+
+        if intent == "prediction":
+            if prediction_text:
+                return f"For {symbol},{prediction_text}"
+            return f"I found {symbol}, but prediction details are not available right now."
+
+        if intent == "confidence":
+            if pred_row:
+                tuned = pred_row.get("ridge_tuned", {})
+                confidence = tuned.get("confidence", {})
+                conf_label = confidence.get("label")
+                conf_percent = confidence.get("percent")
+
+                if conf_label and conf_percent is not None:
+                    return f"The tuned prediction confidence for {symbol} is {conf_label} at {conf_percent}%."
+            return f"I found {symbol}, but confidence details are not available right now."
+
+        if intent == "anomaly":
+            if anomaly and anomaly.get("flag"):
+                label = anomaly.get("label", "UNKNOWN")
+                reason = anomaly.get("reason", "Unusual market activity detected")
+                return f"{symbol} currently has an anomaly signal of {label}. This may indicate unusual market behavior. {reason}"
+            return f"No anomaly is currently flagged for {symbol}."
 
         return (
             f"{symbol} currently shows a {trend} trend, {trend_explanation}. "
