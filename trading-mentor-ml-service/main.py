@@ -377,6 +377,8 @@ def resolve_symbol_and_intent_rom_context(text: str, symbol: str | None, intent:
 def handle_symbol_queries(text: str):
     symbol = extract_known_symbol(text)
     intent = detect_symbol_question_intent(text)
+
+    symbol, intent = resolve_symbol_and_intent_from_context(text, symbol, intent)
     
     if not symbol:
         return None
@@ -405,6 +407,8 @@ def handle_symbol_queries(text: str):
 
         if pred_result and "results" in pred_result and pred_result["results"]:
             pred_row = pred_result["results"] [0]
+
+        update_conversation_context(symbol, intent)
 
         prediction_text = build_prediction_summary(pred_row)
 
