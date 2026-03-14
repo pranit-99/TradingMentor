@@ -343,7 +343,7 @@ def update_conversation_context(symbol: str | None, intent: str | None):
     if intent:
         conversation_context["last_intent"] = intent
 
-def resolve_symbol_and_intent_rom_context(text: str, symbol: str | None, intent: str | None):
+def resolve_symbol_and_intent_from_context(text: str, symbol: str | None, intent: str | None):
     followup_phrases = [
         "what about",
         "and",
