@@ -337,7 +337,7 @@ conversation_context = {
     }
 
 # function to save the context
-def update_conversation_context(symbol: str | None, intent: Str | None):
+def update_conversation_context(symbol: str | None, intent: str | None):
     if symbol:
         conversation_context["last_symbol"] = symbol
     if intent:
