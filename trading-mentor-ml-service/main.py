@@ -278,7 +278,57 @@ def build_why_prediction_response(symbol: str, pred_row: dict) -> str:
 
     return response
 
+#Adding function/ helper function which will detect color and direct of words from user question
+# this helper function which check whether user has used any one of the word in his question basen on that we will compare live data
 
+def extract_user_signal_word(text: str) -> str | None:
+    text = text.lower()
+
+    for word in ["red", "green", "yellow", "up", "down"]:
+        if word in text:
+            return word
+
+    return None
+
+#Adding helper function to compare user word with actual live data from dashboard
+# it will check whether asked color is actylly showing or not based on that bot will provide response
+
+def validate_user_signal_against_data(user_word: str | None, trend: str, pred_row: dict | None):
+    if not user_word:
+        return None
+
+    trend_map = {
+        "green": "GREEN",
+        "red": "RED",
+        "yellow": "YELLOW"
+        }
+
+    prediction_map = {
+        "up": "UP",
+        "down":"DOWN"
+        }
+
+    if user_word in trend_map:
+        actual_trend = trend.upper() if trend else "UNKNOWN"
+        expected_trend = trend_map[user_word]
+
+        if actual_trend != expected_trend:
+            return f"You asked about {user_word}, but the current live trend for this symbol is {actual_trend}."
+
+        if user_word in prediction_map:
+            actual_direction = None
+            if pred_row:
+                tuned = pred_row.get("ridge_tuned", {})
+                actual_direction = tuned.get("direction")
+
+            expected_direction = prediction_map[user_word]
+            
+            if actual_direction and actual_direction != expected_direction:
+                return f"You asked about {user_word}, but the current tuned prediction direction for this symbol is {actual_direction}."
+
+            return None
+
+# Handle response
 def handle_symbol_queries(text: str):
     symbol = extract_known_symbol(text)
     intent = detect_symbol_question_intent(text)
@@ -302,12 +352,13 @@ def handle_symbol_queries(text: str):
         pred_result = predict_compare(symbols=symbol)
         pred_row = None
 
+        if mismatch_messgae:
+            return mismatch_message
+
         if pred_result and "results" in pred_result and pred_result["results"]:
             pred_row = pred_result["results"] [0]
 
         prediction_text = build_prediction_summary(pred_row)
-
-        
 
         anomaly_text = ""
         if anomaly and anomaly.get("flag"):
@@ -365,6 +416,9 @@ def handle_symbol_queries(text: str):
                 reason = anomaly.get("reason", "Unusual market activity detected")
                 return f"{symbol} currently has an anomaly signal of {label}. This may indicate unusual market behavior. {reason}"
             return f"No anomaly is currently flagged for {symbol}."
+
+        user_signal_word = extraxt_user_signal_word(text)
+        mismatch_message = validate_user_signal_against_data(user_signal_word, trend, pred_row)
 
         return (
             f"{symbol} currently shows a {trend} trend, {trend_explanation}. "
