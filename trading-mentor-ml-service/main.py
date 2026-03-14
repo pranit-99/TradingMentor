@@ -352,7 +352,7 @@ def handle_symbol_queries(text: str):
         pred_result = predict_compare(symbols=symbol)
         pred_row = None
 
-        if mismatch_messgae:
+        if mismatch_message:
             return mismatch_message
 
         if pred_result and "results" in pred_result and pred_result["results"]:
