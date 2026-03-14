@@ -359,7 +359,7 @@ def resolve_symbol_and_intent_rom_context(text: str, symbol: str | None, intent:
         "anomaly"
         ]
 
-    is followup = any(phrase in text.lower() for phrase in followup_phrases)
+    is_followup = any(phrase in text.lower() for phrase in followup_phrases)
 
     resolved_symbol = symbol
     resolved_intent = intent
