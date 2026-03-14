@@ -328,6 +328,51 @@ def validate_user_signal_against_data(user_word: str | None, trend: str, pred_ro
 
     return None
 
+# Here We are adding short term conversation memory which will help bot to answer follo up questions
+#here chatbot will only remember last stock symbol and last intent
+# first is one helper function Following is simple python dictionary that stores the latest conversation contect
+conversation_context = {
+    "last_symbol": None,
+    "last_intent": None
+    }
+
+# function to save the context
+def update_conversation_context(symbol: str | None, intent: Str | None):
+    if symbol:
+        conversation_context["last_symbol"] = symbol
+    if intent:
+        conversation_context["last_intent"] = intent
+
+def resolve_symbol_and_intent_rom_context(text: str, symbol: str | None, intent: str | None):
+    followup_phrases = [
+        "what about",
+        "and",
+        "what about it",
+        "what about this",
+        "why",
+        "and why",
+        "prediction",
+        "confidence",
+        "trend",
+        "risk",
+        "volatility",
+        "anomaly"
+        ]
+
+    is followup = any(phrase in text.lower() for phrase in followup_phrases)
+
+    resolved_symbol = symbol
+    resolved_intent = intent
+
+    if is_followup:
+        if not resolved_symbol:
+            resolved_symbol = conversation_context.get("last_symbol")
+
+        if not resolved_intent or resolved_intent == "summary":
+            resolved_intent = conversation_context.get("last_intent") or intent
+
+    return resolved_symbol, resolved_intent
+
 # Handle response
 def handle_symbol_queries(text: str):
     symbol = extract_known_symbol(text)
