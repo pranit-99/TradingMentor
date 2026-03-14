@@ -355,6 +355,9 @@ def handle_symbol_queries(text: str):
         if mismatch_message:
             return mismatch_message
 
+        user_signal_word = extraxt_user_signal_word(text)
+        mismatch_message = validate_user_signal_against_data(user_signal_word, trend, pred_row)
+
         if pred_result and "results" in pred_result and pred_result["results"]:
             pred_row = pred_result["results"] [0]
 
@@ -416,9 +419,6 @@ def handle_symbol_queries(text: str):
                 reason = anomaly.get("reason", "Unusual market activity detected")
                 return f"{symbol} currently has an anomaly signal of {label}. This may indicate unusual market behavior. {reason}"
             return f"No anomaly is currently flagged for {symbol}."
-
-        user_signal_word = extraxt_user_signal_word(text)
-        mismatch_message = validate_user_signal_against_data(user_signal_word, trend, pred_row)
 
         return (
             f"{symbol} currently shows a {trend} trend, {trend_explanation}. "
