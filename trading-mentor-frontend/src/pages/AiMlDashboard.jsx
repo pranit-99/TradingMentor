@@ -17,6 +17,7 @@ const [chatMessages, setChatMessages] = useState([
   { role: "bot", text: "Hi! I’m your Trading Mentor Nirmala. Say hi or hello to begin." }
 ]);
 const chatBodyRef = useRef(null);
+const [botTyping, setBotTyping] = useState(false);
 
 
 
@@ -112,10 +113,11 @@ const symbols = visibleSymbols.join(",");
     return () => clearInterval(timer);
   }, [totalPages]);
 
-  useEffect(()=>{
-    if(chatBodyRef.current){
-      chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
-    }
+  useEffect(()=> {
+    chatBodyRef.current?.scrollTo({
+      top: chatBoadyRef.current.scrollHeight,
+      behaviour: "smooth",
+    });
   }, [chatMessages, chatOpen])
 
   // Set to close chatbox when click out of window
@@ -156,6 +158,7 @@ const symbols = visibleSymbols.join(",");
 
     setChatMessages((prev) => [...prev, {role: "user", text}]);
     setChatInput("");
+    setBotTyping(true);
 
     try{
       const res = await fetch(`${CHAT_BASE}/chat`, {
@@ -177,6 +180,8 @@ const symbols = visibleSymbols.join(",");
       setChatMessages((prev) => [
         ...prev,{role: "bot", text: `⚠️ Chat service error: ${e.message}` },
       ]);
+    } finally {
+      setBotTyping(false);
     }
   };
   
@@ -432,6 +437,9 @@ const symbols = visibleSymbols.join(",");
          {msg.text}
         </div>
         ))}
+        {botTyping && (
+          <div className="chat-msg bot Typing">Typing...</div>
+        )}
         </div>
         <div className="chatbot-input">
   <input

@@ -379,3 +379,8 @@ to   { opacity: 1; transform: translateX(0); }
   background: rgba(255, 255, 255, 0.08);
   color: #ffffff;
 }
+
+.typing {
+  font-style: italic;
+  opacity: 0.8;
+}
