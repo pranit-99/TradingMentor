@@ -115,7 +115,7 @@ const symbols = visibleSymbols.join(",");
 
   useEffect(()=> {
     chatBodyRef.current?.scrollTo({
-      top: chatBoadyRef.current.scrollHeight,
+      top: chatBodyRef.current.scrollHeight,
       behaviour: "smooth",
     });
   }, [chatMessages, chatOpen])
