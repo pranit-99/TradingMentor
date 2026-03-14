@@ -16,6 +16,7 @@ const [chatMaximized, setChatMaximized] = useState(false);
 const [chatMessages, setChatMessages] = useState([
   { role: "bot", text: "Hi! I’m your Trading Mentor Nirmala. Say hi or hello to begin." }
 ]);
+const chatBodyRef = useRef(null);
 
 
 
@@ -110,6 +111,12 @@ const symbols = visibleSymbols.join(",");
   
     return () => clearInterval(timer);
   }, [totalPages]);
+
+  useEffect(()=>{
+    if(chatBodyRef.current){
+      chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
+    }
+  }, [chatMessages, chatOpen])
 
   // Set to close chatbox when click out of window
   useEffect(() => {
@@ -419,7 +426,7 @@ const symbols = visibleSymbols.join(",");
         </div>
         </div>
 
-        <div className="chatbot-body">
+        <div className="chatbot-body" ref={chatBodyRef}>
         {chatMessages.map((msg, index) => (
         <div key={index} className={`chat-msg ${msg.role}`}>
          {msg.text}
