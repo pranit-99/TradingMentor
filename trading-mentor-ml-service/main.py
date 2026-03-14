@@ -301,12 +301,12 @@ def validate_user_signal_against_data(user_word: str | None, trend: str, pred_ro
         "green": "GREEN",
         "red": "RED",
         "yellow": "YELLOW"
-        }
+    }
 
     prediction_map = {
         "up": "UP",
-        "down":"DOWN"
-        }
+        "down": "DOWN"
+    }
 
     if user_word in trend_map:
         actual_trend = trend.upper() if trend else "UNKNOWN"
@@ -315,18 +315,18 @@ def validate_user_signal_against_data(user_word: str | None, trend: str, pred_ro
         if actual_trend != expected_trend:
             return f"You asked about {user_word}, but the current live trend for this symbol is {actual_trend}."
 
-        if user_word in prediction_map:
-            actual_direction = None
-            if pred_row:
-                tuned = pred_row.get("ridge_tuned", {})
-                actual_direction = tuned.get("direction")
+    if user_word in prediction_map:
+        actual_direction = None
+        if pred_row:
+            tuned = pred_row.get("ridge_tuned", {})
+            actual_direction = tuned.get("direction")
 
-            expected_direction = prediction_map[user_word]
-            
-            if actual_direction and actual_direction != expected_direction:
-                return f"You asked about {user_word}, but the current tuned prediction direction for this symbol is {actual_direction}."
+        expected_direction = prediction_map[user_word]
 
-            return None
+        if actual_direction and actual_direction != expected_direction:
+            return f"You asked about {user_word}, but the current tuned prediction direction for this symbol is {actual_direction}."
+
+    return None
 
 # Handle response
 def handle_symbol_queries(text: str):
@@ -351,12 +351,12 @@ def handle_symbol_queries(text: str):
         anomaly = row.get("anomaly")
         pred_result = predict_compare(symbols=symbol)
         pred_row = None
+        user_signal_word = extract_user_signal_word(text)
+        mismatch_message = validate_user_signal_against_data(user_signal_word, trend, pred_row)
 
         if mismatch_message:
             return mismatch_message
 
-        user_signal_word = extraxt_user_signal_word(text)
-        mismatch_message = validate_user_signal_against_data(user_signal_word, trend, pred_row)
 
         if pred_result and "results" in pred_result and pred_result["results"]:
             pred_row = pred_result["results"] [0]
