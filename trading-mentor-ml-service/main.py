@@ -354,9 +354,9 @@ def resolve_symbol_and_intent_from_context(text: str, symbol: str | None, intent
         "and what about",
         "why",
         "and why"
-        ]
+    ]
 
-    is_followup = any(phrase in text_lower for phrase in following_phrases)
+    is_followup = any(phrase in text_lower for phrase in followup_phrases)
 
     last_symbol = conversation_context.get("last_symbol")
     last_intent = conversation_context.get("last_intent")
@@ -364,19 +364,19 @@ def resolve_symbol_and_intent_from_context(text: str, symbol: str | None, intent
     resolved_symbol = symbol
     resolved_intent = intent
 
-    # First Case:- follow-up with new symbol but vague intent
+    # Case 1: follow-up with new symbol but vague intent
     # Example: "What about TSLA?"
     if is_followup and resolved_symbol and (not resolved_intent or resolved_intent == "summary"):
         if last_intent:
             resolved_intent = last_intent
 
-    # Second Case: follow-up with new intent but no symbol
+    # Case 2: follow-up with new intent but no symbol
     # Example: "And prediction?"
     if is_followup and not resolved_symbol and resolved_intent:
         if last_symbol:
             resolved_symbol = last_symbol
 
-    #Third Case:- Followup with no symbol and no useful intent
+    # Case 3: follow-up with neither symbol nor useful intent
     # Example: "And what about it?"
     if is_followup and not resolved_symbol and (not resolved_intent or resolved_intent == "summary"):
         if last_symbol:
@@ -384,8 +384,8 @@ def resolve_symbol_and_intent_from_context(text: str, symbol: str | None, intent
         if last_intent:
             resolved_intent = last_intent
 
-    #Fourth Case:- plain text? follow-up
-    #Convert previous intent into a why-style version when possible
+    # Case 4: plain "why?" follow-up
+    # Convert previous intent into a why-style version when possible
     if text_lower in ["why", "why?", "and why", "and why?"]:
         if last_symbol:
             resolved_symbol = last_symbol
@@ -396,7 +396,7 @@ def resolve_symbol_and_intent_from_context(text: str, symbol: str | None, intent
             "prediction": "why_prediction",
             "anomaly": "why_anomaly",
             "risk_score": "why_risk"
-            }
+        }
 
         if last_intent in why_map:
             resolved_intent = why_map[last_intent]
