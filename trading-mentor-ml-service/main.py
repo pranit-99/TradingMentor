@@ -344,32 +344,64 @@ def update_conversation_context(symbol: str | None, intent: str | None):
         conversation_context["last_intent"] = intent
 
 def resolve_symbol_and_intent_from_context(text: str, symbol: str | None, intent: str | None):
+    text_lower = text.lower().strip()
+
     followup_phrases = [
         "what about",
         "and",
         "what about it",
         "what about this",
+        "and what about",
         "why",
-        "and why",
-        "prediction",
-        "confidence",
-        "trend",
-        "risk",
-        "volatility",
-        "anomaly"
+        "and why"
         ]
 
-    is_followup = any(phrase in text.lower() for phrase in followup_phrases)
+    is_followup = any(phrase in text_lower for phrase in following_phrases)
+
+    last_symbol = conversation_context.get("last_symbol")
+    last_intent = conversation_context.get("last_intent")
 
     resolved_symbol = symbol
     resolved_intent = intent
 
-    if is_followup:
-        if not resolved_symbol:
-            resolved_symbol = conversation_context.get("last_symbol")
+    # First Case:- follow-up with new symbol but vague intent
+    # Example: "What about TSLA?"
+    if is_followup and resolved_symbol and (not resolved_intent or resolved_intent == "summary"):
+        if last_intent:
+            resolved_intent = last_intent
 
-        if not resolved_intent or resolved_intent == "summary":
-            resolved_intent = conversation_context.get("last_intent") or intent
+    # Second Case: follow-up with new intent but no symbol
+    # Example: "And prediction?"
+    if is_followup and not resolved_symbol and resolved_intent:
+        if last_symbol:
+            resolved_symbol = last_symbol
+
+    #Third Case:- Followup with no symbol and no useful intent
+    # Example: "And what about it?"
+    if is_followup and not resolved_symbol and (not resolved_intent or resolved_intent == "summary"):
+        if last_symbol:
+            resolved_symbol = last_symbol
+        if last_intent:
+            resolved_intent = last_intent
+
+    #Fourth Case:- plain text? follow-up
+    #Convert previous intent into a why-style version when possible
+    if text_lower in ["why", "why?", "and why", "and why?"]:
+        if last_symbol:
+            resolved_symbol = last_symbol
+
+        why_map = {
+            "risk": "why_risk",
+            "trend": "why_trend",
+            "prediction": "why_prediction",
+            "anomaly": "why_anomaly",
+            "risk_score": "why_risk"
+            }
+
+        if last_intent in why_map:
+            resolved_intent = why_map[last_intent]
+        elif not resolved_intent and last_intent:
+            resolved_intent = last_intent
 
     return resolved_symbol, resolved_intent
 

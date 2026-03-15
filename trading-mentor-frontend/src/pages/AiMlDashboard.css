@@ -330,6 +330,7 @@ to   { opacity: 1; transform: translateX(0); }
   padding: 12px;
   overflow-y: auto;
   color: #ddd;
+  scroll-behavior: smooth;
 }
 
 .chat-actions {
