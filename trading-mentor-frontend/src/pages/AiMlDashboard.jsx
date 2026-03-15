@@ -178,7 +178,7 @@ const symbols = visibleSymbols.join(",");
       const botText = data?.answer || "I didn’t get an answer. Try again.";
 
       const elapsed = Date.now() - startTime;
-      const remaining = Math.max(10000 - elapsed,0);
+      const remaining = Math.max(4000 - elapsed,0);
 
       setTimeout(() => {
         setChatMessages((prev) => [...prev, { role: "bot", text: botText }]);
@@ -187,7 +187,7 @@ const symbols = visibleSymbols.join(",");
 
     } catch (e) {
       const elapsed = Date.now() - startTime;
-      const remaining = Math.max(10000 - elapsed, 0)
+      const remaining = Math.max(4000 - elapsed, 0)
       setTimeout(() => {
         setChatMessages((prev) => [
           ...prev,
