@@ -160,6 +160,8 @@ const symbols = visibleSymbols.join(",");
     setChatInput("");
     setBotTyping(true);
 
+    const startTime = Date.now();
+
     try{
       const res = await fetch(`${CHAT_BASE}/chat`, {
         method: "POST",
@@ -175,13 +177,24 @@ const symbols = visibleSymbols.join(",");
       const data = await res.json();
       const botText = data?.answer || "I didn’t get an answer. Try again.";
 
-      setChatMessages((prev) => [...prev, {role: "bot", text: botText}]);
+      const elapsed = Date.now() - startTime;
+      const remaining = Math.max(10000 - elapsed,0);
+
+      setTimeout(() => {
+        setChatMessages((prev) => [...prev, { role: "bot", text: botText }]);
+        setBotTyping(false);
+      }, remaining);
+
     } catch (e) {
-      setChatMessages((prev) => [
-        ...prev,{role: "bot", text: `⚠️ Chat service error: ${e.message}` },
-      ]);
-    } finally {
-      setBotTyping(false);
+      const elapsed = Date.now() - startTime;
+      const remaining = Math.max(10000 - elapsed, 0)
+      setTimeout(() => {
+        setChatMessages((prev) => [
+          ...prev,
+          { role: "bot", text: `⚠️ Chat error: ${e.message}` },
+        ]);
+        setBotTyping(false);
+    }, remaining); 
     }
   };
   
@@ -438,7 +451,14 @@ const symbols = visibleSymbols.join(",");
         </div>
         ))}
         {botTyping && (
-          <div className="chat-msg bot Typing">Typing...</div>
+          <div className="chat-msg bot Typing">
+            <span>Typing</span>
+            <span className="typing-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+          </div>
         )}
         </div>
         <div className="chatbot-input">
