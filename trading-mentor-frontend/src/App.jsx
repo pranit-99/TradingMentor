@@ -99,7 +99,7 @@ const handleLoginSuccess = (user) => {
             <AiMlDashboard
               onViewDetails={(symbol) =>{
                 setSelectedSymbol(symbol);
-                setActiveMenu(StockDeatils);
+                setActiveMenu("Stock Deatils");
               }}
             />
           </>
