@@ -24,8 +24,7 @@ const MENU_ITEMS = [
   "Funds",
   "Stocks Listing",
   "Profile",
-  "Ledger Window",
-  "Stock Details"
+  "Ledger Window"
 ]
 
 function App() {
@@ -100,7 +99,7 @@ const handleLoginSuccess = (user) => {
             <AiMlDashboard
               onViewDetails={(symbol) =>{
                 setSelectedSymbol(symbol);
-                setActiveMenu("Stock Deatils");
+                setActiveMenu(StockDeatils);
               }}
             />
           </>
