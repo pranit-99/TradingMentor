@@ -1,16 +1,116 @@
+import { useEffect, useState } from "react";
+import "./StockDetails.css";
+
 export default function StockDetails({symbol, onBack}){
+    const [quote, setQuote] = useState(null);
+    const[loading, setLoading] = useState(false);
+    const[error, setError] = useState(null);
+
+    const SPRING_BASE_URL = import.meta.env.VITE_SPRING_BASE_URL;
+
+    useEffect(() => {
+        if (!symbol) return;
+
+        const fetchQuote = async () =>{
+            try{
+                setLoading(true);
+                setError(null);
+
+                const res = await fetch(
+                    `${SPRING_BASE_URL}/api/stocks/quote?symbol=${encodeURIComponent(symbol)}` 
+                );
+
+                if (!res.ok){
+                    throw new Error(`Quote HTTP ${res.status}`);
+                }
+
+                const data = await res.json();
+                setQuote(data);
+            } catch(err){
+                setError(err.message);
+            } finally{
+                setLoading(false);
+            }
+        };
+        fetchQuote();
+    }, [symbol, SPRING_BASE_URL]);
+
     return(
-        <div>
-            <button onClick={onBack} style={{marginBottom: "16px"}}>
-                Back 
-            </button>
+        <div className="stock-details-page">
+      <button className="stock-back-btn" onClick={onBack}>
+        ← Back
+      </button>
 
-            <h1>Stock Details</h1>
-            <p>Selected Symbol: <b>{symbol || "N/A"}</b></p>
+      <div className="stock-details-header">
+        <h1>Stock Details</h1>
+        <p>
+          Selected Symbol: <b>{symbol || "N/A"}</b>
+        </p>
+      </div>
 
-            <div style={{ marginTop: "20px", padding: "20px", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px" }}>
-                Graph and Live Stock details for <b>{symbol || "N/A"}</b> will appear in next step
-            </div>
+      {loading && (
+        <div className="stock-details-card">Loading live stock summary...</div>
+      )}
+
+      {error && (
+        <div className="stock-details-card">
+          <b>Error:</b> {error}
         </div>
+      )}
+
+      {!loading && !error && quote && (
+        <div className="stock-details-card">
+          <div className="stock-summary-top">
+            <div>
+              <h2>{quote.symbol || symbol}</h2>
+              <p className="stock-subtitle">Live market snapshot</p>
+            </div>
+
+            <div className="stock-price-block">
+              <div className="stock-price">
+                {quote.currentPrice ?? quote.c ?? "N/A"}
+              </div>
+              <div
+                className={`stock-change ${
+                  (quote.change ?? quote.d ?? 0) >= 0 ? "pos" : "neg"
+                }`}
+              >
+                {quote.change ?? quote.d ?? "N/A"} (
+                {quote.changePercent ?? quote.dp ?? "N/A"}%)
+              </div>
+            </div>
+          </div>
+
+          <div className="stock-stats-grid">
+            <div className="stock-stat">
+              <span>Open</span>
+              <b>{quote.open ?? quote.o ?? "N/A"}</b>
+            </div>
+
+            <div className="stock-stat">
+              <span>High</span>
+              <b>{quote.high ?? quote.h ?? "N/A"}</b>
+            </div>
+
+            <div className="stock-stat">
+              <span>Low</span>
+              <b>{quote.low ?? quote.l ?? "N/A"}</b>
+            </div>
+
+            <div className="stock-stat">
+              <span>Previous Close</span>
+              <b>{quote.previousClose ?? quote.pc ?? "N/A"}</b>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {!loading && !error && !quote && (
+        <div className="stock-details-card">
+          No live quote available for <b>{symbol}</b>.
+        </div>
+      )}
+    </div>
+        
     );
 }
