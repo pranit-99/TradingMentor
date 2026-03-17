@@ -32,7 +32,7 @@ function App() {
   const [activeMenu, setActiveMenu] = useState("Dashboard");
   const [currentUser, setCurrentUser] = useState(null);
   const [showAccountModal, setShowAccountModal] = useState(false);
-  const [selectedSymbol, setSelectedSymbol] = useState("AAPL");
+  const [selectedSymbol, setSelectedSymbol] = useState(null);
 
   
 
@@ -98,6 +98,7 @@ const handleLoginSuccess = (user) => {
             </p>
             <AiMlDashboard
               onViewDetails={(symbol) =>{
+                console.log("View etails Clicked:-", symbol);
                 setSelectedSymbol(symbol);
                 setActiveMenu("Stock Deatils");
               }}
