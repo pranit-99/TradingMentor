@@ -97,12 +97,12 @@ const handleLoginSuccess = (user) => {
               Learn trading with zero real money risk.
             </p>
             <AiMlDashboard
-              onViewDetails={(symbol) =>{
-                console.log("View etails Clicked:-", symbol);
-                setSelectedSymbol(symbol);
-                setActiveMenu("Stock Deatils");
-              }}
-            />
+  onViewDetails={(symbol) => {
+    console.log("View details Clicked:-", symbol);
+    setSelectedSymbol(symbol);
+    setActiveMenu("Stock Details");
+  }}
+/>
           </>
         );
         case "Portfolio":
@@ -123,13 +123,13 @@ const handleLoginSuccess = (user) => {
         case "Login":
           return <LoginPage onLoginSuccess={handleLoginSuccess} />;
           case "Stock Details":
-            return (
-              <div style={{ color: "white", padding: "20px", background: "red" }}>
-                <h1>STOCK DETAILS WORKING</h1>
-                <p>Symbol: {selectedSymbol || "NONE"}</p>
-                <button onClick={() => setActiveMenu("Dashboard")}>Back</button>
-              </div>
-            );
+  return (
+    <div style={{ color: "white", background: "red", padding: "20px" }}>
+      <h1>STOCK DETAILS WORKING</h1>
+      <p>Selected Symbol: {selectedSymbol || "NONE"}</p>
+      <button onClick={() => setActiveMenu("Dashboard")}>Back</button>
+    </div>
+  );
       
       case "ForgotPassword":
         return (
@@ -238,7 +238,7 @@ const handleLoginSuccess = (user) => {
 
         {/* Main content area */}
         <section className="content">
-  <div style={{ color: "yellow", marginBottom: "10px" }}>
+  <div style={{ color: "yellow", marginBottom: "10px", fontWeight: "bold" }}>
     DEBUG → activeMenu: {activeMenu} | selectedSymbol: {selectedSymbol || "NONE"}
   </div>
   {renderContent()}
