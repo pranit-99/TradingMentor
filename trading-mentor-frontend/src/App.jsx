@@ -122,13 +122,14 @@ const handleLoginSuccess = (user) => {
           return <Signup />;
         case "Login":
           return <LoginPage onLoginSuccess={handleLoginSuccess} />;
-        case "Stock Details":
-          return(
-            <StockDetails
-              symbol={selectedSymbol}
-              onBack={() => setActiveMenu("Dashboard")}
-            />
-          );
+          case "Stock Details":
+            return (
+              <div style={{ color: "white", padding: "20px", background: "red" }}>
+                <h1>STOCK DETAILS WORKING</h1>
+                <p>Symbol: {selectedSymbol || "NONE"}</p>
+                <button onClick={() => setActiveMenu("Dashboard")}>Back</button>
+              </div>
+            );
       
       case "ForgotPassword":
         return (
@@ -236,7 +237,12 @@ const handleLoginSuccess = (user) => {
         </aside>
 
         {/* Main content area */}
-        <section className="content">{renderContent()}</section>
+        <section className="content">
+  <div style={{ color: "yellow", marginBottom: "10px" }}>
+    DEBUG → activeMenu: {activeMenu} | selectedSymbol: {selectedSymbol || "NONE"}
+  </div>
+  {renderContent()}
+</section>
       </main>
     </div>
   );
