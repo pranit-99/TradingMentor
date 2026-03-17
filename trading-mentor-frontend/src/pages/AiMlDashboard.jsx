@@ -21,7 +21,6 @@ const [botTyping, setBotTyping] = useState(false);
 
 
 
-
 const AI_BASE_URL = import.meta.env.VITE_AI_BASE_URL;
 const CHAT_BASE = import.meta.env.VITE_ML_BASE_URL || "http://127.0.0.1:8001";
 

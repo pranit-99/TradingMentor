@@ -24,7 +24,8 @@ const MENU_ITEMS = [
   "Funds",
   "Stocks Listing",
   "Profile",
-  "Ledger Window"
+  "Ledger Window",
+  "Stock Details"
 ]
 
 function App() {
