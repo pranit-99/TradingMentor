@@ -12,6 +12,7 @@ import Portfolio from "./pages/Portfolio";
 import TradeHistory from "./pages/TradeHistory.jsx";
 import Profile from "./pages/Profile.jsx";
 import AiMlDashboard from "./pages/AiMlDashboard.jsx";
+import StockDetails from "./pages/StockDetails.jsx";
 
 
 
@@ -31,6 +32,8 @@ function App() {
   const [activeMenu, setActiveMenu] = useState("Dashboard");
   const [currentUser, setCurrentUser] = useState(null);
   const [showAccountModal, setShowAccountModal] = useState(false);
+  const [selectedSymbol, setSelectedSymbol] = useState("AAPL");
+
   
 
 const handleLoginSuccess = (user) => {
@@ -93,7 +96,12 @@ const handleLoginSuccess = (user) => {
             <p>
               Learn trading with zero real money risk.
             </p>
-            <AiMlDashboard />
+            <AiMlDashboard
+              onViewDetails={(symbol) =>{
+                setSelectedSymbol(symbol);
+                setActiveMenu("Stock Deatils");
+              }}
+            />
           </>
         );
         case "Portfolio":
@@ -111,8 +119,16 @@ const handleLoginSuccess = (user) => {
         return <Profile currentUser={currentUser}/>;
         case "SignUp":
           return <Signup />;
-      case "Login":
-        return <LoginPage onLoginSuccess={handleLoginSuccess} />;
+        case "Login":
+          return <LoginPage onLoginSuccess={handleLoginSuccess} />;
+        case "Stock Details":
+          return(
+            <StockDetails
+              symbol={selectedSymbol}
+              onBack={() => setActiveMenu("Dashboard")}
+            />
+          );
+      
       case "ForgotPassword":
         return (
        <ForgotPassword onBackToLogin={() => setActiveMenu("Login")} />

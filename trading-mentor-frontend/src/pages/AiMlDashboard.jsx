@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { FaRobot } from "react-icons/fa"
 import "./AiMlDashboard.css";
 
-export default function AiMlDashboard() {
+export default function AiMlDashboard({onViewDetails}) {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [predMap, setPredMap] = useState({});
@@ -116,7 +116,7 @@ const symbols = visibleSymbols.join(",");
   useEffect(()=> {
     chatBodyRef.current?.scrollTo({
       top: chatBodyRef.current.scrollHeight,
-      behaviour: "smooth",
+      behavior: "smooth",
     });
   }, [chatMessages, chatOpen])
 
@@ -416,6 +416,16 @@ const symbols = visibleSymbols.join(",");
                   style={{ width: `${row.risk_score}%` }}
                 />
               </div>
+              <div className="aiml-card-actions">
+                <button
+                className="aiml-details-btn"
+                onClick={(e) =>{
+                  e.stopPropagation();
+                  onViewDetails?.(row.symbol)
+                }}>
+                  View Details
+                </button>
+              </div>  
             </div>
           ))}
         </div>
