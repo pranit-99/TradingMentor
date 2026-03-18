@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import "./StockDetails.css";
 
 function SimpleLineChart({ data = [], width = 900, height = 280 }) {
   if (!data.length) {
@@ -45,6 +44,7 @@ function SimpleLineChart({ data = [], width = 900, height = 280 }) {
 
 export default function StockDetails({ symbol, onBack }) {
   const [prices, setPrices] = useState(null);
+  const [overview, setOverview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -54,33 +54,43 @@ export default function StockDetails({ symbol, onBack }) {
   useEffect(() => {
     if (!symbol) {
       setPrices(null);
+      setOverview(null);
       return;
     }
 
-    const fetchPrices = async () => {
+    const fetchDetails = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        const res = await fetch(
-          `${AI_BASE_URL}/prices?symbol=${encodeURIComponent(symbol)}`
-        );
+        const [pricesRes, overviewRes] = await Promise.all([
+          fetch(`${AI_BASE_URL}/prices?symbol=${encodeURIComponent(symbol)}`),
+          fetch(`${AI_BASE_URL}/overview?symbols=${encodeURIComponent(symbol)}`),
+        ]);
 
-        if (!res.ok) {
-          throw new Error(`Prices HTTP ${res.status}`);
+        if (!pricesRes.ok) {
+          throw new Error(`Prices HTTP ${pricesRes.status}`);
         }
 
-        const data = await res.json();
-        setPrices(data);
+        if (!overviewRes.ok) {
+          throw new Error(`Overview HTTP ${overviewRes.status}`);
+        }
+
+        const pricesData = await pricesRes.json();
+        const overviewData = await overviewRes.json();
+
+        setPrices(pricesData);
+        setOverview(overviewData?.results?.[0] || null);
       } catch (err) {
         setError(err.message);
         setPrices(null);
+        setOverview(null);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPrices();
+    fetchDetails();
   }, [symbol, AI_BASE_URL]);
 
   const closes = prices?.closes || [];
@@ -159,6 +169,48 @@ export default function StockDetails({ symbol, onBack }) {
               <span>{prices?.dates?.[0] || "—"}</span>
               <span>{prices?.dates?.[prices?.dates?.length - 1] || "—"}</span>
             </div>
+          </div>
+
+          <div className="stock-details-card">
+            <h3>Analytics</h3>
+
+            <div className="stock-stats-grid">
+              <div className="stock-stat">
+                <span>Trend</span>
+                <b>{overview?.trend || "N/A"}</b>
+              </div>
+
+              <div className="stock-stat">
+                <span>Risk</span>
+                <b>{overview?.risk || "N/A"}</b>
+              </div>
+
+              <div className="stock-stat">
+                <span>Risk Score</span>
+                <b>{overview?.risk_score ?? "N/A"}</b>
+              </div>
+
+              <div className="stock-stat">
+                <span>Volatility</span>
+                <b>{overview?.volatility ?? "N/A"}</b>
+              </div>
+
+              <div className="stock-stat">
+                <span>Short Avg</span>
+                <b>{overview?.short_avg ?? "N/A"}</b>
+              </div>
+
+              <div className="stock-stat">
+                <span>Long Avg</span>
+                <b>{overview?.long_avg ?? "N/A"}</b>
+              </div>
+            </div>
+
+            {overview?.anomaly?.flag && (
+              <div className="stock-anomaly-box">
+                <b>Anomaly:</b> {overview.anomaly.label} — {overview.anomaly.reason}
+              </div>
+            )}
           </div>
         </>
       )}
