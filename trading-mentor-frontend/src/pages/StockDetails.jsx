@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import "./StockDetails.css";
 
 function SimpleLineChart({ data = [], width = 900, height = 280 }) {
   if (!data.length) {
