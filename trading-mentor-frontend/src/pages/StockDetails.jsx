@@ -37,6 +37,20 @@ export default function StockDetails({symbol, onBack}){
     fetchPrices();
   }, [symbol, AI_BASE_URL]);
 
+  const closes = prices?.closes || [];
+
+  const latestClose = closes.length > 0 ? closes[closes.length - 1] : null;
+
+  const firstClose = closes.length > 0 ? closes[0] : null;
+
+  const priceDiff = latestCose != null && firstClose != null
+                    ? latestClose - firstClose
+                    : null;
+
+  const percentChange = latestClose != null && firstClose != null && firstClose !== 0
+                        ? (priceDiff / firstClose) * 100
+                        : null;
+
   return(
     <div className="stock-details-page">
       <button className="stock-back-btn" onClick={onBack}>
@@ -61,10 +75,32 @@ export default function StockDetails({symbol, onBack}){
         </div>
       )}
       {!loading && !error && prices && (
+        <>
+          <div className="stock-details-card">
+            <h3>{symbol}</h3>
+            <p className="stock-subtitle">1 Month Historical Summary</p>
+            <div className="stock-summary-top">
+              <div className="stock-price-block">
+                <div className="stock-price">
+                {latestClose != null ? `$${latestClose.toFixed(2)}` : "N/A"}
+                </div>
+
+                {priceDiff != null && percentChange != null && (
+                  <div className={`stock-change ${priceDiff >= 0 ? "pos" : "neg"}`}>
+                    {priceDiff >= 0 ? "+" : ""}
+                    {priceDiff.toFixed(2)} ({priceDiff >= 0 ? "+" : ""}
+                    {percentChange.toFixed(2)}%)
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
         <div className="stock-details-card">
           <h3>Prices API Response</h3>
           <pre>{JSON.stringify(prices, null, 2)}</pre>
         </div>
+        </>
       )}
     </div>
   )
