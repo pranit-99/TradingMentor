@@ -45,6 +45,7 @@ function SimpleLineChart({ data = [], width = 900, height = 280 }) {
 export default function StockDetails({ symbol, onBack }) {
   const [prices, setPrices] = useState(null);
   const [overview, setOverview] = useState(null);
+  const [prediction, setPrediction] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -55,6 +56,7 @@ export default function StockDetails({ symbol, onBack }) {
     if (!symbol) {
       setPrices(null);
       setOverview(null);
+      setPrediction(null);
       return;
     }
 
@@ -63,9 +65,10 @@ export default function StockDetails({ symbol, onBack }) {
         setLoading(true);
         setError(null);
 
-        const [pricesRes, overviewRes] = await Promise.all([
+        const [pricesRes, overviewRes, predictionRes] = await Promise.all([
           fetch(`${AI_BASE_URL}/prices?symbol=${encodeURIComponent(symbol)}`),
           fetch(`${AI_BASE_URL}/overview?symbols=${encodeURIComponent(symbol)}`),
+          fetch(`${AI_BASE_URL}/predict_compare?symbols=${encodeURIComponent(symbol)}`),
         ]);
 
         if (!pricesRes.ok) {
@@ -76,15 +79,22 @@ export default function StockDetails({ symbol, onBack }) {
           throw new Error(`Overview HTTP ${overviewRes.status}`);
         }
 
+        if (!predictionRes.ok) {
+          throw new Error(`Prediction HTTP ${predictionRes.status}`);
+        }
+
         const pricesData = await pricesRes.json();
         const overviewData = await overviewRes.json();
+        const predictionData = await predictionRes.json();
 
         setPrices(pricesData);
         setOverview(overviewData?.results?.[0] || null);
+        setPrediction(predictionData?.results?.[0] || null);
       } catch (err) {
         setError(err.message);
         setPrices(null);
         setOverview(null);
+        setPrediction(null);
       } finally {
         setLoading(false);
       }
@@ -110,6 +120,58 @@ export default function StockDetails({ symbol, onBack }) {
     latestClose != null && firstClose != null && firstClose !== 0
       ? (priceDiff / firstClose) * 100
       : null;
+
+  const renderPredictionBox = (label, obj, meta = null) => {
+    if (!obj || typeof obj.predicted_next_day_return !== "number" || !obj.direction) {
+      return (
+        <div className="pred-item">
+          <div className="pred-name">{label}</div>
+          <div className="pred-na">N/A</div>
+        </div>
+      );
+    }
+
+    const pct = (obj.predicted_next_day_return * 100).toFixed(2);
+    const sign = obj.predicted_next_day_return >= 0 ? "+" : "";
+
+    const cls =
+      obj.direction === "UP"
+        ? "pred-up"
+        : obj.direction === "DOWN"
+        ? "pred-down"
+        : "pred-flat";
+
+    return (
+      <div className="pred-item">
+        <div className="pred-name">{label}</div>
+        <div className={`pred-value ${cls}`}>{obj.direction}</div>
+        <div className={`pred-pct ${cls}`}>({sign}{pct}%)</div>
+
+        {meta && <div className="pred-meta">{meta}</div>}
+
+        {label === "Tuned" && obj.confidence && (
+          <div className="pred-confidence">
+            <span
+              className={
+                obj.confidence.label === "HIGH"
+                  ? "conf-high"
+                  : obj.confidence.label === "MEDIUM"
+                  ? "conf-med"
+                  : "conf-low"
+              }
+            >
+              Confidence: {obj.confidence.label}
+            </span>
+            <span className="conf-pill">{obj.confidence.percent}%</span>
+          </div>
+        )}
+
+        {label === "Tuned" && obj.explanation && (
+          <div className="pred-explanation">{obj.explanation}</div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="stock-details-page">
@@ -211,6 +273,22 @@ export default function StockDetails({ symbol, onBack }) {
                 <b>Anomaly:</b> {overview.anomaly.label} — {overview.anomaly.reason}
               </div>
             )}
+          </div>
+
+          <div className="stock-details-card">
+            <h3>Prediction Models</h3>
+
+            <div className="pred-grid">
+              {renderPredictionBox("Linear", prediction?.linear)}
+              {renderPredictionBox("Ridge", prediction?.ridge_fixed)}
+              {renderPredictionBox(
+                "Tuned",
+                prediction?.ridge_tuned,
+                prediction?.ridge_tuned?.best_alpha
+                  ? `α=${prediction.ridge_tuned.best_alpha} | MAE=${prediction.ridge_tuned.val_mae}`
+                  : null
+              )}
+            </div>
           </div>
         </>
       )}

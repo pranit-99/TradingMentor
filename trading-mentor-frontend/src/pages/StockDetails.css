@@ -13,6 +13,95 @@
   display: block;
 }
 
+.pred-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.pred-item {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.pred-name {
+  color: #9aa4c7;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.pred-value {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.pred-pct {
+  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.pred-up {
+  color: #22c55e;
+}
+
+.pred-down {
+  color: #ef4444;
+}
+
+.pred-flat {
+  color: #facc15;
+}
+
+.pred-na {
+  color: #9aa4c7;
+}
+
+.pred-meta {
+  margin-top: 8px;
+  color: #b8bfd3;
+  font-size: 13px;
+}
+
+.pred-confidence {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.conf-high {
+  color: #22c55e;
+  font-weight: 600;
+}
+
+.conf-med {
+  color: #facc15;
+  font-weight: 600;
+}
+
+.conf-low {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.conf-pill {
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+.pred-explanation {
+  margin-top: 10px;
+  color: #c7d0ea;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .stock-stats-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(180px, 1fr));
