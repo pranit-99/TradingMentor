@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import "./StockDetails.css"
 
 
 export default function StockDetails({ symbol, onBack }) {
