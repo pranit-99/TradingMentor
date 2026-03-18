@@ -1,42 +1,44 @@
 import { useEffect, useState } from "react";
-import "./StockDetails.css";
+import "./StockDetails.css"
 
-export default function StockDetails({symbol, onBack}){
-    const [quote, setQuote] = useState(null);
-    const[loading, setLoading] = useState(false);
-    const[error, setError] = useState(null);
 
-    const SPRING_BASE_URL = import.meta.env.VITE_SPRING_BASE_URL;
+export default function StockDetails({ symbol, onBack }) {
+  const [quote, setQuote] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-    useEffect(() => {
-        if (!symbol) return;
+  const SPRING_BASE_URL = import.meta.env.VITE_SPRING_BASE_URL;
 
-        const fetchQuote = async () =>{
-            try{
-                setLoading(true);
-                setError(null);
+  useEffect(() => {
+    if (!symbol || !SPRING_BASE_URL) return;
 
-                const res = await fetch(
-                    `${SPRING_BASE_URL}/api/stocks/quote?symbol=${encodeURIComponent(symbol)}` 
-                );
+    const fetchQuote = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-                if (!res.ok){
-                    throw new Error(`Quote HTTP ${res.status}`);
-                }
+        const res = await fetch(
+          `${SPRING_BASE_URL}/api/stocks/quote?symbol=${encodeURIComponent(symbol)}`
+        );
 
-                const data = await res.json();
-                setQuote(data);
-            } catch(err){
-                setError(err.message);
-            } finally{
-                setLoading(false);
-            }
-        };
-        fetchQuote();
-    }, [symbol, SPRING_BASE_URL]);
+        if (!res.ok) {
+          throw new Error(`Quote HTTP ${res.status}`);
+        }
 
-    return(
-        <div className="stock-details-page">
+        const data = await res.json();
+        setQuote(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchQuote();
+  }, [symbol, SPRING_BASE_URL]);
+
+  return (
+    <div className="stock-details-page">
       <button className="stock-back-btn" onClick={onBack}>
         ← Back
       </button>
@@ -111,6 +113,5 @@ export default function StockDetails({symbol, onBack}){
         </div>
       )}
     </div>
-        
-    );
+  );
 }
