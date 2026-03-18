@@ -1,127 +1,71 @@
 import { useEffect, useState } from "react";
 
-export default function StockDetails({ symbol, onBack }) {
-  const [quote, setQuote] = useState(null);
+export default function StockDetails({symbol, onBack}){
+  const [prices, setPrices] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const SPRING_BASE_URL =
-    import.meta.env.VITE_SPRING_BASE_URL || "http://localhost:8080";
+  const AI_BASE_URL = import.meta.env.VITE_AI_BASE_URL || "http://127.0.0.1:8001";
 
-  useEffect(() => {
-    if (!symbol) {
-      setQuote(null);
+  useEffect(() =>{
+    if (!symbol){
+      setPrices(null);
       return;
     }
 
-    console.log("SPRING BASE:", SPRING_BASE_URL);
-    console.log("SYMBOL:", symbol);
-
-    const fetchQuote = async () => {
+    const fetchPrices = async () => {
       try {
         setLoading(true);
         setError(null);
-
         const res = await fetch(
-          `${SPRING_BASE_URL}/api/stocks/quote?symbol=${encodeURIComponent(symbol)}`
+          `${AI_BASE_URL}/prices?symbol=${encodeURIComponent(symbol)}`
         );
 
         if (!res.ok) {
-          throw new Error(`Quote HTTP ${res.status}`);
+          throw new Error(`Prices HTTP ${res.status}`);
         }
 
         const data = await res.json();
-        setQuote(data);
-      } catch (err) {
+        setPrices(data);
+      } catch (err){
         setError(err.message);
-        setQuote(null);
+        setPrices(null);
       } finally {
         setLoading(false);
       }
     };
+    fetchPrices();
+  }, [symbol, AI_BASE_URL]);
 
-    fetchQuote();
-  }, [symbol, SPRING_BASE_URL]);
-
-  return (
+  return(
     <div className="stock-details-page">
       <button className="stock-back-btn" onClick={onBack}>
-        ← Back
+        Back
       </button>
 
       <div className="stock-details-header">
         <h1>Stock Details</h1>
         <p>
-          Selected Symbol: <b>{symbol || "N/A"}</b>
+          Selected Symbol : <b>{symbol || "N/A"}</b>
         </p>
       </div>
-
       {!symbol && (
         <div className="stock-details-card">No symbol selected.</div>
       )}
-
       {loading && (
-        <div className="stock-details-card">Loading live stock summary...</div>
+        <div className="stock-details-card">Loading chart data...</div>
       )}
-
       {error && (
         <div className="stock-details-card">
           <b>Error:</b> {error}
         </div>
       )}
-
-      {!loading && !error && quote && (
+      {!loading && !error && prices && (
         <div className="stock-details-card">
-          <div className="stock-summary-top">
-            <div>
-              <h2>{quote.symbol || symbol}</h2>
-              <p className="stock-subtitle">Live market snapshot</p>
-            </div>
-
-            <div className="stock-price-block">
-              <div className="stock-price">
-                {quote.currentPrice ?? quote.c ?? "N/A"}
-              </div>
-              <div
-                className={`stock-change ${
-                  (quote.change ?? quote.d ?? 0) >= 0 ? "pos" : "neg"
-                }`}
-              >
-                {quote.change ?? quote.d ?? "N/A"} (
-                {quote.changePercent ?? quote.dp ?? "N/A"}%)
-              </div>
-            </div>
-          </div>
-
-          <div className="stock-stats-grid">
-            <div className="stock-stat">
-              <span>Open</span>
-              <b>{quote.open ?? quote.o ?? "N/A"}</b>
-            </div>
-
-            <div className="stock-stat">
-              <span>High</span>
-              <b>{quote.high ?? quote.h ?? "N/A"}</b>
-            </div>
-
-            <div className="stock-stat">
-              <span>Low</span>
-              <b>{quote.low ?? quote.l ?? "N/A"}</b>
-            </div>
-
-            <div className="stock-stat">
-              <span>Previous Close</span>
-              <b>{quote.previousClose ?? quote.pc ?? "N/A"}</b>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {!loading && !error && !quote && symbol && (
-        <div className="stock-details-card">
-          No live quote available for <b>{symbol}</b>.
+          <h3>Prices API Response</h3>
+          <pre>{JSON.stringify(prices, null, 2)}</pre>
         </div>
       )}
     </div>
-  );
+  )
 }
