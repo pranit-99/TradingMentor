@@ -6,10 +6,15 @@ export default function StockDetails({ symbol, onBack }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const SPRING_BASE_URL = import.meta.env.VITE_SPRING_BASE_URL;
+  const SPRING_BASE_URL =
+  import.meta.env.VITE_SPRING_BASE_URL || "http://localhost:8080";
 
   useEffect(() => {
-    if (!symbol || !SPRING_BASE_URL) return;
+    if (!symbol) {
+      return <div style={{ color: "white" }}>No symbol selected</div>;
+    }
+    console.log("SPRING BASE:", SPRING_BASE_URL);
+    console.log("SYMBOL:", symbol);
 
     const fetchQuote = async () => {
       try {
