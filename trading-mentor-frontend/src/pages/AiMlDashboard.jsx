@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { FaRobot } from "react-icons/fa"
 import "./AiMlDashboard.css";
-import StockDetails from"./StockDetails.jsx";
 
 export default function AiMlDashboard({onViewDetails}) {
   const [data, setData] = useState(null);
@@ -14,20 +13,11 @@ const [chatInput, setChatInput] = useState("");
 const [chatOpen, setChatOpen] = useState(false);
 const chatRef = useRef(null);
 const [chatMaximized, setChatMaximized] = useState(false);
-const [selectedSymbol, setSelectedSymbol] = useState(null);
 const [chatMessages, setChatMessages] = useState([
   { role: "bot", text: "Hi! I’m your Trading Mentor Nirmala. Say hi or hello to begin." }
 ]);
 const chatBodyRef = useRef(null);
 const [botTyping, setBotTyping] = useState(false);
-
-const handleViewDetails = (symbol) =>{
-  setSelectedSymbol(symbol);
-};
-
-const handleBack = () => {
-  setSelectedSymbol(null);
-}
 
 
 
@@ -425,13 +415,6 @@ const symbols = visibleSymbols.join(",");
                   style={{ width: `${row.risk_score}%` }}
                 />
               </div>
-                <>
-                  {!selectedSymbol ? (
-                  <AiMlDashboard onViewDetails={handleViewDetails} />
-                      ) : (
-                  <StockDetails symbol={selectedSymbol} onBack={handleBack} />
-                  )}
-                </>
               <div className="aiml-card-actions">
                 <button
                 className="aiml-details-btn"
