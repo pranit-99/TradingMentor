@@ -97,10 +97,9 @@ const handleLoginSuccess = (user) => {
               Learn trading with zero real money risk.
             </p>
             <AiMlDashboard
-              onViewDetails={(symbol) =>{
-                console.log("View etails Clicked:-", symbol);
-                setSelectedSymbol(symbol);
-                setActiveMenu("Stock Deatils");
+              onViewDetails={(symbol) => {
+              setSelectedSymbol(symbol);
+              setActiveMenu("Stock Details");
               }}
             />
           </>
@@ -126,9 +125,12 @@ const handleLoginSuccess = (user) => {
           return(
             <StockDetails
               symbol={selectedSymbol}
-              onBack={() => setActiveMenu("Dashboard")}
+              onBack={() => {
+              setSelectedSymbol(null);
+              setActiveMenu("Dashboard");
+              }}
             />
-          );
+            );
       
       case "ForgotPassword":
         return (
