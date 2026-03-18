@@ -186,11 +186,30 @@ export default function StockDetails({ symbol, onBack }) {
       </button>
 
       <div className="stock-details-header">
-        <h1>Stock Details</h1>
-        <p>
-          Selected Symbol: <b>{symbol || "N/A"}</b>
-        </p>
+  <div className="stock-header-left">
+    <div className="stock-symbol-row">
+      <h1>{symbol || "N/A"}</h1>
+      <span className="stock-timeframe-badge">
+        {timeframe.toUpperCase()}
+      </span>
+    </div>
+    <p className="stock-header-subtitle">Historical trend summary</p>
+  </div>
+
+  <div className="stock-header-right">
+    <div className="stock-header-price">
+      {latestClose != null ? `$${latestClose.toFixed(2)}` : "N/A"}
+    </div>
+
+    {priceDiff != null && percentChange != null && (
+      <div className={`stock-header-change ${priceDiff >= 0 ? "pos" : "neg"}`}>
+        {priceDiff >= 0 ? "+" : ""}
+        {priceDiff.toFixed(2)} ({priceDiff >= 0 ? "+" : ""}
+        {percentChange.toFixed(2)}%)
       </div>
+    )}
+  </div>
+</div>
 
       {!symbol && <div className="stock-details-card">No symbol selected.</div>}
 
@@ -206,27 +225,6 @@ export default function StockDetails({ symbol, onBack }) {
 
       {!loading && !error && prices && (
         <>
-          <div className="stock-details-card">
-            <h3>{symbol}</h3>
-            <p className="stock-subtitle">Historical Summary</p>
-
-            <div className="stock-summary-top">
-              <div className="stock-price-block">
-                <div className="stock-price">
-                  {latestClose != null ? `$${latestClose.toFixed(2)}` : "N/A"}
-                </div>
-
-                {priceDiff != null && percentChange != null && (
-                  <div className={`stock-change ${priceDiff >= 0 ? "pos" : "neg"}`}>
-                    {priceDiff >= 0 ? "+" : ""}
-                    {priceDiff.toFixed(2)} ({priceDiff >= 0 ? "+" : ""}
-                    {percentChange.toFixed(2)}%)
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
           <div className="stock-details-card">
             <div className="stock-chart-header">
               <h3>Price Trend</h3>
