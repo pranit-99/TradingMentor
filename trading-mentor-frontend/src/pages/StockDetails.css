@@ -7,6 +7,41 @@
   padding: 10px;
 }
 
+.stock-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.stock-timeframe-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tf-btn {
+  background: rgba(255,255,255,0.05);
+  color: #cfd6ea;
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: 0.2s ease;
+}
+
+.tf-btn:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.tf-btn.active {
+  background: rgba(59,130,246,0.18);
+  border-color: rgba(59,130,246,0.45);
+  color: #ffffff;
+}
+
 .stock-chart-svg {
   width: 100%;
   height: 240px;

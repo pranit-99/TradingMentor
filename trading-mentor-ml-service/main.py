@@ -820,22 +820,34 @@ def stock_risk(symbol: str):
         }
 
 @app.get("/prices")
-def stock_prices(symbol: str):
+def stock_prices(
+    symbol: str,
+    period: str = "1mo",
+    interval: str = "1d"
+):
     """
-    Returns last 1 month daily close prices for charting.
-    Example: /prices?symbol=AAPL
+    Returns historical close prices for charting.
+    Example:
+    /prices?symbol=AAPL
+    /prices?symbol=AAPL&period=6mo&interval=1d
+    /prices?symbol=AAPL&period=1y&interval=1wk
     """
-    data = yf.download(symbol, period="1mo", interval="1d")
+    data = yf.download(symbol, period=period, interval=interval)
 
     if data.empty:
-        return {"symbol": symbol.upper(), "dates": [], "closes": [], "reason": "No data found"}
+        return {
+            "symbol": symbol.upper(),
+            "period": period,
+            "interval": interval,
+            "dates": [],
+            "closes": [],
+            "reason": "No data found"
+        }
 
-    # Close can be Series OR a 1-column DataFrame depending on yfinance output
     close_obj = data["Close"]
-    if hasattr(close_obj, "columns"):  # means it's a DataFrame
-        close_obj = close_obj.iloc[:, 0]  # take first column
+    if hasattr(close_obj, "columns"):
+        close_obj = close_obj.iloc[:, 0]
 
-    # Now close_obj is a Series -> convert to 1D float array
     close_values = close_obj.to_numpy().astype(float)
 
     dates = [d.strftime("%Y-%m-%d") for d in data.index.to_pydatetime()]
@@ -843,6 +855,8 @@ def stock_prices(symbol: str):
 
     return {
         "symbol": symbol.upper(),
+        "period": period,
+        "interval": interval,
         "dates": dates,
         "closes": closes
     }

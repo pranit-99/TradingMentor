@@ -49,8 +49,17 @@ export default function StockDetails({ symbol, onBack }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const [timeframe, setTimeframe] = useState("1mo");
+
   const AI_BASE_URL =
     import.meta.env.VITE_AI_BASE_URL || "http://127.0.0.1:8001";
+
+  const intervalMap = {
+    "1mo": "1d",
+    "3mo": "1d",
+    "6mo": "1d",
+    "1y": "1wk",
+  };
 
   useEffect(() => {
     if (!symbol) {
@@ -66,9 +75,17 @@ export default function StockDetails({ symbol, onBack }) {
         setError(null);
 
         const [pricesRes, overviewRes, predictionRes] = await Promise.all([
-          fetch(`${AI_BASE_URL}/prices?symbol=${encodeURIComponent(symbol)}`),
+          fetch(
+            `${AI_BASE_URL}/prices?symbol=${encodeURIComponent(
+              symbol
+            )}&period=${encodeURIComponent(timeframe)}&interval=${encodeURIComponent(
+              intervalMap[timeframe]
+            )}`
+          ),
           fetch(`${AI_BASE_URL}/overview?symbols=${encodeURIComponent(symbol)}`),
-          fetch(`${AI_BASE_URL}/predict_compare?symbols=${encodeURIComponent(symbol)}`),
+          fetch(
+            `${AI_BASE_URL}/predict_compare?symbols=${encodeURIComponent(symbol)}`
+          ),
         ]);
 
         if (!pricesRes.ok) {
@@ -101,7 +118,7 @@ export default function StockDetails({ symbol, onBack }) {
     };
 
     fetchDetails();
-  }, [symbol, AI_BASE_URL]);
+  }, [symbol, timeframe, AI_BASE_URL]);
 
   const closes = prices?.closes || [];
 
@@ -122,7 +139,11 @@ export default function StockDetails({ symbol, onBack }) {
       : null;
 
   const renderPredictionBox = (label, obj, meta = null) => {
-    if (!obj || typeof obj.predicted_next_day_return !== "number" || !obj.direction) {
+    if (
+      !obj ||
+      typeof obj.predicted_next_day_return !== "number" ||
+      !obj.direction
+    ) {
       return (
         <div className="pred-item">
           <div className="pred-name">{label}</div>
@@ -191,7 +212,7 @@ export default function StockDetails({ symbol, onBack }) {
       )}
 
       {loading && (
-        <div className="stock-details-card">Loading chart data...</div>
+        <div className="stock-details-card">Loading stock details...</div>
       )}
 
       {error && (
@@ -204,7 +225,7 @@ export default function StockDetails({ symbol, onBack }) {
         <>
           <div className="stock-details-card">
             <h3>{symbol}</h3>
-            <p className="stock-subtitle">1 Month Historical Summary</p>
+            <p className="stock-subtitle">Historical Summary</p>
 
             <div className="stock-summary-top">
               <div className="stock-price-block">
@@ -213,7 +234,11 @@ export default function StockDetails({ symbol, onBack }) {
                 </div>
 
                 {priceDiff != null && percentChange != null && (
-                  <div className={`stock-change ${priceDiff >= 0 ? "pos" : "neg"}`}>
+                  <div
+                    className={`stock-change ${
+                      priceDiff >= 0 ? "pos" : "neg"
+                    }`}
+                  >
                     {priceDiff >= 0 ? "+" : ""}
                     {priceDiff.toFixed(2)} ({priceDiff >= 0 ? "+" : ""}
                     {percentChange.toFixed(2)}%)
@@ -224,7 +249,40 @@ export default function StockDetails({ symbol, onBack }) {
           </div>
 
           <div className="stock-details-card">
-            <h3>1 Month Price Trend</h3>
+            <div className="stock-chart-header">
+              <h3>Price Trend</h3>
+
+              <div className="stock-timeframe-tabs">
+                <button
+                  className={timeframe === "1mo" ? "tf-btn active" : "tf-btn"}
+                  onClick={() => setTimeframe("1mo")}
+                >
+                  1M
+                </button>
+
+                <button
+                  className={timeframe === "3mo" ? "tf-btn active" : "tf-btn"}
+                  onClick={() => setTimeframe("3mo")}
+                >
+                  3M
+                </button>
+
+                <button
+                  className={timeframe === "6mo" ? "tf-btn active" : "tf-btn"}
+                  onClick={() => setTimeframe("6mo")}
+                >
+                  6M
+                </button>
+
+                <button
+                  className={timeframe === "1y" ? "tf-btn active" : "tf-btn"}
+                  onClick={() => setTimeframe("1y")}
+                >
+                  1Y
+                </button>
+              </div>
+            </div>
+
             <SimpleLineChart data={closes} />
 
             <div className="stock-chart-dates">
@@ -270,7 +328,8 @@ export default function StockDetails({ symbol, onBack }) {
 
             {overview?.anomaly?.flag && (
               <div className="stock-anomaly-box">
-                <b>Anomaly:</b> {overview.anomaly.label} — {overview.anomaly.reason}
+                <b>Anomaly:</b> {overview.anomaly.label} —{" "}
+                {overview.anomaly.reason}
               </div>
             )}
           </div>
