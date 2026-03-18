@@ -49,7 +49,6 @@ export default function StockDetails({ symbol, onBack }) {
   const [prediction, setPrediction] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
   const [timeframe, setTimeframe] = useState("1mo");
 
   const AI_BASE_URL =
@@ -84,22 +83,12 @@ export default function StockDetails({ symbol, onBack }) {
             )}`
           ),
           fetch(`${AI_BASE_URL}/overview?symbols=${encodeURIComponent(symbol)}`),
-          fetch(
-            `${AI_BASE_URL}/predict_compare?symbols=${encodeURIComponent(symbol)}`
-          ),
+          fetch(`${AI_BASE_URL}/predict_compare?symbols=${encodeURIComponent(symbol)}`),
         ]);
 
-        if (!pricesRes.ok) {
-          throw new Error(`Prices HTTP ${pricesRes.status}`);
-        }
-
-        if (!overviewRes.ok) {
-          throw new Error(`Overview HTTP ${overviewRes.status}`);
-        }
-
-        if (!predictionRes.ok) {
-          throw new Error(`Prediction HTTP ${predictionRes.status}`);
-        }
+        if (!pricesRes.ok) throw new Error(`Prices HTTP ${pricesRes.status}`);
+        if (!overviewRes.ok) throw new Error(`Overview HTTP ${overviewRes.status}`);
+        if (!predictionRes.ok) throw new Error(`Prediction HTTP ${predictionRes.status}`);
 
         const pricesData = await pricesRes.json();
         const overviewData = await overviewRes.json();
@@ -123,16 +112,11 @@ export default function StockDetails({ symbol, onBack }) {
 
   const closes = prices?.closes || [];
 
-  const latestClose =
-    closes.length > 0 ? closes[closes.length - 1] : null;
-
-  const firstClose =
-    closes.length > 0 ? closes[0] : null;
+  const latestClose = closes.length > 0 ? closes[closes.length - 1] : null;
+  const firstClose = closes.length > 0 ? closes[0] : null;
 
   const priceDiff =
-    latestClose != null && firstClose != null
-      ? latestClose - firstClose
-      : null;
+    latestClose != null && firstClose != null ? latestClose - firstClose : null;
 
   const percentChange =
     latestClose != null && firstClose != null && firstClose !== 0
@@ -146,9 +130,9 @@ export default function StockDetails({ symbol, onBack }) {
       !obj.direction
     ) {
       return (
-        <div className="pred-item">
-          <div className="pred-name">{label}</div>
-          <div className="pred-na">N/A</div>
+        <div className="stock-pred-item">
+          <div className="stock-pred-name">{label}</div>
+          <div className="stock-pred-na">N/A</div>
         </div>
       );
     }
@@ -158,38 +142,38 @@ export default function StockDetails({ symbol, onBack }) {
 
     const cls =
       obj.direction === "UP"
-        ? "pred-up"
+        ? "stock-pred-up"
         : obj.direction === "DOWN"
-        ? "pred-down"
-        : "pred-flat";
+        ? "stock-pred-down"
+        : "stock-pred-flat";
 
     return (
-      <div className="pred-item">
-        <div className="pred-name">{label}</div>
-        <div className={`pred-value ${cls}`}>{obj.direction}</div>
-        <div className={`pred-pct ${cls}`}>({sign}{pct}%)</div>
+      <div className="stock-pred-item">
+        <div className="stock-pred-name">{label}</div>
+        <div className={`stock-pred-value ${cls}`}>{obj.direction}</div>
+        <div className={`stock-pred-pct ${cls}`}>({sign}{pct}%)</div>
 
-        {meta && <div className="pred-meta">{meta}</div>}
+        {meta && <div className="stock-pred-meta">{meta}</div>}
 
         {label === "Tuned" && obj.confidence && (
-          <div className="pred-confidence">
+          <div className="stock-pred-confidence">
             <span
               className={
                 obj.confidence.label === "HIGH"
-                  ? "conf-high"
+                  ? "stock-conf-high"
                   : obj.confidence.label === "MEDIUM"
-                  ? "conf-med"
-                  : "conf-low"
+                  ? "stock-conf-med"
+                  : "stock-conf-low"
               }
             >
               Confidence: {obj.confidence.label}
             </span>
-            <span className="conf-pill">{obj.confidence.percent}%</span>
+            <span className="stock-conf-pill">{obj.confidence.percent}%</span>
           </div>
         )}
 
         {label === "Tuned" && obj.explanation && (
-          <div className="pred-explanation">{obj.explanation}</div>
+          <div className="stock-pred-explanation">{obj.explanation}</div>
         )}
       </div>
     );
@@ -208,9 +192,7 @@ export default function StockDetails({ symbol, onBack }) {
         </p>
       </div>
 
-      {!symbol && (
-        <div className="stock-details-card">No symbol selected.</div>
-      )}
+      {!symbol && <div className="stock-details-card">No symbol selected.</div>}
 
       {loading && (
         <div className="stock-details-card">Loading stock details...</div>
@@ -235,11 +217,7 @@ export default function StockDetails({ symbol, onBack }) {
                 </div>
 
                 {priceDiff != null && percentChange != null && (
-                  <div
-                    className={`stock-change ${
-                      priceDiff >= 0 ? "pos" : "neg"
-                    }`}
-                  >
+                  <div className={`stock-change ${priceDiff >= 0 ? "pos" : "neg"}`}>
                     {priceDiff >= 0 ? "+" : ""}
                     {priceDiff.toFixed(2)} ({priceDiff >= 0 ? "+" : ""}
                     {percentChange.toFixed(2)}%)
@@ -260,21 +238,18 @@ export default function StockDetails({ symbol, onBack }) {
                 >
                   1M
                 </button>
-
                 <button
                   className={timeframe === "3mo" ? "tf-btn active" : "tf-btn"}
                   onClick={() => setTimeframe("3mo")}
                 >
                   3M
                 </button>
-
                 <button
                   className={timeframe === "6mo" ? "tf-btn active" : "tf-btn"}
                   onClick={() => setTimeframe("6mo")}
                 >
                   6M
                 </button>
-
                 <button
                   className={timeframe === "1y" ? "tf-btn active" : "tf-btn"}
                   onClick={() => setTimeframe("1y")}
@@ -300,27 +275,22 @@ export default function StockDetails({ symbol, onBack }) {
                 <span>Trend</span>
                 <b>{overview?.trend || "N/A"}</b>
               </div>
-
               <div className="stock-stat">
                 <span>Risk</span>
                 <b>{overview?.risk || "N/A"}</b>
               </div>
-
               <div className="stock-stat">
                 <span>Risk Score</span>
                 <b>{overview?.risk_score ?? "N/A"}</b>
               </div>
-
               <div className="stock-stat">
                 <span>Volatility</span>
                 <b>{overview?.volatility ?? "N/A"}</b>
               </div>
-
               <div className="stock-stat">
                 <span>Short Avg</span>
                 <b>{overview?.short_avg ?? "N/A"}</b>
               </div>
-
               <div className="stock-stat">
                 <span>Long Avg</span>
                 <b>{overview?.long_avg ?? "N/A"}</b>
@@ -329,8 +299,7 @@ export default function StockDetails({ symbol, onBack }) {
 
             {overview?.anomaly?.flag && (
               <div className="stock-anomaly-box">
-                <b>Anomaly:</b> {overview.anomaly.label} —{" "}
-                {overview.anomaly.reason}
+                <b>Anomaly:</b> {overview.anomaly.label} — {overview.anomaly.reason}
               </div>
             )}
           </div>
@@ -338,7 +307,7 @@ export default function StockDetails({ symbol, onBack }) {
           <div className="stock-details-card">
             <h3>Prediction Models</h3>
 
-            <div className="pred-grid">
+            <div className="stock-pred-grid">
               {renderPredictionBox("Linear", prediction?.linear)}
               {renderPredictionBox("Ridge", prediction?.ridge_fixed)}
               {renderPredictionBox(

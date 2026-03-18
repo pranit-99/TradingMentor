@@ -519,14 +519,14 @@
   line-height: 1.5;
 }
 
-.pred-grid {
+.stock-pred-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(220px, 1fr));
   gap: 14px;
   margin-top: 8px;
 }
 
-.pred-item {
+.stock-pred-item {
   background: rgba(255, 255, 255, 0.035);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 14px;
@@ -535,7 +535,7 @@
   box-sizing: border-box;
 }
 
-.pred-name {
+.stock-pred-name {
   color: #97a3c8;
   margin-bottom: 10px;
   font-size: 13px;
@@ -543,41 +543,41 @@
   text-transform: uppercase;
 }
 
-.pred-value {
+.stock-pred-value {
   font-size: 22px;
   font-weight: 800;
 }
 
-.pred-pct {
+.stock-pred-pct {
   margin-top: 6px;
   font-size: 15px;
   font-weight: 700;
 }
 
-.pred-up {
+.stock-pred-up {
   color: #22c55e;
 }
 
-.pred-down {
+.stock-pred-down {
   color: #ef4444;
 }
 
-.pred-flat {
+.stock-pred-flat {
   color: #facc15;
 }
 
-.pred-na {
+.stock-pred-na {
   color: #9aa4c7;
 }
 
-.pred-meta {
+.stock-pred-meta {
   margin-top: 10px;
   color: #bcc6df;
   font-size: 13px;
   line-height: 1.4;
 }
 
-.pred-confidence {
+.stock-pred-confidence {
   margin-top: 12px;
   display: flex;
   justify-content: space-between;
@@ -586,22 +586,22 @@
   flex-wrap: wrap;
 }
 
-.conf-high {
+.stock-conf-high {
   color: #22c55e;
   font-weight: 700;
 }
 
-.conf-med {
+.stock-conf-med {
   color: #facc15;
   font-weight: 700;
 }
 
-.conf-low {
+.stock-conf-low {
   color: #ef4444;
   font-weight: 700;
 }
 
-.conf-pill {
+.stock-conf-pill {
   background: rgba(255, 255, 255, 0.08);
   border-radius: 999px;
   padding: 5px 10px;
@@ -610,7 +610,7 @@
   font-weight: 700;
 }
 
-.pred-explanation {
+.stock-pred-explanation {
   margin-top: 12px;
   color: #c7d0ea;
   font-size: 13px;
@@ -622,7 +622,7 @@
     grid-template-columns: repeat(2, minmax(180px, 1fr));
   }
 
-  .pred-grid {
+  .stock-pred-grid {
     grid-template-columns: 1fr;
   }
 }
