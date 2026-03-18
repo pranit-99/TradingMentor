@@ -225,45 +225,59 @@ export default function StockDetails({ symbol, onBack }) {
 
       {!loading && !error && prices && (
         <>
-          <div className="stock-details-card">
-            <div className="stock-chart-header">
-              <h3>Price Trend</h3>
+           <div className="stock-details-card stock-chart-card">
+  <div className="stock-chart-header">
+    <div className="stock-chart-heading-block">
+      <h3>{symbol} Price Trend</h3>
+      <p className="stock-chart-subtitle">
+        Historical closing-price movement for the selected timeframe
+      </p>
+    </div>
 
-              <div className="stock-timeframe-tabs">
-                <button
-                  className={timeframe === "1mo" ? "tf-btn active" : "tf-btn"}
-                  onClick={() => setTimeframe("1mo")}
-                >
-                  1M
-                </button>
-                <button
-                  className={timeframe === "3mo" ? "tf-btn active" : "tf-btn"}
-                  onClick={() => setTimeframe("3mo")}
-                >
-                  3M
-                </button>
-                <button
-                  className={timeframe === "6mo" ? "tf-btn active" : "tf-btn"}
-                  onClick={() => setTimeframe("6mo")}
-                >
-                  6M
-                </button>
-                <button
-                  className={timeframe === "1y" ? "tf-btn active" : "tf-btn"}
-                  onClick={() => setTimeframe("1y")}
-                >
-                  1Y
-                </button>
-              </div>
-            </div>
+    <div className="stock-timeframe-tabs">
+      <button
+        className={timeframe === "1mo" ? "tf-btn active" : "tf-btn"}
+        onClick={() => setTimeframe("1mo")}
+      >
+        1M
+      </button>
+      <button
+        className={timeframe === "3mo" ? "tf-btn active" : "tf-btn"}
+        onClick={() => setTimeframe("3mo")}
+      >
+        3M
+      </button>
+      <button
+        className={timeframe === "6mo" ? "tf-btn active" : "tf-btn"}
+        onClick={() => setTimeframe("6mo")}
+      >
+        6M
+      </button>
+      <button
+        className={timeframe === "1y" ? "tf-btn active" : "tf-btn"}
+        onClick={() => setTimeframe("1y")}
+      >
+        1Y
+      </button>
+    </div>
+  </div>
 
-            <SimpleLineChart data={closes} />
+  <div className="stock-chart-panel">
+    <SimpleLineChart data={closes} />
+  </div>
 
-            <div className="stock-chart-dates">
-              <span>{prices?.dates?.[0] || "—"}</span>
-              <span>{prices?.dates?.[prices?.dates?.length - 1] || "—"}</span>
-            </div>
-          </div>
+  <div className="stock-chart-footer">
+    <div className="stock-chart-date-block">
+      <span className="stock-chart-label">Start</span>
+      <span>{prices?.dates?.[0] || "—"}</span>
+    </div>
+
+    <div className="stock-chart-date-block stock-chart-date-block-right">
+      <span className="stock-chart-label">Latest</span>
+      <span>{prices?.dates?.[prices?.dates?.length - 1] || "—"}</span>
+    </div>
+  </div>
+</div>
 
           <div className="stock-details-card">
             <h3>Analytics</h3>
