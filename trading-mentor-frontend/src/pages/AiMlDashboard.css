@@ -1,24 +1,22 @@
 /* ===== MAIN WRAPPER ===== */
 .aiml-wrap {
-  padding: 20px;
-  color: #f5f7ff;
-  position: relative;
-  min-height: 70vh;
+  max-width: 1300px;   /* 👈 THIS restores centered layout */
+  margin: 0 auto;      /* 👈 center it */
+  width: 100%;
 }
-
 /* ===== GRID ===== */
 .aiml-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
+  gap: 18px;
 }
 
 /* ===== RESPONSIVE GRID ===== */
-@media (max-width: 900px) {
+/*@media (max-width: 900px) {
   .aiml-grid {
     grid-template-columns: 1fr 1fr;
   }
-}
+}*/
 
 @media (max-width: 650px) {
   .aiml-grid {
@@ -161,7 +159,7 @@
   display: grid;
   place-items: center;
   font-size: 26px;
-  z-index: 3000;
+  z-index: 999;
   box-shadow: 0 0 20px rgba(0,255,160,0.4);
 }
 
