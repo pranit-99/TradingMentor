@@ -1,14 +1,11 @@
-
-  .stock-details-page {
-    padding: 24px;
-    max-width: 1100px;   /* 👈 IMPORTANT */
-    margin: 0 auto;      /* 👈 center align */
-    width: 100%;
-  }
-
-.stock-chart-wrap {
-  max-width: 100%;
-  height: 300px;
+.stock-details-page {
+  padding: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+  min-height: 100%;
+  color: #f5f7ff;
+  box-sizing: border-box;
 }
 
 .stock-back-btn {
@@ -21,6 +18,7 @@
   margin-bottom: 20px;
   font-size: 15px;
   font-weight: 600;
+  transition: background 0.2s ease;
 }
 
 .stock-back-btn:hover {
@@ -35,6 +33,7 @@
   margin: 0 0 8px;
   font-size: 30px;
   font-weight: 700;
+  color: #ffffff;
 }
 
 .stock-details-header p {
@@ -43,12 +42,25 @@
   font-size: 16px;
 }
 
-
+.stock-details-card {
+  width: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(17, 24, 52, 0.96),
+    rgba(9, 13, 34, 0.96)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 20px;
+  padding: 22px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+}
 
 .stock-details-card h3 {
   margin: 0;
   font-size: 20px;
   font-weight: 700;
+  color: #ffffff;
 }
 
 .stock-subtitle {
@@ -114,6 +126,7 @@
   cursor: pointer;
   font-size: 13px;
   font-weight: 600;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .tf-btn:hover {
@@ -164,6 +177,7 @@
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 16px;
   padding: 16px;
+  box-sizing: border-box;
 }
 
 .stock-stat span {
