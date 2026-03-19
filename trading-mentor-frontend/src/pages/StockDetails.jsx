@@ -10,15 +10,23 @@ function SimpleLineChart({ data = [], width = 900, height = 280 }) {
   const max = Math.max(...data);
   const range = max - min || 1;
 
-  const points = data
-    .map((value, index) => {
-      const x = (index / Math.max(data.length - 1, 1)) * width;
-      const y = height - ((value - min) / range) * height;
-      return `${x},${y}`;
-    })
-    .join(" ");
+  const pointsArray = data.map((value, index) => {
+    const x = (index / Math.max(data.length - 1, 1)) * width;
+    const y = height - ((value - min) / range) * height;
+    return { x, y };
+  });
+
+  const points = pointsArray.map(p => `${p.x},${p.y}`).join(" ");
+
+  const lastPoint = pointsArray[pointsArray.length - 1];
 
   const isPositive = data[data.length - 1] >= data[0];
+
+  // create 4 horizontal grid lines
+  const gridLines = Array.from({ length: 4 }).map((_, i) => {
+    const y = (height / 5) * (i + 1);
+    return y;
+  });
 
   return (
     <div className="stock-chart-wrap">
@@ -27,12 +35,45 @@ function SimpleLineChart({ data = [], width = 900, height = 280 }) {
         className="stock-chart-svg"
         preserveAspectRatio="none"
       >
+        {/* GRID LINES */}
+        {gridLines.map((y, idx) => (
+          <line
+            key={idx}
+            x1="0"
+            x2={width}
+            y1={y}
+            y2={y}
+            className="chart-grid-line"
+          />
+        ))}
+
+        {/* MAIN LINE */}
         <polyline
           fill="none"
           stroke={isPositive ? "#22c55e" : "#ef4444"}
           strokeWidth="3"
           points={points}
         />
+
+        {/* GLOW DOT */}
+        {lastPoint && (
+          <>
+            {/* outer glow */}
+            <circle
+              cx={lastPoint.x}
+              cy={lastPoint.y}
+              r="8"
+              fill={isPositive ? "rgba(34,197,94,0.25)" : "rgba(239,68,68,0.25)"}
+            />
+            {/* inner solid dot */}
+            <circle
+              cx={lastPoint.x}
+              cy={lastPoint.y}
+              r="4"
+              fill={isPositive ? "#22c55e" : "#ef4444"}
+            />
+          </>
+        )}
       </svg>
 
       <div className="stock-chart-scale">

@@ -418,6 +418,18 @@
   flex-wrap: wrap;
 }
 
+/* GRID LINES */
+.chart-grid-line {
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+/* GLOW EFFECT */
+.chart-dot-glow {
+  fill: rgba(34, 197, 94, 0.25); /* green glow default */
+}
+
 .stock-conf-high {
   color: #22c55e;
   font-weight: 700;
