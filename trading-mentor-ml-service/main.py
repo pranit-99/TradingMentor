@@ -77,27 +77,44 @@ KNOWLEDGE_BASE = load_knowledge_base()
 
 #-A Helper function to find matching knowledge if user asks any Question the function checks whether any topic name
 #Exists in the message
-def find_knowledge_topic(text: str):
-    text = text.lower().strip()
-
-    for topic in KNOWLEDGE_BASE.keys():
-        if topic in text:
-            return topic
-
-    return None
-# A helper function to build Answers So for "volatility", the bot returns the definition stored in JSON
-def get_knowledge_defination_response(text: str):
+def get_knowledge_response(text: str):
     topic = find_knowledge_topic(text)
     if not topic:
         return None
 
     topic_data = KNOWLEDGE_BASE.get(topic, {})
-    definition = topic_data.get("definition")
-
-    if not definition:
+    if not topic_data:
         return None
 
-    return definition
+    section = detect_knowledge_section(text)
+    answer = topic_data.get(section)
+
+    if answer:
+        return answer
+
+    # fallback to definition if requested section is empty
+    definition = topic_data.get("definition")
+    if definition:
+        return definition
+
+    return None
+
+#Add a helper to detect which section the user wants
+def detect_knowledge_section(text: str) -> str:
+    text = text.lower()
+
+    if "formula" in text or "calculate" in text or "calculation" in text or "computed" in text:
+        return "formula"
+
+    if "example" in text or "sample" in text:
+        return "example"
+
+    if "importance" in text or "important" in text or "why does it matter" in text or "why is it important" in text:
+        return "importance"
+
+    return defination
+
+    
 #-------------------Knowledge Based Chatbotresponse Ends------------------------------
 
 
@@ -577,7 +594,7 @@ def get_basic_chat_response(message: str) -> str:
     if symbol_reply:
         return symbol_reply
 
-    knowledge_reply = get_knowledge_defination_response(text)
+    knowledge_reply = get_knowledge_response(text)
     if knowledge_reply:
         return knowledge_reply
 
