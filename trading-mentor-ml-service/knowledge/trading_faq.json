@@ -65,7 +65,6 @@
     "example": "A sudden unexpected spike or drop in price may be treated as an anomaly.",
     "importance": "Anomalies help identify unusual events that may need closer attention."
   },
-  ,
   "moving average": {
     "definition": "A moving average is a technical indicator that smooths price data over a period of time to help identify market direction.",
     "formula": "A simple moving average is calculated by adding closing prices over a chosen period and dividing by the number of periods.",
