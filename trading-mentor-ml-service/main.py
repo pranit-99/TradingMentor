@@ -115,15 +115,17 @@ def get_knowledge_response(text: str):
     section = detect_knowledge_section(text)
     answer = topic_data.get(section)
 
-    if answer:
-        return answer
+    if not answer:
+        section = "definition"
+        answer = topic_data.get(section)
 
-    # fallback to definition if requested section is empty
-    definition = topic_data.get("definition")
-    if definition:
-        return definition
+    if not answer:
+        return None
 
-    return None
+    pretty_section = section.capitalize()
+    pretty_topic = topic.title()
+
+    return f"{pretty_topic} — {pretty_section}: {answer}"
 
 #Add a helper to detect which section the user wants
 def detect_knowledge_section(text: str) -> str:
