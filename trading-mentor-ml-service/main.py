@@ -50,6 +50,20 @@ def health():
 #-------------------Knowledge Based Chatbotresponse Begin------------------------------
 KNOWLEDGE_FILE = Path(__file__).parent / "knowledge" / "trading_faq.json"
 
+TOPIC_ALIASES = {
+    "equity": ["equity", "ownership"],
+    "stock": ["stock", "share", "shares"],
+    "trading": ["trading", "buying and selling"],
+    "volatility": ["volatility", "price movement", "price swings", "price fluctuation"],
+    "risk": ["risk", "risky", "uncertainty"],
+    "investment": ["investment", "investing"],
+    "trend": ["trend", "direction", "market direction"],
+    "risk score": ["risk score", "risk rating"],
+    "prediction": ["prediction", "predict", "forecast", "model output"],
+    "confidence": ["confidence", "trust level", "reliability"],
+    "anomaly": ["anomaly", "unusual behavior", "unusual activity", "abnormal signal"]
+}
+
 def load_knowledge_base():
     try:
         if not KNOWLEDGE_FILE.exists():
@@ -80,9 +94,12 @@ KNOWLEDGE_BASE = load_knowledge_base()
 def find_knowledge_topic(text: str):
     text = text.lower().strip()
 
-    for topic in KNOWLEDGE_BASE.keys():
-        if topic in text:
-            return topic
+    for topic, aliases in TOPIC_ALIASES.items():
+        for alias in aliases:
+            if alias in text:
+                return topic
+
+    return None
 
     return None
 # A helper function to build Answers So for "volatility", the bot returns the definition stored in JSON
