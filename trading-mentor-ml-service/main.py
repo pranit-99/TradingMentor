@@ -77,6 +77,15 @@ KNOWLEDGE_BASE = load_knowledge_base()
 
 #-A Helper function to find matching knowledge if user asks any Question the function checks whether any topic name
 #Exists in the message
+def find_knowledge_topic(text: str):
+    text = text.lower().strip()
+
+    for topic in KNOWLEDGE_BASE.keys():
+        if topic in text:
+            return topic
+
+    return None
+# A helper function to build Answers So for "volatility", the bot returns the definition stored in JSON
 def get_knowledge_response(text: str):
     topic = find_knowledge_topic(text)
     if not topic:
@@ -112,8 +121,7 @@ def detect_knowledge_section(text: str) -> str:
     if "importance" in text or "important" in text or "why does it matter" in text or "why is it important" in text:
         return "importance"
 
-    return defination
-
+    return "definition"
     
 #-------------------Knowledge Based Chatbotresponse Ends------------------------------
 
