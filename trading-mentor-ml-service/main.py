@@ -229,6 +229,49 @@ def detect_knowledge_section(text: str) -> str:
         return "importance"
 
     return "definition"
+
+#Add helper function to find all matching knowledge topics
+def find_all_knowledge_topics(text: str):
+    text = text.lower().strip()
+    matched_topics = []
+
+    for topic, aliases in TOPIC_ALIASES.items():
+        for alias in aliases:
+            if alias in text:
+                matched_topics.append(topic)
+                break
+
+    return matched_topics
+
+#add helper to answer multiple topics
+def get_multi_topic_knowledge_response(text: str):
+    topics = find_all_knowledge_topics(text)
+
+    if not topics:
+        return None
+
+    if len(topics) == 1:
+        return None
+
+    section = detect_knowledge_section(text)
+    responses = []
+
+    for topic in topics[:2]:
+        topic_data = KNOWLEDGE_BASE.get(topic, {})
+        if not topic_data:
+            continue
+
+        answer = topic_data.get(section)
+        if not answer:
+            answer = topic_data.get("definition")
+
+        if answer:
+            responses.append(f"{topic.title()} — {section.capitalize()}: {answer}")
+
+    if responses:
+        return " ".join(responses)
+
+    return None
     
 #-------------------Knowledge Based Chatbotresponse Ends------------------------------
 
@@ -708,6 +751,10 @@ def get_basic_chat_response(message: str) -> str:
     symbol_reply = handle_symbol_queries(text)
     if symbol_reply:
         return symbol_reply
+
+    multi_knowledge_reply = get_multi_topic_knowledge_response(text)
+    if multi_knowledge_reply:
+        return multi_knowledge_reply
 
     knowledge_reply = get_knowledge_response(text)
     if knowledge_reply:
