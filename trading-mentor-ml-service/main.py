@@ -109,6 +109,19 @@ def is_explain_style_question(text: str) -> bool:
         "tell me about" in text or
         "help me understand" in text
     )
+
+#Add a helper to detect calculation-style prompts
+def is_calculation_style_question(text: str) -> bool:
+    text = text.lower()
+    return (
+        "calculate" in text or
+        "calculation" in text or
+        "formula" in text or
+        "computed" in text or
+        "compute" in text or
+        "how is" in text
+    )
+
 # A helper function to build Answers So for "volatility", the bot returns the definition stored in JSON
 def get_knowledge_response(text: str):
     topic = find_knowledge_topic(text)
@@ -127,6 +140,19 @@ def get_knowledge_response(text: str):
             return f"{topic.title()} — Explanation: {definition} Example: {example}"
         if definition:
             return f"{topic.title()} — Explanation: {definition}"
+        return None
+
+    if is_calculation_style_question(text):
+        formula = topic_data.get("formula")
+        example = topic_data.get("example")
+        definition = topic_data.get("definition")
+
+        if formula and example:
+            return f"{topic.title()} — Formula: {formula} Example: {example}"
+        if formula:
+            return f"{topic.title()} — Formula: {formula}"
+        if definition:
+            return f"{topic.title()} — Definition: {definition}"
         return None
 
     section = detect_knowledge_section(text)
