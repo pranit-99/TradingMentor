@@ -86,7 +86,7 @@ def find_knowledge_topic(text: str):
 
     return None
 # A helper function to build Answers So for "volatility", the bot returns the definition stored in JSON
-def get_knowledge_definition_response(text: str):
+def get_knowledge_defination_response(text: str):
     topic = find_knowledge_topic(text)
     if not topic:
         return None
