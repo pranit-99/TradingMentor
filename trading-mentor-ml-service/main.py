@@ -62,6 +62,26 @@ TOPIC_ALIASES = {
     "prediction": ["prediction", "predict", "forecast", "model output"],
     "confidence": ["confidence", "trust level", "reliability"],
     "anomaly": ["anomaly", "unusual behavior", "unusual activity", "abnormal signal"]
+    "moving average": ["moving average","average price","average trend","price average"],
+    "regression": ["regression","prediction model","statistical prediction"],
+    "ridge regression": ["ridge regression","ridge model","regularized regression"],
+    "alpha": ["alpha","excess return"],
+    "return": ["return","investment return","profit percentage"],
+    "standard deviation": ["standard deviation","price deviation","return variability"],
+    "sharpe ratio": ["sharpe ratio","risk adjusted return","return per risk"],
+    "rsi": ["rsi","relative strength index","momentum indicator"],
+    "macd": ["macd","moving average convergence divergence","trend momentum indicator"],
+    "beta": ["beta","market sensitivity"],
+    "drawdown": ["drawdown","portfolio decline","investment drop"],
+    "portfolio": ["portfolio","investment portfolio","collection of investments"],
+    "diversification": ["diversification","spread investments","investment spreading"],
+    "correlation": ["correlation","asset relationship","price relationship"],
+    "overfitting": ["overfitting","model overtraining","training noise problem"],
+    "feature engineering": ["feature engineering","feature creation","data feature preparation"],
+    "model training": ["model training","training model","machine learning training"],
+    "backtesting": ["backtesting","strategy testing","historical strategy testing"],
+    "anomaly detection": ["anomaly detection","unusual pattern detection","abnormal pattern detection"],
+    "momentum": ["momentum","price momentum","trend strength"]
 }
 
 def load_knowledge_base():

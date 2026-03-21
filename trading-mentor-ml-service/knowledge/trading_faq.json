@@ -64,5 +64,126 @@
     "formula": "",
     "example": "A sudden unexpected spike or drop in price may be treated as an anomaly.",
     "importance": "Anomalies help identify unusual events that may need closer attention."
+  },
+  ,
+  "moving average": {
+    "definition": "A moving average is a technical indicator that smooths price data over a period of time to help identify market direction.",
+    "formula": "A simple moving average is calculated by adding closing prices over a chosen period and dividing by the number of periods.",
+    "example": "A 5-day moving average adds the last 5 closing prices and divides the total by 5.",
+    "importance": "Moving averages help traders identify trends and reduce noise in daily price fluctuations."
+  },
+  "regression": {
+    "definition": "Regression is a statistical method used to estimate the relationship between variables and make predictions.",
+    "formula": "In simple linear regression, the relationship is often written as y = mx + b.",
+    "example": "A model may use past returns and volatility to predict the next day return of a stock.",
+    "importance": "Regression is important because it helps build predictive models in finance and machine learning."
+  },
+  "ridge regression": {
+    "definition": "Ridge regression is a variation of linear regression that adds regularization to reduce overfitting.",
+    "formula": "Ridge regression minimizes prediction error while also penalizing large coefficient values using an alpha term.",
+    "example": "If a model becomes too sensitive to historical noise, ridge regression helps stabilize the predictions.",
+    "importance": "Ridge regression is important because it improves model generalization and reduces overfitting."
+  },
+  "alpha": {
+    "definition": "Alpha can refer to excess return over a benchmark or, in ridge regression, the regularization strength used in the model.",
+    "formula": "In investing, alpha is often measured as portfolio return minus benchmark return after adjusting for risk. In ridge regression, alpha controls the penalty strength.",
+    "example": "A portfolio that outperforms the market benchmark may be said to have positive alpha.",
+    "importance": "Alpha is important because it helps evaluate investment performance and also affects model stability in ridge regression."
+  },
+  "return": {
+    "definition": "Return is the gain or loss made on an investment over a period of time.",
+    "formula": "Return is often calculated as (ending price - starting price) divided by starting price.",
+    "example": "If a stock rises from $100 to $110, the return is 10 percent.",
+    "importance": "Return is one of the most basic measures of investment performance."
+  },
+  "standard deviation": {
+    "definition": "Standard deviation measures how spread out values are from their average and is commonly used as a measure of volatility.",
+    "formula": "It is calculated as the square root of the variance of the values.",
+    "example": "If stock returns vary widely from day to day, the standard deviation will be higher.",
+    "importance": "Standard deviation is important because it helps quantify market variability and risk."
+  },
+  "sharpe ratio": {
+    "definition": "Sharpe ratio measures risk-adjusted return by comparing excess return to volatility.",
+    "formula": "Sharpe ratio = (portfolio return - risk-free rate) / standard deviation of returns.",
+    "example": "Two portfolios may have the same return, but the one with lower volatility will usually have a better Sharpe ratio.",
+    "importance": "Sharpe ratio is important because it helps compare investment performance relative to risk."
+  },
+  "rsi": {
+    "definition": "RSI, or Relative Strength Index, is a momentum indicator that measures the speed and magnitude of recent price movements.",
+    "formula": "RSI is commonly calculated using average gains and losses over a period, often 14 days.",
+    "example": "An RSI above 70 is often considered overbought, while below 30 is often considered oversold.",
+    "importance": "RSI is important because it helps traders identify momentum and possible reversal points."
+  },
+  "macd": {
+    "definition": "MACD, or Moving Average Convergence Divergence, is a trend-following momentum indicator based on moving averages.",
+    "formula": "MACD is commonly calculated as the difference between a short-term EMA and a long-term EMA.",
+    "example": "If the MACD line crosses above the signal line, some traders interpret it as bullish momentum.",
+    "importance": "MACD is important because it helps identify trend direction and momentum changes."
+  },
+  "beta": {
+    "definition": "Beta measures how much a stock or portfolio tends to move relative to the overall market.",
+    "formula": "Beta is often estimated by comparing the covariance of asset returns with market returns to the variance of market returns.",
+    "example": "A beta of 1.2 suggests the asset tends to move 20 percent more than the market on average.",
+    "importance": "Beta is important because it helps measure market-related risk."
+  },
+  "drawdown": {
+    "definition": "Drawdown measures the decline from a peak value to a lower point before recovery.",
+    "formula": "Drawdown is often calculated as (peak value - lowest value) divided by peak value.",
+    "example": "If a portfolio falls from $100,000 to $80,000, the drawdown is 20 percent.",
+    "importance": "Drawdown is important because it helps investors understand downside risk."
+  },
+  "portfolio": {
+    "definition": "A portfolio is a collection of investments held by an individual or institution.",
+    "formula": "",
+    "example": "A portfolio may contain stocks, bonds, ETFs, and cash.",
+    "importance": "Portfolio management is important because combining assets helps manage risk and return."
+  },
+  "diversification": {
+    "definition": "Diversification means spreading investments across different assets to reduce risk.",
+    "formula": "",
+    "example": "Instead of investing only in one stock, an investor may spread money across technology, healthcare, and energy companies.",
+    "importance": "Diversification is important because it reduces the impact of one poor-performing asset."
+  },
+  "correlation": {
+    "definition": "Correlation measures how strongly two assets move in relation to each other.",
+    "formula": "Correlation values usually range from -1 to 1.",
+    "example": "If two stocks often move in the same direction, they have positive correlation.",
+    "importance": "Correlation is important because it helps with diversification and portfolio construction."
+  },
+  "overfitting": {
+    "definition": "Overfitting happens when a model learns the training data too closely, including noise, and performs poorly on new data.",
+    "formula": "",
+    "example": "A model may appear very accurate on historical data but fail when tested on unseen market data.",
+    "importance": "Overfitting is important because it makes predictions unreliable in real-world trading."
+  },
+  "feature engineering": {
+    "definition": "Feature engineering is the process of creating useful input variables from raw data for machine learning models.",
+    "formula": "",
+    "example": "A trading model might create features like moving averages, volatility, momentum, and lag returns from historical prices.",
+    "importance": "Feature engineering is important because better features often lead to better model performance."
+  },
+  "model training": {
+    "definition": "Model training is the process of teaching a machine learning model using historical data so it can learn patterns and make predictions.",
+    "formula": "",
+    "example": "A stock prediction model can be trained on past prices and technical indicators to forecast next-day returns.",
+    "importance": "Model training is important because it is how predictive systems learn from past data."
+  },
+  "backtesting": {
+    "definition": "Backtesting means testing a trading strategy or prediction model on historical data to see how it would have performed.",
+    "formula": "",
+    "example": "A strategy can be backtested on five years of stock data before being used in live trading.",
+    "importance": "Backtesting is important because it helps evaluate whether a strategy might be useful before real deployment."
+  },
+  "anomaly detection": {
+    "definition": "Anomaly detection is the process of identifying unusual patterns in data that do not match normal behavior.",
+    "formula": "",
+    "example": "A sudden abnormal jump in trading behavior may be flagged as an anomaly by the model.",
+    "importance": "Anomaly detection is important because it helps highlight unusual market activity that may need investigation."
+  },
+  "momentum": {
+    "definition": "Momentum refers to the strength and speed of a price movement in a particular direction.",
+    "formula": "",
+    "example": "If a stock has been rising consistently over several periods, it may be said to have positive momentum.",
+    "importance": "Momentum is important because traders use it to judge the strength of trends and possible continuation."
   }
 }
