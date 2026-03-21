@@ -110,6 +110,27 @@ def is_explain_style_question(text: str) -> bool:
         "help me understand" in text
     )
 
+#Add a helper to detect learning-style questions
+def is_learning_style_question(text: str) -> bool:
+    text = text.lower()
+
+    learning_phrases = [
+        "what is",
+        "explain",
+        "tell me about",
+        "help me understand",
+        "how is",
+        "how do we",
+        "formula",
+        "example",
+        "important",
+        "importance",
+        "calculate",
+        "calculation"
+    ]
+
+    return any(phrase in text for phrase in learning_phrases)
+
 #Add a helper to detect calculation-style prompts
 def is_calculation_style_question(text: str) -> bool:
     text = text.lower()
@@ -121,6 +142,10 @@ def is_calculation_style_question(text: str) -> bool:
         "compute" in text or
         "how is" in text
     )
+
+#get_supported_knowledge_topics
+def get_supported_knowledge_topics() -> str:
+    return ", ".join(KNOWLEDGE_BASE.keys())
 
 # A helper function to build Answers So for "volatility", the bot returns the definition stored in JSON
 def get_knowledge_response(text: str):
@@ -676,7 +701,14 @@ def get_basic_chat_response(message: str) -> str:
     if dashboard_reply:
         return dashboard_reply
 
-    return "I am still learning. Please start with a greeting like hi or hello."
+    if is_learning_style_question(text):
+        supported_topics = get_supported_knowledge_topics()
+        return (
+            "I do not have that topic in my knowledge base yet. "
+            f"You can currently ask about: {supported_topics}."
+        )
+
+    return "I am still learning. You can ask about trading concepts, dashboard terms, or stock symbols like AAPL."
 #-------------------Rule Based Chatbot response ends-------------------------
 
 def compute_trend_from_close_prices(close_prices: np.ndarray) -> tuple[str, float, float]:
