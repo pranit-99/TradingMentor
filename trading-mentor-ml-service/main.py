@@ -61,7 +61,7 @@ TOPIC_ALIASES = {
     "risk score": ["risk score", "risk rating"],
     "prediction": ["prediction", "predict", "forecast", "model output"],
     "confidence": ["confidence", "trust level", "reliability"],
-    "anomaly": ["anomaly", "unusual behavior", "unusual activity", "abnormal signal"]
+    "anomaly": ["anomaly", "unusual behavior", "unusual activity", "abnormal signal"],
     "moving average": ["moving average","average price","average trend","price average"],
     "regression": ["regression","prediction model","statistical prediction"],
     "ridge regression": ["ridge regression","ridge model","regularized regression"],
