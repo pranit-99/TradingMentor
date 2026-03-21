@@ -101,7 +101,14 @@ def find_knowledge_topic(text: str):
 
     return None
 
-    return None
+#Add a helper to detect explanation-style prompts
+def is_explain_style_question(text: str) -> bool:
+    text = text.lower()
+    return (
+        "explain" in text or
+        "tell me about" in text or
+        "help me understand" in text
+    )
 # A helper function to build Answers So for "volatility", the bot returns the definition stored in JSON
 def get_knowledge_response(text: str):
     topic = find_knowledge_topic(text)
@@ -110,6 +117,16 @@ def get_knowledge_response(text: str):
 
     topic_data = KNOWLEDGE_BASE.get(topic, {})
     if not topic_data:
+        return None
+
+    if is_explain_style_question(text):
+        definition = topic_data.get("definition")
+        example = topic_data.get("example")
+
+        if definition and example:
+            return f"{topic.title()} — Explanation: {definition} Example: {example}"
+        if definition:
+            return f"{topic.title()} — Explanation: {definition}"
         return None
 
     section = detect_knowledge_section(text)
