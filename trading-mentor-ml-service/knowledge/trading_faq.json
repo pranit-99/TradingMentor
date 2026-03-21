@@ -1,0 +1,68 @@
+{
+  "equity": {
+    "definition": "Equity is the value of ownership in an asset or company, calculated as the total assets minus liabilities. It represents the net worth of a business or the, portion of a home owned outright, and is crucial for determining financial health and investment value. Types include shareholder equity, private equity, and home equity",
+    "formula": "Formula for Equity is Equity = Asset - Liabilities",
+    "example": "If a company has 100 shares and you buy 1 share, you own 1 percent of the company.",
+    "importance": "Equity is important because it represents ownership and potential value growth."
+  },
+  "stock": {
+    "definition": "A stock is a share of ownership in a company. Its value can go up or down based on company performance and market conditions.",
+    "formula": "",
+    "example": "If you buy shares of Apple, you become a shareholder in Apple.",
+    "importance": "Stocks are one of the most common investment instruments used for wealth growth."
+  },
+  "trading": {
+    "definition": "Trading means buying and selling financial assets like stocks to make a profit from price changes.",
+    "formula": "",
+    "example": "If you buy a stock at $100 and sell it at $110, your gain is $10 per share.",
+    "importance": "Trading helps investors and learners understand market movements and profit opportunities."
+  },
+  "volatility": {
+    "definition": "Volatility shows how much a stock price moves up and down. Higher volatility means bigger price swings and usually higher risk.",
+    "formula": "Volatility is commonly estimated using the standard deviation of returns over a period of time.",
+    "example": "If one stock moves between $95 and $105 often while another stays near $100, the first one is more volatile.",
+    "importance": "Volatility is important because it helps measure uncertainty and risk in price movement."
+  },
+  "risk": {
+    "definition": "Risk is the chance of losing money or getting a lower return than expected in an investment.",
+    "formula": "",
+    "example": "A highly unstable stock has more risk than a stable stock with smaller price changes.",
+    "importance": "Understanding risk helps traders and investors make safer and more informed decisions."
+  },
+  "investment": {
+    "definition": "Investment means putting money into an asset like stocks, bonds, or funds with the goal of growing it over time.",
+    "formula": "",
+    "example": "Buying shares and holding them for long-term growth is a common investment strategy.",
+    "importance": "Investment helps build long-term wealth and financial security."
+  },
+  "trend": {
+    "definition": "Trend shows the overall market direction of a stock, such as upward, downward, or neutral movement.",
+    "formula": "",
+    "example": "If a stock keeps moving higher over several periods, it is showing an upward trend.",
+    "importance": "Trend helps users understand direction and momentum in the market."
+  },
+  "risk score": {
+    "definition": "Risk score is a simplified value used to represent how risky a stock currently appears. A higher risk score usually means more uncertainty or price movement.",
+    "formula": "",
+    "example": "A stock with a risk score of 80 is generally considered riskier than one with a score of 20.",
+    "importance": "Risk score makes risk easier to interpret quickly."
+  },
+  "prediction": {
+    "definition": "Prediction is the model’s estimate of how the stock may move next based on historical data and selected features.",
+    "formula": "",
+    "example": "If the model predicts a next-day return of 1.2 percent, it is forecasting an upward movement.",
+    "importance": "Predictions help users understand possible future movement, though they are never guaranteed."
+  },
+  "confidence": {
+    "definition": "Confidence shows how strongly the model believes in its prediction. Higher confidence usually means the signal is more reliable, but it is never a guarantee.",
+    "formula": "",
+    "example": "A prediction with 85 percent confidence is treated as more reliable than one with 55 percent confidence.",
+    "importance": "Confidence helps users judge how strongly they should trust a prediction."
+  },
+  "anomaly": {
+    "definition": "An anomaly is an unusual market behavior or signal that does not follow the stock’s normal pattern.",
+    "formula": "",
+    "example": "A sudden unexpected spike or drop in price may be treated as an anomaly.",
+    "importance": "Anomalies help identify unusual events that may need closer attention."
+  }
+}

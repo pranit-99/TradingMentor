@@ -12,11 +12,11 @@ from pydantic import BaseModel
 import yfinance as yf
 import numpy as np
 import os, json, re
+import json
+from pathlib import Path
 
 
 app = FastAPI()
-
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -47,7 +47,61 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 @app.get("/health")
 def health():
     return {"status": "ok"}
+#-------------------Knowledge Based Chatbotresponse Begin------------------------------
+KNOWLEDGE_FILE = Path(__file__).parent / "knowledge" / "trading_faq.json"
 
+def load_knowledge_base():
+    try:
+        if not KNOWLEDGE_FILE.exists():
+            print(f"Knowledge file not found: {KNOWLEDGE_FILE}")
+            return {}
+
+        with open(KNOWLEDGE_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        if not isinstance(data, dict):
+            print("Knowledge base format is invalid. Expected a dictionary at the top level.")
+            return {}
+
+        print(f"Knowledge base loaded successfully with {len(data)} topics.")
+        return data
+
+    except json.JSONDecodeError as e:
+        print(f"Knowledge base JSON error: {e}")
+        return {}
+
+    except Exception as e:
+        print(f"Unexpected error loading knowledge base: {e}")
+        return {}
+KNOWLEDGE_BASE = load_knowledge_base()
+
+#-A Helper function to find matching knowledge if user asks any Question the function checks whether any topic name
+#Exists in the message
+def find_knowledge_topic(text: str):
+    text = text.lower().strip()
+
+    for topic in KNOWLEDGE_BASE.keys():
+        if topic in text:
+            return topic
+
+    return None
+# A helper function to build Answers So for "volatility", the bot returns the definition stored in JSON
+def get_knowledge_definition_response(text: str):
+    topic = find_knowledge_topic(text)
+    if not topic:
+        return None
+
+    topic_data = KNOWLEDGE_BASE.get(topic, {})
+    definition = topic_data.get("definition")
+
+    if not definition:
+        return None
+
+    return definition
+#-------------------Knowledge Based Chatbotresponse Ends------------------------------
+
+
+#-------------------Rule Based Chatbot response Begin-------------------------
 def handle_greetings(text: str):
     if text in ["hi", "hello", "hey", "hii", "helo"]:
         return "Hi! I'm your Trading Mentor Nirmala. How can I help you today?"
@@ -523,6 +577,10 @@ def get_basic_chat_response(message: str) -> str:
     if symbol_reply:
         return symbol_reply
 
+    knowledge_reply = get_knowledge_defination_response(text)
+    if knowledge_reply:
+        return knowledge_reply
+
     concept_reply = handle_trading_concepts(text)
     if concept_reply:
         return concept_reply
@@ -532,7 +590,7 @@ def get_basic_chat_response(message: str) -> str:
         return dashboard_reply
 
     return "I am still learning. Please start with a greeting like hi or hello."
-
+#-------------------Rule Based Chatbot response ends-------------------------
 
 def compute_trend_from_close_prices(close_prices: np.ndarray) -> tuple[str, float, float]:
     """
