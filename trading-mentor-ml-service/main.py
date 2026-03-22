@@ -302,11 +302,11 @@ def get_multi_section_knowledge_response(text: str):
     if not topic:
         return None
 
-    sections = detect_all_lnowledge_sections(text)
-    if len(sections) <=1:
+    sections = detect_all_knowledge_sections(text)
+    if len(sections) <= 1:
         return None
 
-    topic_data = KNOWLEDGE_BASE.get(topic,{})
+    topic_data = KNOWLEDGE_BASE.get(topic, {})
     if not topic_data:
         return None
 
@@ -317,10 +317,10 @@ def get_multi_section_knowledge_response(text: str):
         if answer:
             responses.append(f"{topic.title()} — {section.capitalize()}: {answer}")
 
-        if responses:
-            return " ".join(response)
+    if responses:
+        return " ".join(responses)
 
-        return None
+    return None
             
     
 #-------------------Knowledge Based Chatbotresponse Ends------------------------------
