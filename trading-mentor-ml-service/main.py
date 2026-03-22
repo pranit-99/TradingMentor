@@ -341,9 +341,10 @@ def get_supported_knowledge_topics() -> str:
 # A helper function to build Answers So for "volatility", the bot returns the definition stored in JSON
 def get_knowledge_response(text: str):
     topic, alias = find_knowledge_topic_with_alias(text)
-    intro = build_alias_aware_intro(topic, alias)
     if not topic:
         return None
+
+    intro = build_alias_aware_intro(topic, alias)
 
     topic_data = KNOWLEDGE_BASE.get(topic, {})
     if not topic_data:
@@ -367,9 +368,9 @@ def get_knowledge_response(text: str):
         if formula and example:
             return f'{intro}{topic.title()} — Formula: {formula} Example: {example}'
         if formula:
-            return f"{topic.title()} — Formula: {formula}"
+            return f'{intro}{topic.title()} — Formula: {formula}'
         if definition:
-            return f"{topic.title()} — Definition: {definition}"
+            return f'{intro}{topic.title()} — Definition: {definition}'
         return None
 
     section = detect_knowledge_section(text)
@@ -489,7 +490,7 @@ def detect_all_knowledge_sections(text: str):
 
 # add a helper function for single and multi sections answers
 def get_multi_section_knowledge_response(text: str):
-    topic = find_knowledge_topic(text)
+    topic, alias = find_knowledge_topic_with_alias(text)
     if not topic:
         return None
 
@@ -500,7 +501,8 @@ def get_multi_section_knowledge_response(text: str):
     topic_data = KNOWLEDGE_BASE.get(topic, {})
     if not topic_data:
         return None
-
+    
+    intro = build_alias_aware_intro(topic, alias)
     responses = []
 
     section_labels = {
@@ -517,7 +519,9 @@ def get_multi_section_knowledge_response(text: str):
             responses.append(f"{topic.title()} — {label}: {answer}")
 
     if responses:
+        return f"{intro}{joined}"
         return "\n".join(responses)
+    
 
     return None
             
