@@ -51,37 +51,197 @@ def health():
 KNOWLEDGE_FILE = Path(__file__).parent / "knowledge" / "trading_faq.json"
 
 TOPIC_ALIASES = {
-    "equity": ["equity", "ownership"],
-    "stock": ["stock", "share", "shares"],
-    "trading": ["trading", "buying and selling"],
-    "volatility": ["volatility", "price movement", "price swings", "price fluctuation"],
-    "risk": ["risk", "risky", "uncertainty"],
-    "investment": ["investment", "investing"],
-    "trend": ["trend", "direction", "market direction"],
-    "risk score": ["risk score", "risk rating"],
-    "prediction": ["prediction", "predict", "forecast", "model output"],
-    "confidence": ["confidence", "trust level", "reliability"],
-    "anomaly": ["anomaly", "unusual behavior", "unusual activity", "abnormal signal"],
-    "moving average": ["moving average","average price","average trend","price average"],
-    "regression": ["regression","prediction model","statistical prediction"],
-    "ridge regression": ["ridge regression","ridge model","regularized regression"],
-    "alpha": ["alpha","excess return"],
-    "return": ["return","investment return","profit percentage"],
-    "standard deviation": ["standard deviation","price deviation","return variability"],
-    "sharpe ratio": ["sharpe ratio","risk adjusted return","return per risk"],
-    "rsi": ["rsi","relative strength index","momentum indicator"],
-    "macd": ["macd","moving average convergence divergence","trend momentum indicator"],
-    "beta": ["beta","market sensitivity"],
-    "drawdown": ["drawdown","portfolio decline","investment drop"],
-    "portfolio": ["portfolio","investment portfolio","collection of investments"],
-    "diversification": ["diversification","spread investments","investment spreading"],
-    "correlation": ["correlation","asset relationship","price relationship"],
-    "overfitting": ["overfitting","model overtraining","training noise problem"],
-    "feature engineering": ["feature engineering","feature creation","data feature preparation"],
-    "model training": ["model training","training model","machine learning training"],
-    "backtesting": ["backtesting","strategy testing","historical strategy testing"],
-    "anomaly detection": ["anomaly detection","unusual pattern detection","abnormal pattern detection"],
-    "momentum": ["momentum","price momentum","trend strength"]
+    "equity": [
+        "equity",
+        "ownership",
+        "ownership value",
+        "shareholder value",
+        "net worth in a business"
+    ],
+    "stock": [
+        "stock",
+        "share",
+        "shares",
+        "company share",
+        "ownership share"
+    ],
+    "trading": [
+        "trading",
+        "buying and selling",
+        "market trading",
+        "asset buying and selling"
+    ],
+    "volatility": [
+        "volatility",
+        "price movement",
+        "price swings",
+        "price fluctuation",
+        "price fluctuations",
+        "market fluctuation",
+        "market fluctuations"
+    ],
+    "risk": [
+        "risk",
+        "risky",
+        "uncertainty",
+        "danger in investing",
+        "investment danger",
+        "loss possibility",
+        "chance of loss"
+    ],
+    "investment": [
+        "investment",
+        "investing",
+        "putting money into assets",
+        "growing money"
+    ],
+    "trend": [
+        "trend",
+        "market direction",
+        "price direction",
+        "movement direction"
+    ],
+    "risk score": [
+        "risk score",
+        "risk rating",
+        "risk level score"
+    ],
+    "prediction": [
+        "prediction",
+        "predict",
+        "forecast",
+        "model output",
+        "future estimate",
+        "next move estimate"
+    ],
+    "confidence": [
+        "confidence",
+        "trust level",
+        "reliability",
+        "prediction trust",
+        "model confidence"
+    ],
+    "anomaly": [
+        "anomaly",
+        "unusual behavior",
+        "abnormal signal",
+        "unusual activity",
+        "strange market behavior"
+    ],
+
+    "moving average": [
+        "moving average",
+        "average price",
+        "average trend",
+        "price average"
+    ],
+    "regression": [
+        "regression",
+        "prediction model",
+        "statistical prediction",
+        "relationship model"
+    ],
+    "ridge regression": [
+        "ridge regression",
+        "ridge model",
+        "regularized regression"
+    ],
+    "alpha": [
+        "alpha",
+        "excess return",
+        "outperformance"
+    ],
+    "return": [
+        "return",
+        "investment return",
+        "profit percentage",
+        "gain percentage"
+    ],
+    "standard deviation": [
+        "standard deviation",
+        "price deviation",
+        "return variability",
+        "spread of values"
+    ],
+    "sharpe ratio": [
+        "sharpe ratio",
+        "risk adjusted return",
+        "return per risk"
+    ],
+    "rsi": [
+        "rsi",
+        "relative strength index",
+        "momentum indicator"
+    ],
+    "macd": [
+        "macd",
+        "moving average convergence divergence",
+        "trend momentum indicator"
+    ],
+    "beta": [
+        "beta",
+        "market sensitivity",
+        "market movement sensitivity"
+    ],
+    "drawdown": [
+        "drawdown",
+        "portfolio decline",
+        "investment drop",
+        "loss from peak"
+    ],
+    "portfolio": [
+        "portfolio",
+        "investment portfolio",
+        "collection of investments",
+        "group of investments"
+    ],
+    "diversification": [
+        "diversification",
+        "spread investments",
+        "investment spreading",
+        "mix of investments"
+    ],
+    "correlation": [
+        "correlation",
+        "asset relationship",
+        "price relationship",
+        "how assets move together"
+    ],
+    "overfitting": [
+        "overfitting",
+        "model overtraining",
+        "training noise problem",
+        "too closely fitted model"
+    ],
+    "feature engineering": [
+        "feature engineering",
+        "feature creation",
+        "data feature preparation",
+        "input variable creation"
+    ],
+    "model training": [
+        "model training",
+        "training model",
+        "machine learning training",
+        "teaching the model"
+    ],
+    "backtesting": [
+        "backtesting",
+        "strategy testing",
+        "historical strategy testing",
+        "testing on past data"
+    ],
+    "anomaly detection": [
+        "anomaly detection",
+        "unusual pattern detection",
+        "abnormal pattern detection"
+    ],
+    "momentum": [
+        "momentum",
+        "price momentum",
+        "trend strength",
+        "movement strength"
+    ]
 }
 
 def load_knowledge_base():
@@ -109,17 +269,28 @@ def load_knowledge_base():
         return {}
 KNOWLEDGE_BASE = load_knowledge_base()
 
+#Add a helper to build alias-aware intro text
+def build_alias_aware_intro(topic: str, alias: str) -> str:
+    if not alias or alias == topic:
+        return ""
+
+    return f'In this context, "{alias}" usually refers to {topic}. '
+
 #-A Helper function to find matching knowledge if user asks any Question the function checks whether any topic name
 #Exists in the message
 def find_knowledge_topic(text: str):
+    topic, _ = find_knowledge_topic_with_alias(text)
+    return topic
+
+def find_knowledge_topic_with_alias(text: str):
     text = text.lower().strip()
 
     for topic, aliases in TOPIC_ALIASES.items():
         for alias in aliases:
             if alias in text:
-                return topic
+                return topic, alias
 
-    return None
+    return None, None
 
 #Add a helper to detect explanation-style prompts
 def is_explain_style_question(text: str) -> bool:
@@ -169,7 +340,8 @@ def get_supported_knowledge_topics() -> str:
 
 # A helper function to build Answers So for "volatility", the bot returns the definition stored in JSON
 def get_knowledge_response(text: str):
-    topic = find_knowledge_topic(text)
+    topic, alias = find_knowledge_topic_with_alias(text)
+    intro = build_alias_aware_intro(topic, alias)
     if not topic:
         return None
 
@@ -182,9 +354,9 @@ def get_knowledge_response(text: str):
         example = topic_data.get("example")
 
         if definition and example:
-            return f"{topic.title()} — Explanation: {definition} Example: {example}"
+            return f'{intro}{topic.title()} — Explanation: {definition} Example: {example}'
         if definition:
-            return f"{topic.title()} — Explanation: {definition}"
+            return f'{intro}{topic.title()} — Explanation: {definition}'
         return None
 
     if is_calculation_style_question(text):
@@ -193,7 +365,7 @@ def get_knowledge_response(text: str):
         definition = topic_data.get("definition")
 
         if formula and example:
-            return f"{topic.title()} — Formula: {formula} Example: {example}"
+            return f'{intro}{topic.title()} — Formula: {formula} Example: {example}'
         if formula:
             return f"{topic.title()} — Formula: {formula}"
         if definition:
@@ -213,7 +385,7 @@ def get_knowledge_response(text: str):
     pretty_section = section.capitalize()
     pretty_topic = topic.title()
 
-    return f"{pretty_topic} — {pretty_section}: {answer}"
+    return f"{intro}{pretty_topic} — {pretty_section}: {answer}"
 
 #Add a helper to detect which section the user wants
 def detect_knowledge_section(text: str) -> str:
