@@ -331,7 +331,7 @@ def get_multi_section_knowledge_response(text: str):
 
     responses = []
 
-    section_lables = {
+    section_labels = {
         "definition": "Definition",
         "formula": "Formula",
         "example": "Example",
