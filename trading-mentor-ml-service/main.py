@@ -279,16 +279,35 @@ def detect_all_knowledge_sections(text: str):
     text = text.lower()
     sections = []
 
-    if "what is" in text or "define" in text:
+    if (
+        "what is" in text or
+        "define" in text or
+        "explain" in text or
+        "tell me about" in text or
+        "help me understand" in text
+    ):
         sections.append("definition")
 
-    if "formula" in text or "calculate" in text or "calculation" in text or "computed" in text or "compute" in text:
+    if (
+        "formula" in text or
+        "calculate" in text or
+        "calculation" in text or
+        "computed" in text or
+        "compute" in text or
+        "how is" in text or
+        "how do we" in text
+    ):
         sections.append("formula")
 
     if "example" in text or "sample" in text:
         sections.append("example")
 
-    if "importance" in text or "important" in text or "why does it matter" in text or "why is it important" in text:
+    if (
+        "importance" in text or
+        "important" in text or
+        "why does it matter" in text or
+        "why is it important" in text
+    ):
         sections.append("importance")
 
     if not sections:
@@ -312,13 +331,21 @@ def get_multi_section_knowledge_response(text: str):
 
     responses = []
 
+    section_lables = {
+        "definition": "Definition",
+        "formula": "Formula",
+        "example": "Example",
+        "importance": "Importance"
+        }
+
     for section in sections:
         answer = topic_data.get(section)
         if answer:
-            responses.append(f"{topic.title()} — {section.capitalize()}: {answer}")
+            label = section_labels.get(section, section.capitalize())
+            responses.append(f"{topic.title()} — {label}: {answer}")
 
     if responses:
-        return " ".join(responses)
+        return "\n".join(responses)
 
     return None
             
