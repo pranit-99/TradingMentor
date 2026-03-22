@@ -520,7 +520,7 @@ def get_multi_section_knowledge_response(text: str):
             responses.append(f"{topic.title()} — {label}: {answer}")
 
     if responses:
-        joined = "\n".join(responses)
+        joined = "\n\n".join(responses)
         return f"{intro}{joined}"
 
     return None
