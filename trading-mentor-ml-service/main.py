@@ -501,8 +501,9 @@ def get_multi_section_knowledge_response(text: str):
     topic_data = KNOWLEDGE_BASE.get(topic, {})
     if not topic_data:
         return None
-    
+
     intro = build_alias_aware_intro(topic, alias)
+
     responses = []
 
     section_labels = {
@@ -510,7 +511,7 @@ def get_multi_section_knowledge_response(text: str):
         "formula": "Formula",
         "example": "Example",
         "importance": "Importance"
-        }
+    }
 
     for section in sections:
         answer = topic_data.get(section)
@@ -519,9 +520,8 @@ def get_multi_section_knowledge_response(text: str):
             responses.append(f"{topic.title()} — {label}: {answer}")
 
     if responses:
+        joined = "\n".join(responses)
         return f"{intro}{joined}"
-        return "\n".join(responses)
-    
 
     return None
             
