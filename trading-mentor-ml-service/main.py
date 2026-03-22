@@ -403,33 +403,25 @@ def detect_knowledge_section(text: str) -> str:
 
     return "definition"
 
-#Add helper function to find all matching knowledge topics
+#Add helper function to find all matching knowledge topics:-uses the richer topic+alias helper
 def find_all_knowledge_topics(text: str):
-    text = text.lower().strip()
-    matched_topics = []
-
-    for topic, aliases in TOPIC_ALIASES.items():
-        for alias in aliases:
-            if alias in text:
-                matched_topics.append(topic)
-                break
-
-    return matched_topics
+    matched = find_all_knowledge_topics_with_aliases(text)
+    return [topic for topic, _ in matched]
 
 #add helper to answer multiple topics
 def get_multi_topic_knowledge_response(text: str):
-    topics = find_all_knowledge_topics(text)
+    matched_topics = find_all_knowledge_topics_with_aliases(text)
 
-    if not topics:
+    if not matched_topics:
         return None
 
-    if len(topics) == 1:
+    if len(matched_topics) == 1:
         return None
 
     section = detect_knowledge_section(text)
     responses = []
 
-    for topic in topics[:2]:
+    for topic, alias in matched_topics[:2]:
         topic_data = KNOWLEDGE_BASE.get(topic, {})
         if not topic_data:
             continue
@@ -439,10 +431,15 @@ def get_multi_topic_knowledge_response(text: str):
             answer = topic_data.get("definition")
 
         if answer:
-            responses.append(f"{topic.title()} — {section.capitalize()}: {answer}")
+            intro = build_alias_aware_intro(topic, alias)
+            formatted = f"{topic.title()} — {section.capitalize()}: {answer}"
+            if intro:
+                responses.append(f"{intro}{formatted}")
+            else:
+                responses.append(formatted)
 
     if responses:
-        return " ".join(responses)
+        return "\n".join(responses)
 
     return None
 
@@ -524,6 +521,19 @@ def get_multi_section_knowledge_response(text: str):
         return f"{intro}{joined}"
 
     return None
+
+#Add a helper to find all matched topics with aliases
+def find_all_knowledge_topics_with_aliases(text: str):
+    text = text.lower().strip()
+    matched = []
+
+    for topic, aliases in TOPIC_ALIASES.items():
+        for alias in aliases:
+            if alias in text:
+                matched.append((topic, alias))
+                break
+
+    return matched
             
     
 #-------------------Knowledge Based Chatbotresponse Ends------------------------------
