@@ -331,6 +331,7 @@ to   { opacity: 1; transform: translateX(0); }
   overflow-y: auto;
   color: #ddd;
   scroll-behavior: smooth;
+  white-space: pre-line;
 }
 
 .chat-actions {
