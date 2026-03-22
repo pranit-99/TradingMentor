@@ -272,6 +272,56 @@ def get_multi_topic_knowledge_response(text: str):
         return " ".join(responses)
 
     return None
+
+#support one topic with multiple learning intents in the same question
+#For one matched topic, the bot should be able to combine:definition,formula,example,importance, depending on what the user asked.
+def detect_all_knowledge_sections(text: str):
+    text = text.lower()
+    sections = []
+
+    if "what is" in text or "define" in text:
+        sections.append("definition")
+
+    if "formula" in text or "calculate" in text or "calculation" in text or "computed" in text or "compute" in text:
+        sections.append("formula")
+
+    if "example" in text or "sample" in text:
+        sections.append("example")
+
+    if "importance" in text or "important" in text or "why does it matter" in text or "why is it important" in text:
+        sections.append("importance")
+
+    if not sections:
+        sections.append("definition")
+
+    return sections
+
+# add a helper function for single and multi sections answers
+def get_multi_section_knowledge_response(text: str):
+    topic = find_knowledge_topic(text)
+    if not topic:
+        return None
+
+    sections = detect_all_lnowledge_sections(text)
+    if len(sections) <=1:
+        return None
+
+    topic_data = KNOWLEDGE_BASE.get(topic,{})
+    if not topic_data:
+        return None
+
+    responses = []
+
+    for section in sections:
+        answer = topic_data.get(section)
+        if answer:
+            responses.append(f"{topic.title()} — {section.capitalize()}: {answer}")
+
+        if responses:
+            return " ".join(response)
+
+        return None
+            
     
 #-------------------Knowledge Based Chatbotresponse Ends------------------------------
 
@@ -740,7 +790,8 @@ def handle_symbol_queries(text: str):
 
     except Exception as e:
         return f"I found the symbol {symbol}, but there was an error fetching live data: {str(e)}"
-
+#-------------------Rule Based Chatbot response ends------------------------
+#------------------- Chatbot response Begin------------------------
 def get_basic_chat_response(message: str) -> str:
     text = message.strip().lower()
 
@@ -755,6 +806,10 @@ def get_basic_chat_response(message: str) -> str:
     multi_knowledge_reply = get_multi_topic_knowledge_response(text)
     if multi_knowledge_reply:
         return multi_knowledge_reply
+
+    multi_section_reply = get_multi_section_knowledge_response(text)
+    if multi_section_reply:
+        return multi_section_reply
 
     knowledge_reply = get_knowledge_response(text)
     if knowledge_reply:
@@ -776,7 +831,7 @@ def get_basic_chat_response(message: str) -> str:
         )
 
     return "I am still learning. You can ask about trading concepts, dashboard terms, or stock symbols like AAPL."
-#-------------------Rule Based Chatbot response ends-------------------------
+#------------------- Chatbot response Ends------------------------
 
 def compute_trend_from_close_prices(close_prices: np.ndarray) -> tuple[str, float, float]:
     """
