@@ -269,6 +269,17 @@ def load_knowledge_base():
         return {}
 KNOWLEDGE_BASE = load_knowledge_base()
 
+#Add a helper to flatten and sort aliases by length
+def get_sorted_topic_alias_pairs():
+    pairs = []
+
+    for topic, aliases in TOPIC_ALIASES.items():
+        for alias in aliases:
+            pairs.append((topic, alias))
+
+    pairs.sort(key=lambda x: len(x[1]), reverse=True)
+    return pairs
+
 #Add a helper to build alias-aware intro text
 def build_alias_aware_intro(topic: str, alias: str) -> str:
     if not alias or alias == topic:
@@ -285,10 +296,9 @@ def find_knowledge_topic(text: str):
 def find_knowledge_topic_with_alias(text: str):
     text = text.lower().strip()
 
-    for topic, aliases in TOPIC_ALIASES.items():
-        for alias in aliases:
-            if alias in text:
-                return topic, alias
+    for topic, alias in get_sorted_topic_alias_pairs():
+        if alias in text:
+            return topic, alias
 
     return None, None
 
@@ -522,18 +532,23 @@ def get_multi_section_knowledge_response(text: str):
 
     return None
 
+def alias_matches_text(alias: str, text: str) -> bool:
+    pattern = r"\b" + re.escape(alias) + r"\b"
+    return re.search(pattern, text) is not None
+
 #Add a helper to find all matched topics with aliases
 def find_all_knowledge_topics_with_aliases(text: str):
     text = text.lower().strip()
     matched = []
+    seen_topics = set()
 
-    for topic, aliases in TOPIC_ALIASES.items():
-        for alias in aliases:
-            if alias in text:
-                matched.append((topic, alias))
-                break
+    for topic, alias in get_sorted_topic_alias_pairs():
+        if alias_matches_text(alias, text) and topic not in seen_topics:
+            matched.append((topic, alias))
+            seen_topics.add(topic)
 
     return matched
+
             
     
 #-------------------Knowledge Based Chatbotresponse Ends------------------------------
