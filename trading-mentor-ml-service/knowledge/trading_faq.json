@@ -25,7 +25,9 @@
     "example": "If one stock moves between $95 and $105 often while another stays near $100, the first one is more volatile.",
     "importance": "Volatility is important because it helps measure uncertainty and risk in price movement.",
     "interpretation": "In practice, volatility tells you how unstable or jumpy a stock is. A highly volatile stock can move sharply in a short time, which may create both opportunity and risk.",
-    "use_case": "Traders use volatility to judge how much a stock may move and to decide position size, stop-loss distance, or whether a stock is suitable for short-term trading."
+    "use_case": "Traders use volatility to judge how much a stock may move and to decide position size, stop-loss distance, or whether a stock is suitable for short-term trading.",
+    "limitations": "Volatility shows the size of price movement, but it does not tell direction and does not guarantee future market behavior.",
+    "advantages": "Volatility helps measure uncertainty, compare risk across assets, and support better position sizing."
   },
   "risk": {
     "definition": "Risk is the chance of losing money or getting a lower return than expected in an investment.",
@@ -61,7 +63,9 @@
     "example": "If the model predicts a next-day return of 1.2 percent, it is forecasting an upward movement.",
     "importance": "Predictions help users understand possible future movement, though they are never guaranteed.",
     "interpretation": "In practice, a prediction is not a guarantee. It is the model’s best estimate based on patterns learned from past data.",
-    "use_case": "Prediction is used to estimate possible future movement so that users can compare model output with current trend, risk, and confidence."
+    "use_case": "Prediction is used to estimate possible future movement so that users can compare model output with current trend, risk, and confidence.",
+    "limitations": "Predictions are estimates, not guarantees. They depend on historical data and may fail when market conditions change suddenly.",
+    "advantages": "Predictions help users estimate possible future movement, compare signals, and support data-driven decision making."
   },
   "confidence": {
     "definition": "Confidence shows how strongly the model believes in its prediction. Higher confidence usually means the signal is more reliable, but it is never a guarantee.",
@@ -81,7 +85,8 @@
     "example": "A 5-day moving average adds the last 5 closing prices and divides the total by 5.",
     "importance": "Moving averages help traders identify trends and reduce noise in daily price fluctuations.",
     "interpretation": "In practice, a moving average helps smooth noisy price movement so traders can better spot the broader direction of the market.",
-    "use_case": "Traders use moving averages to identify trend direction, support/resistance zones, and crossover-based trading signals."
+    "use_case": "Traders use moving averages to identify trend direction, support/resistance zones, and crossover-based trading signals.",
+    "limitations": "Moving averages are lagging indicators, so they react after price has already moved and may give delayed signals."
   },
   "regression": {
     "definition": "Regression is a statistical method used to estimate the relationship between variables and make predictions.",
@@ -90,14 +95,18 @@
     "importance": "Regression is important because it helps build predictive models in finance and machine learning.",
     "interpretation": "In practice, regression helps estimate how one or more inputs may influence an output, which is useful for prediction tasks.",
     "use_case": "Regression is used in trading models to estimate future returns or price movement from historical features such as volatility, momentum, and lagged returns.",
-    "comparison": "Regression is the general prediction method, while ridge regression is a regularized version designed to reduce overfitting."
+    "comparison": "Regression is the general prediction method, while ridge regression is a regularized version designed to reduce overfitting.",
+    "limitations": "Regression may miss complex non-linear market behavior and can become unreliable if the input relationships change over time.",
+    "advantages": "Regression is simple, interpretable, and useful for understanding relationships between inputs and outputs."
   },
   "ridge regression": {
     "definition": "Ridge regression is a variation of linear regression that adds regularization to reduce overfitting.",
     "formula": "Ridge regression minimizes prediction error while also penalizing large coefficient values using an alpha term.",
     "example": "If a model becomes too sensitive to historical noise, ridge regression helps stabilize the predictions.",
     "importance": "Ridge regression is important because it improves model generalization and reduces overfitting.",
-    "comparison": "Ridge regression is similar to linear regression, but it adds a penalty term that helps stabilize the model and reduce sensitivity to noise."
+    "comparison": "Ridge regression is similar to linear regression, but it adds a penalty term that helps stabilize the model and reduce sensitivity to noise.",
+    "limitations": "Ridge regression reduces overfitting, but it may still underperform if the features are weak or if the market behavior changes significantly.",
+    "advantages": "Ridge regression helps reduce overfitting, improves stability, and often performs better when features are correlated."
   },
   "alpha": {
     "definition": "Alpha can refer to excess return over a benchmark or, in ridge regression, the regularization strength used in the model.",
@@ -133,7 +142,8 @@
     "definition": "MACD, or Moving Average Convergence Divergence, is a trend-following momentum indicator based on moving averages.",
     "formula": "MACD is commonly calculated as the difference between a short-term EMA and a long-term EMA.",
     "example": "If the MACD line crosses above the signal line, some traders interpret it as bullish momentum.",
-    "importance": "MACD is important because it helps identify trend direction and momentum changes."
+    "importance": "MACD is important because it helps identify trend direction and momentum changes.",
+    "advantages": "Moving averages smooth noisy price data and help traders identify broader trend direction more clearly."
   },
   "beta": {
     "definition": "Beta measures how much a stock or portfolio tends to move relative to the overall market.",
@@ -187,7 +197,9 @@
     "definition": "Backtesting means testing a trading strategy or prediction model on historical data to see how it would have performed.",
     "formula": "",
     "example": "A strategy can be backtested on five years of stock data before being used in live trading.",
-    "importance": "Backtesting is important because it helps evaluate whether a strategy might be useful before real deployment."
+    "importance": "Backtesting is important because it helps evaluate whether a strategy might be useful before real deployment.",
+    "limitations": "Backtesting relies on historical data, and strong past performance does not guarantee that the same strategy will work in future markets.",
+    "advantages": "Backtesting helps evaluate ideas on historical data before using them in live trading."
   },
   "anomaly detection": {
     "definition": "Anomaly detection is the process of identifying unusual patterns in data that do not match normal behavior.",

@@ -553,6 +553,12 @@ def detect_knowledge_section(text: str) -> str:
     if "difference" in text or "compare" in text or "vs" in text or "versus" in text:
         return "comparison"
 
+    if "limitation" in text or "limitations" in text or "drawback" in text or "drawbacks" in text or "weakness" in text or "weaknesses" in text:
+        return "limitations"
+
+    if "advantage" in text or "advantages" in text or "benefit" in text or "benefits" in text:
+        return "advantages"
+
     return "definition"
 
 # A helper function to build Answers So for "volatility", the bot returns the definition stored in JSON
@@ -707,6 +713,24 @@ def detect_all_knowledge_sections(text: str):
     ):
         sections.append("comparison")
 
+    if (
+    "limitation" in text or
+    "limitations" in text or
+    "drawback" in text or
+    "drawbacks" in text or
+    "weakness" in text or
+    "weaknesses" in text
+    ):
+        sections.append("limitations")
+
+    if (
+    "advantage" in text or
+    "advantages" in text or
+    "benefit" in text or
+    "benefits" in text
+    ):
+        sections.append("advantages")
+
     if not sections:
         sections.append("definition")
 
@@ -737,7 +761,9 @@ def get_multi_section_knowledge_response(text: str):
         "importance": "Importance",
         "interpretation": "Interpretation",
         "use_case": "Use Case",
-        "comparison": "Comparison"
+        "comparison": "Comparison",
+        "limitations": "Limitations",
+        "advantages": "Advantages"
     }
 
     for section in sections:
