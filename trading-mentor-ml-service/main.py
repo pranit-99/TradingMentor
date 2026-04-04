@@ -244,6 +244,27 @@ TOPIC_ALIASES = {
     ]
 }
 
+#Adding text normilization helpers
+def normalize_knowledge_text(text: str)-> str:
+    text = text.lower().strip
+    
+    replacements = {
+        "examples": "example",
+        "samples": "sample",
+        "calculations": "calculation",
+        "formulas": "formula",
+        "shares": "share",
+        "returns": "return",
+        "fluctuations": "fluctuation",
+        "predictions": "prediction",
+        "investments": "investment"
+    }
+
+    for old, new in replacements.items():
+        text = re.sub(r"\b" + re.escape(old) + r"\b", new, text)
+
+    return text
+
 def load_knowledge_base():
     try:
         if not KNOWLEDGE_FILE.exists():
@@ -294,7 +315,7 @@ def find_knowledge_topic(text: str):
     return topic
 
 def find_knowledge_topic_with_alias(text: str):
-    text = text.lower().strip()
+    text = normalize_knowledge_text(text)
 
     for topic, alias in get_sorted_topic_alias_pairs():
         if alias in text:
@@ -400,7 +421,7 @@ def get_knowledge_response(text: str):
 
 #Add a helper to detect which section the user wants
 def detect_knowledge_section(text: str) -> str:
-    text = text.lower()
+    text = normalize_knowledge_text(text)
 
     if "formula" in text or "calculate" in text or "calculation" in text or "computed" in text:
         return "formula"
@@ -538,7 +559,7 @@ def alias_matches_text(alias: str, text: str) -> bool:
 
 #Add a helper to find all matched topics with aliases
 def find_all_knowledge_topics_with_aliases(text: str):
-    text = text.lower().strip()
+    text = normalize_knowledge_text(text)
     matched = []
     seen_topics = set()
 
