@@ -705,7 +705,7 @@ def detect_all_knowledge_sections(text: str):
     "vs" in text or
     "versus" in text
     ):
-    sections.append("comparison")
+        sections.append("comparison")
 
     if not sections:
         sections.append("definition")
