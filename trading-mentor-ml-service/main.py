@@ -825,7 +825,7 @@ def get_multi_section_knowledge_response(text: str):
         "when_not_to_use": "When Not To Use",
         "common_mistakes": "Common Mistakes",
         "related_concepts": "Related Concepts",
-        "prerequisites": "Prerequisites"
+        "prerequisites": "Prerequisites",
         "real_world_example": "Real World Example"
     }
 
