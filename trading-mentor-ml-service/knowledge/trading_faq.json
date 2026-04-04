@@ -3,13 +3,15 @@
     "definition": "Equity is the value of ownership in an asset or company, calculated as the total assets minus liabilities. It represents the net worth of a business or the, portion of a home owned outright, and is crucial for determining financial health and investment value. Types include shareholder equity, private equity, and home equity",
     "formula": "Formula for Equity is Equity = Asset - Liabilities",
     "example": "If a company has 100 shares and you buy 1 share, you own 1 percent of the company.",
-    "importance": "Equity is important because it represents ownership and potential value growth."
+    "importance": "Equity is important because it represents ownership and potential value growth.",
+    "comparison": "Equity is the broader ownership concept, while stock is the specific instrument investors buy and sell to hold that ownership."
   },
   "stock": {
     "definition": "A stock is a share of ownership in a company. Its value can go up or down based on company performance and market conditions.",
     "formula": "",
     "example": "If you buy shares of Apple, you become a shareholder in Apple.",
-    "importance": "Stocks are one of the most common investment instruments used for wealth growth."
+    "importance": "Stocks are one of the most common investment instruments used for wealth growth.",
+    "comparison": "Stock is a tradable share of ownership in a company, while equity is the broader concept of ownership value itself."
   },
   "trading": {
     "definition": "Trading means buying and selling financial assets like stocks to make a profit from price changes.",
@@ -87,13 +89,15 @@
     "example": "A model may use past returns and volatility to predict the next day return of a stock.",
     "importance": "Regression is important because it helps build predictive models in finance and machine learning.",
     "interpretation": "In practice, regression helps estimate how one or more inputs may influence an output, which is useful for prediction tasks.",
-    "use_case": "Regression is used in trading models to estimate future returns or price movement from historical features such as volatility, momentum, and lagged returns."
+    "use_case": "Regression is used in trading models to estimate future returns or price movement from historical features such as volatility, momentum, and lagged returns.",
+    "comparison": "Regression is the general prediction method, while ridge regression is a regularized version designed to reduce overfitting."
   },
   "ridge regression": {
     "definition": "Ridge regression is a variation of linear regression that adds regularization to reduce overfitting.",
     "formula": "Ridge regression minimizes prediction error while also penalizing large coefficient values using an alpha term.",
     "example": "If a model becomes too sensitive to historical noise, ridge regression helps stabilize the predictions.",
-    "importance": "Ridge regression is important because it improves model generalization and reduces overfitting."
+    "importance": "Ridge regression is important because it improves model generalization and reduces overfitting.",
+    "comparison": "Ridge regression is similar to linear regression, but it adds a penalty term that helps stabilize the model and reduce sensitivity to noise."
   },
   "alpha": {
     "definition": "Alpha can refer to excess return over a benchmark or, in ridge regression, the regularization strength used in the model.",
@@ -207,13 +211,15 @@
     "definition": "Support is a price level where a stock tends to stop falling and may bounce upward.",
     "formula": "",
     "example": "If a stock repeatedly drops near $100 and then rises, $100 may act as a support level.",
-    "importance": "Support is important because traders use it to identify possible entry zones and price stability areas."
+    "importance": "Support is important because traders use it to identify possible entry zones and price stability areas.",
+    "comparison": "Support is a level where price tends to stop falling, while resistance is a level where price tends to stop rising."
   },
   "resistance": {
     "definition": "Resistance is a price level where a stock tends to stop rising and may move downward.",
     "formula": "",
     "example": "If a stock repeatedly rises near $150 and then falls, $150 may act as a resistance level.",
-    "importance": "Resistance is important because traders use it to identify possible selling pressure and reversal zones."
+    "importance": "Resistance is important because traders use it to identify possible selling pressure and reversal zones.",
+    "comparison": "Resistance is a level where price tends to stop rising, while support is a level where price tends to stop falling."
   },
   "liquidity": {
     "definition": "Liquidity measures how easily an asset can be bought or sold without causing a large price change.",
@@ -231,13 +237,15 @@
     "definition": "A market order is an instruction to buy or sell immediately at the best available current price.",
     "formula": "",
     "example": "If you place a market buy order, it is filled at the lowest available ask price.",
-    "importance": "Market orders are important because they prioritize speed of execution over exact price."
+    "importance": "Market orders are important because they prioritize speed of execution over exact price.",
+    "comparison": "A market order prioritizes speed of execution, while a limit order prioritizes price control."
   },
   "limit order": {
     "definition": "A limit order is an instruction to buy or sell only at a specified price or better.",
     "formula": "",
     "example": "A limit buy order at $95 will only execute if the stock price falls to $95 or below.",
-    "importance": "Limit orders are important because they give traders more control over trade price."
+    "importance": "Limit orders are important because they give traders more control over trade price.",
+    "comparison": "A limit order gives control over execution price, while a market order focuses on immediate execution."
   },
   "stop loss": {
     "definition": "A stop-loss is a risk-management order designed to automatically exit a position when price reaches a specified level.",
