@@ -184,5 +184,125 @@
     "formula": "",
     "example": "If a stock has been rising consistently over several periods, it may be said to have positive momentum.",
     "importance": "Momentum is important because traders use it to judge the strength of trends and possible continuation."
+  },
+  "moving average crossover": {
+    "definition": "A moving average crossover happens when a short-term moving average crosses above or below a long-term moving average.",
+    "formula": "",
+    "example": "If the 5-day moving average crosses above the 20-day moving average, some traders see it as a bullish signal.",
+    "importance": "Moving average crossovers are important because they are commonly used to identify possible trend changes."
+  },
+  "support": {
+    "definition": "Support is a price level where a stock tends to stop falling and may bounce upward.",
+    "formula": "",
+    "example": "If a stock repeatedly drops near $100 and then rises, $100 may act as a support level.",
+    "importance": "Support is important because traders use it to identify possible entry zones and price stability areas."
+  },
+  "resistance": {
+    "definition": "Resistance is a price level where a stock tends to stop rising and may move downward.",
+    "formula": "",
+    "example": "If a stock repeatedly rises near $150 and then falls, $150 may act as a resistance level.",
+    "importance": "Resistance is important because traders use it to identify possible selling pressure and reversal zones."
+  },
+  "liquidity": {
+    "definition": "Liquidity measures how easily an asset can be bought or sold without causing a large price change.",
+    "formula": "",
+    "example": "A heavily traded stock usually has high liquidity because many buyers and sellers are active.",
+    "importance": "Liquidity is important because it affects trade execution, slippage, and market efficiency."
+  },
+  "bid ask spread": {
+    "definition": "The bid-ask spread is the difference between the highest price a buyer is willing to pay and the lowest price a seller is willing to accept.",
+    "formula": "Bid-ask spread = ask price - bid price.",
+    "example": "If the bid is $99 and the ask is $100, the spread is $1.",
+    "importance": "The bid-ask spread is important because it reflects trading cost and market liquidity."
+  },
+  "market order": {
+    "definition": "A market order is an instruction to buy or sell immediately at the best available current price.",
+    "formula": "",
+    "example": "If you place a market buy order, it is filled at the lowest available ask price.",
+    "importance": "Market orders are important because they prioritize speed of execution over exact price."
+  },
+  "limit order": {
+    "definition": "A limit order is an instruction to buy or sell only at a specified price or better.",
+    "formula": "",
+    "example": "A limit buy order at $95 will only execute if the stock price falls to $95 or below.",
+    "importance": "Limit orders are important because they give traders more control over trade price."
+  },
+  "stop loss": {
+    "definition": "A stop-loss is a risk-management order designed to automatically exit a position when price reaches a specified level.",
+    "formula": "",
+    "example": "If you buy a stock at $100 and set a stop-loss at $95, the position may be sold if price drops to $95.",
+    "importance": "Stop-losses are important because they help limit downside risk."
+  },
+  "market capitalization": {
+    "definition": "Market capitalization is the total market value of a company’s outstanding shares.",
+    "formula": "Market capitalization = share price × total outstanding shares.",
+    "example": "If a company has 1 million shares and each share is worth $50, its market capitalization is $50 million.",
+    "importance": "Market capitalization is important because it helps classify company size and compare firms."
+  },
+  "ipo": {
+    "definition": "An IPO, or Initial Public Offering, is the process through which a private company offers shares to the public for the first time.",
+    "formula": "",
+    "example": "When a startup lists its shares on a stock exchange for the first time, it is conducting an IPO.",
+    "importance": "IPOs are important because they allow companies to raise capital from public investors."
+  },
+  "hedging": {
+    "definition": "Hedging is a strategy used to reduce potential losses by taking an offsetting position in another asset or instrument.",
+    "formula": "",
+    "example": "An investor may use options to hedge against a possible fall in stock prices.",
+    "importance": "Hedging is important because it helps manage risk in uncertain markets."
+  },
+  "leverage": {
+    "definition": "Leverage means using borrowed money or financial instruments to increase exposure to an investment.",
+    "formula": "",
+    "example": "If a trader uses borrowed funds to control a larger stock position than their own cash allows, that is leverage.",
+    "importance": "Leverage is important because it can magnify both profits and losses."
+  },
+  "margin trading": {
+    "definition": "Margin trading is the practice of borrowing funds from a broker to buy securities.",
+    "formula": "",
+    "example": "A trader may use a margin account to purchase more shares than they could afford with cash alone.",
+    "importance": "Margin trading is important because it increases buying power, but also increases risk."
+  },
+  "short selling": {
+    "definition": "Short selling is a strategy where an investor borrows and sells a security, hoping to buy it back later at a lower price.",
+    "formula": "",
+    "example": "If a trader shorts a stock at $100 and buys it back at $80, the profit is $20 per share before costs.",
+    "importance": "Short selling is important because it allows traders to potentially profit from falling prices."
+  },
+  "mean reversion": {
+    "definition": "Mean reversion is the idea that prices or returns tend to move back toward their long-term average over time.",
+    "formula": "",
+    "example": "If a stock moves far above its usual average price, a mean reversion strategy may expect it to move back down closer to average.",
+    "importance": "Mean reversion is important because it forms the basis of many quantitative trading strategies."
+  },
+  "stationarity": {
+    "definition": "Stationarity means that the statistical properties of a time series, such as mean and variance, remain relatively constant over time.",
+    "formula": "",
+    "example": "A stationary return series has a more stable average and variability than a raw price series.",
+    "importance": "Stationarity is important because many time-series models assume the data is stationary."
+  },
+  "time series": {
+    "definition": "A time series is a sequence of data points recorded over time, such as daily stock prices or monthly returns.",
+    "formula": "",
+    "example": "A stock’s closing price recorded every day over one year is a time series.",
+    "importance": "Time series analysis is important because financial forecasting depends on historical sequences over time."
+  },
+  "feature scaling": {
+    "definition": "Feature scaling is the process of adjusting numerical input variables so they are on a similar scale.",
+    "formula": "",
+    "example": "A model may scale volatility and returns so one large-value feature does not dominate the learning process.",
+    "importance": "Feature scaling is important because many machine learning models perform better when features are normalized."
+  },
+  "cross validation": {
+    "definition": "Cross validation is a method for evaluating a model by splitting data into multiple training and testing subsets.",
+    "formula": "",
+    "example": "A model may be trained on one portion of data and validated on another repeatedly to estimate performance more reliably.",
+    "importance": "Cross validation is important because it helps assess whether a model generalizes well beyond one specific train-test split."
+  },
+  "hyperparameter tuning": {
+    "definition": "Hyperparameter tuning is the process of selecting the best configuration values for a machine learning model.",
+    "formula": "",
+    "example": "Trying different alpha values in ridge regression to find the one with the best validation error is hyperparameter tuning.",
+    "importance": "Hyperparameter tuning is important because it can significantly improve model performance and stability."
   }
 }

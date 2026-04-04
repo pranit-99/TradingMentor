@@ -241,7 +241,132 @@ TOPIC_ALIASES = {
         "price momentum",
         "trend strength",
         "movement strength"
-    ]
+    ],
+"moving average crossover": [
+    "moving average crossover",
+    "ma crossover",
+    "average crossover",
+    "moving average cross"
+],
+
+"support": [
+    "support",
+    "support level",
+    "price floor"
+],
+
+"resistance": [
+    "resistance",
+    "resistance level",
+    "price ceiling"
+],
+
+"liquidity": [
+    "liquidity",
+    "easy to buy and sell",
+    "market liquidity",
+    "trading ease"
+],
+
+"bid ask spread": [
+    "bid ask spread",
+    "spread",
+    "bid ask difference",
+    "ask bid gap"
+],
+
+"market order": [
+    "market order",
+    "instant order",
+    "immediate trade order"
+],
+
+"limit order": [
+    "limit order",
+    "price controlled order",
+    "fixed price order"
+],
+
+"stop loss": [
+    "stop loss",
+    "stop-loss",
+    "loss protection order",
+    "automatic loss exit"
+],
+
+"market capitalization": [
+    "market capitalization",
+    "market cap",
+    "company size",
+    "company market value"
+],
+
+"ipo": [
+    "ipo",
+    "initial public offering",
+    "company going public"
+],
+
+"hedging": [
+    "hedging",
+    "risk offsetting",
+    "loss protection strategy"
+],
+
+"leverage": [
+    "leverage",
+    "borrowed exposure",
+    "amplified exposure"
+],
+
+"margin trading": [
+    "margin trading",
+    "trading on margin",
+    "borrowed trading"
+],
+
+"short selling": [
+    "short selling",
+    "shorting",
+    "selling borrowed shares"
+],
+
+"mean reversion": [
+    "mean reversion",
+    "return to average",
+    "price returning to average"
+],
+
+"stationarity": [
+    "stationarity",
+    "stable time series",
+    "constant statistical behavior"
+],
+
+"time series": [
+    "time series",
+    "historical sequence data",
+    "data over time"
+],
+
+"feature scaling": [
+    "feature scaling",
+    "scaling features",
+    "normalizing input values"
+],
+
+"cross validation": [
+    "cross validation",
+    "cross-validation",
+    "multiple train test validation"
+],
+
+"hyperparameter tuning": [
+    "hyperparameter tuning",
+    "parameter tuning",
+    "model parameter optimization"
+]
+    
 }
 
 #Adding text normilization helpers
