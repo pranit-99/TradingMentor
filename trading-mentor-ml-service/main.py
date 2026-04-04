@@ -547,6 +547,9 @@ def detect_knowledge_section(text: str) -> str:
     if "meaning" in text or "interpret" in text or "in practice" in text or "what does it mean" in text:
         return "interpretation"
 
+    if "use case" in text or "used for" in text or "how is it used" in text or "where is it used" in text or "application" in text:
+        return "use_case"
+
     return "definition"
 
 # A helper function to build Answers So for "volatility", the bot returns the definition stored in JSON
@@ -684,6 +687,15 @@ def detect_all_knowledge_sections(text: str):
     ):
         sections.append("interpretation")
 
+    if (
+    "use case" in text or
+    "used for" in text or
+    "how is it used" in text or
+    "where is it used" in text or
+    "application" in text
+    ):
+        sections.append("use_case")
+
     if not sections:
         sections.append("definition")
 
@@ -712,7 +724,8 @@ def get_multi_section_knowledge_response(text: str):
         "formula": "Formula",
         "example": "Example",
         "importance": "Importance",
-        "interpretation": "Interpretation"
+        "interpretation": "Interpretation",
+        "use_case": "Use Case"
     }
 
     for section in sections:

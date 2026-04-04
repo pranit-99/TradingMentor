@@ -22,14 +22,16 @@
     "formula": "Volatility is commonly estimated using the standard deviation of returns over a period of time.",
     "example": "If one stock moves between $95 and $105 often while another stays near $100, the first one is more volatile.",
     "importance": "Volatility is important because it helps measure uncertainty and risk in price movement.",
-    "interpretation": "In practice, volatility tells you how unstable or jumpy a stock is. A highly volatile stock can move sharply in a short time, which may create both opportunity and risk."
+    "interpretation": "In practice, volatility tells you how unstable or jumpy a stock is. A highly volatile stock can move sharply in a short time, which may create both opportunity and risk.",
+    "use_case": "Traders use volatility to judge how much a stock may move and to decide position size, stop-loss distance, or whether a stock is suitable for short-term trading."
   },
   "risk": {
     "definition": "Risk is the chance of losing money or getting a lower return than expected in an investment.",
     "formula": "",
     "example": "A highly unstable stock has more risk than a stable stock with smaller price changes.",
     "importance": "Understanding risk helps traders and investors make safer and more informed decisions.",
-    "interpretation": "In practice, risk means how likely you are to face uncertainty, losses, or outcomes that differ from what you expect."
+    "interpretation": "In practice, risk means how likely you are to face uncertainty, losses, or outcomes that differ from what you expect.",
+    "use_case": "Investors use risk to compare opportunities, size positions, and decide whether a trade fits their goals and tolerance for uncertainty."
   },
   "investment": {
     "definition": "Investment means putting money into an asset like stocks, bonds, or funds with the goal of growing it over time.",
@@ -42,7 +44,8 @@
     "formula": "",
     "example": "If a stock keeps moving higher over several periods, it is showing an upward trend.",
     "importance": "Trend helps users understand direction and momentum in the market.",
-    "interpretation": "In practice, trend helps you understand whether the market is generally moving upward, downward, or sideways."
+    "interpretation": "In practice, trend helps you understand whether the market is generally moving upward, downward, or sideways.",
+    "use_case": "Traders use trend to decide whether to trade with market direction, avoid weak setups, or confirm whether momentum is strong or fading."
   },
   "risk score": {
     "definition": "Risk score is a simplified value used to represent how risky a stock currently appears. A higher risk score usually means more uncertainty or price movement.",
@@ -55,7 +58,8 @@
     "formula": "",
     "example": "If the model predicts a next-day return of 1.2 percent, it is forecasting an upward movement.",
     "importance": "Predictions help users understand possible future movement, though they are never guaranteed.",
-    "interpretation": "In practice, a prediction is not a guarantee. It is the model’s best estimate based on patterns learned from past data."
+    "interpretation": "In practice, a prediction is not a guarantee. It is the model’s best estimate based on patterns learned from past data.",
+    "use_case": "Prediction is used to estimate possible future movement so that users can compare model output with current trend, risk, and confidence."
   },
   "confidence": {
     "definition": "Confidence shows how strongly the model believes in its prediction. Higher confidence usually means the signal is more reliable, but it is never a guarantee.",
@@ -74,14 +78,16 @@
     "formula": "A simple moving average is calculated by adding closing prices over a chosen period and dividing by the number of periods.",
     "example": "A 5-day moving average adds the last 5 closing prices and divides the total by 5.",
     "importance": "Moving averages help traders identify trends and reduce noise in daily price fluctuations.",
-    "interpretation": "In practice, a moving average helps smooth noisy price movement so traders can better spot the broader direction of the market."
+    "interpretation": "In practice, a moving average helps smooth noisy price movement so traders can better spot the broader direction of the market.",
+    "use_case": "Traders use moving averages to identify trend direction, support/resistance zones, and crossover-based trading signals."
   },
   "regression": {
     "definition": "Regression is a statistical method used to estimate the relationship between variables and make predictions.",
     "formula": "In simple linear regression, the relationship is often written as y = mx + b.",
     "example": "A model may use past returns and volatility to predict the next day return of a stock.",
     "importance": "Regression is important because it helps build predictive models in finance and machine learning.",
-    "interpretation": "In practice, regression helps estimate how one or more inputs may influence an output, which is useful for prediction tasks."
+    "interpretation": "In practice, regression helps estimate how one or more inputs may influence an output, which is useful for prediction tasks.",
+    "use_case": "Regression is used in trading models to estimate future returns or price movement from historical features such as volatility, momentum, and lagged returns."
   },
   "ridge regression": {
     "definition": "Ridge regression is a variation of linear regression that adds regularization to reduce overfitting.",
