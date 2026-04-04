@@ -245,9 +245,12 @@ TOPIC_ALIASES = {
 }
 
 #Adding text normilization helpers
-def normalize_knowledge_text(text: str)-> str:
-    text = text.lower().strip
-    
+def normalize_knowledge_text(text: str) -> str:
+    if text is None:
+        return ""
+
+    text = str(text).lower().strip()
+
     replacements = {
         "examples": "example",
         "samples": "sample",
