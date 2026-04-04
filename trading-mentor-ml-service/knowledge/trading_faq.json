@@ -304,5 +304,95 @@
     "formula": "",
     "example": "Trying different alpha values in ridge regression to find the one with the best validation error is hyperparameter tuning.",
     "importance": "Hyperparameter tuning is important because it can significantly improve model performance and stability."
+  },
+  "order book": {
+    "definition": "An order book is a real-time list of buy and sell orders for a security, organized by price level.",
+    "formula": "",
+    "example": "An order book may show many buy orders at $99 and many sell orders at $100, helping traders see supply and demand.",
+    "importance": "The order book is important because it helps traders understand market depth, liquidity, and price pressure."
+  },
+  "market maker": {
+    "definition": "A market maker is a participant that continuously quotes both buy and sell prices to provide liquidity in the market.",
+    "formula": "",
+    "example": "A market maker may quote a bid of $99 and an ask of $100, allowing other traders to transact quickly.",
+    "importance": "Market makers are important because they improve liquidity and help markets function smoothly."
+  },
+  "slippage": {
+    "definition": "Slippage is the difference between the expected price of a trade and the actual execution price.",
+    "formula": "Slippage = actual execution price - expected execution price.",
+    "example": "If you expect to buy at $100 but the order executes at $101, the slippage is $1.",
+    "importance": "Slippage is important because it affects trading cost and execution quality."
+  },
+  "execution price": {
+    "definition": "Execution price is the price at which a trade is actually completed in the market.",
+    "formula": "",
+    "example": "A trader may submit a market order expecting to buy near $100, but the actual execution price depends on available market liquidity.",
+    "importance": "Execution price is important because it determines the real cost or proceeds of a trade."
+  },
+  "price discovery": {
+    "definition": "Price discovery is the process through which buyers and sellers determine the fair market price of an asset.",
+    "formula": "",
+    "example": "As many traders place buy and sell orders, the market gradually settles on a current trading price.",
+    "importance": "Price discovery is important because it reflects supply, demand, and information in the market."
+  },
+  "market depth": {
+    "definition": "Market depth describes the volume of buy and sell orders available at different price levels in the market.",
+    "formula": "",
+    "example": "If many orders exist close to the current price, the market is said to have strong depth.",
+    "importance": "Market depth is important because it affects liquidity and the likelihood of price moving sharply during trades."
+  },
+  "volume": {
+    "definition": "Volume is the number of shares or contracts traded in a market during a given period.",
+    "formula": "",
+    "example": "If 1 million shares of a stock are traded in a day, its daily volume is 1 million.",
+    "importance": "Volume is important because it helps traders judge market activity, liquidity, and strength of price moves."
+  },
+  "turnover": {
+    "definition": "Turnover is the total value or quantity of securities traded during a specific period.",
+    "formula": "",
+    "example": "If a stock exchange sees billions of dollars of trades in a day, that contributes to market turnover.",
+    "importance": "Turnover is important because it reflects market activity and liquidity."
+  },
+  "settlement": {
+    "definition": "Settlement is the final process where securities are delivered and payment is exchanged after a trade is executed.",
+    "formula": "",
+    "example": "After buying shares, settlement is the stage where the shares move to the buyer and funds move to the seller.",
+    "importance": "Settlement is important because it completes the trade legally and financially."
+  },
+  "clearing": {
+    "definition": "Clearing is the process of reconciling buy and sell transactions and preparing them for settlement.",
+    "formula": "",
+    "example": "A clearing house verifies the details of trades before final settlement occurs.",
+    "importance": "Clearing is important because it reduces errors and counterparty risk in markets."
+  },
+  "counterparty risk": {
+    "definition": "Counterparty risk is the risk that the other party in a transaction may fail to meet their obligation.",
+    "formula": "",
+    "example": "If one side of a trade cannot deliver funds or securities, the other side faces counterparty risk.",
+    "importance": "Counterparty risk is important because it can affect trade completion and financial stability."
+  },
+  "broker": {
+    "definition": "A broker is an intermediary that executes trades on behalf of clients.",
+    "formula": "",
+    "example": "Retail investors typically place orders through brokerage firms rather than directly in the market.",
+    "importance": "Brokers are important because they provide market access and trade execution services."
+  },
+  "dealer": {
+    "definition": "A dealer is a participant that buys and sells securities for its own account rather than only acting as an intermediary.",
+    "formula": "",
+    "example": "A dealer may hold inventory of securities and quote prices to other market participants.",
+    "importance": "Dealers are important because they help provide liquidity and support market activity."
+  },
+  "exchange": {
+    "definition": "An exchange is an organized marketplace where securities, derivatives, and other financial instruments are traded.",
+    "formula": "",
+    "example": "The New York Stock Exchange is a well-known example of a securities exchange.",
+    "importance": "Exchanges are important because they provide structure, transparency, and price discovery."
+  },
+  "otc market": {
+    "definition": "An OTC market, or over-the-counter market, is a decentralized market where trades occur directly between parties instead of on a centralized exchange.",
+    "formula": "",
+    "example": "Some bonds and derivatives are commonly traded in OTC markets rather than on stock exchanges.",
+    "importance": "OTC markets are important because they allow flexible trading arrangements, though often with less transparency than exchanges."
   }
 }

@@ -369,6 +369,29 @@ TOPIC_ALIASES = {
     
 }
 
+
+#Adding helper function into knowledge helpers to generate a simple singular form
+#This function tries to convert a plural-looking word into a simple singular form.
+def to_simple_singular(word: str) -> str:
+    if word.endswith("ies") and len(word) > 3:
+        return word[:-3] + "y"
+    if word.endswith("es") and len(word) > 2:
+        return word[:-2]
+    if word.endswith("s") and len(word) > 1:
+        return word[:-1]
+    return word
+
+#Adding a helper function to create plural-tolerant alias variants
+def get_alias_variants(alias: str):
+    variants = {alias}
+
+    words = alias.split()
+    singular_words = [to_simple_singular(w) for w in words]
+    singular_alias = " ".join(singular_words)
+
+    variants.add(singular_alias)
+    return variants
+
 #Adding text normilization helpers
 def normalize_knowledge_text(text: str) -> str:
     if text is None:
@@ -446,8 +469,9 @@ def find_knowledge_topic_with_alias(text: str):
     text = normalize_knowledge_text(text)
 
     for topic, alias in get_sorted_topic_alias_pairs():
-        if alias in text:
-            return topic, alias
+        for variant in get_alias_variants(alias):
+            if alias_matches_text(variant, text):
+                return topic, alias
 
     return None, None
 
@@ -466,18 +490,28 @@ def is_learning_style_question(text: str) -> bool:
 
     learning_phrases = [
         "what is",
+        "what are",
         "explain",
+        "define",
+        "describe",
         "tell me about",
         "help me understand",
         "how is",
+        "how does",
+        "how do",
         "how do we",
+        "why is",
+        "why are",
         "formula",
         "example",
-        "important",
+        "examples",
         "importance",
+        "important",
+        "why does it matter",
         "calculate",
-        "calculation"
-    ]
+        "calculation",
+        "computed"
+        ]
 
     return any(phrase in text for phrase in learning_phrases)
 
@@ -692,9 +726,11 @@ def find_all_knowledge_topics_with_aliases(text: str):
     seen_topics = set()
 
     for topic, alias in get_sorted_topic_alias_pairs():
-        if alias_matches_text(alias, text) and topic not in seen_topics:
-            matched.append((topic, alias))
-            seen_topics.add(topic)
+        for variant in get_alias_variants(alias):
+            if alias_matches_text(variant, text) and topic not in seen_topics:
+                matched.append((topic, alias))
+                seen_topics.add(topic)
+                break
 
     return matched
 
