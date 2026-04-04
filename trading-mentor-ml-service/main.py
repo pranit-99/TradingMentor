@@ -531,6 +531,24 @@ def is_calculation_style_question(text: str) -> bool:
 def get_supported_knowledge_topics() -> str:
     return ", ".join(KNOWLEDGE_BASE.keys())
 
+#Add a helper to detect which section the user wants
+def detect_knowledge_section(text: str) -> str:
+    text = normalize_knowledge_text(text)
+
+    if "formula" in text or "calculate" in text or "calculation" in text or "computed" in text:
+        return "formula"
+
+    if "example" in text or "sample" in text:
+        return "example"
+
+    if "importance" in text or "important" in text or "why does it matter" in text or "why is it important" in text:
+        return "importance"
+
+    if "meaning" in text or "interpret" in text or "in practice" in text or "what does it mean" in text:
+        return "interpretation"
+
+    return "definition"
+
 # A helper function to build Answers So for "volatility", the bot returns the definition stored in JSON
 def get_knowledge_response(text: str):
     topic, alias = find_knowledge_topic_with_alias(text)
@@ -580,21 +598,6 @@ def get_knowledge_response(text: str):
     pretty_topic = topic.title()
 
     return f"{intro}{pretty_topic} — {pretty_section}: {answer}"
-
-#Add a helper to detect which section the user wants
-def detect_knowledge_section(text: str) -> str:
-    text = normalize_knowledge_text(text)
-
-    if "formula" in text or "calculate" in text or "calculation" in text or "computed" in text:
-        return "formula"
-
-    if "example" in text or "sample" in text:
-        return "example"
-
-    if "importance" in text or "important" in text or "why does it matter" in text or "why is it important" in text:
-        return "importance"
-
-    return "definition"
 
 #Add helper function to find all matching knowledge topics:-uses the richer topic+alias helper
 def find_all_knowledge_topics(text: str):
@@ -673,6 +676,14 @@ def detect_all_knowledge_sections(text: str):
     ):
         sections.append("importance")
 
+    if (
+        "meaning" in text or
+        "interpret" in text or
+        "in practice" in text or
+        "what does it mean" in text
+    ):
+        sections.append("interpretation")
+
     if not sections:
         sections.append("definition")
 
@@ -700,7 +711,8 @@ def get_multi_section_knowledge_response(text: str):
         "definition": "Definition",
         "formula": "Formula",
         "example": "Example",
-        "importance": "Importance"
+        "importance": "Importance",
+        "interpretation": "Interpretation"
     }
 
     for section in sections:

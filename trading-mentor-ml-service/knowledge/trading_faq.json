@@ -21,13 +21,15 @@
     "definition": "Volatility shows how much a stock price moves up and down. Higher volatility means bigger price swings and usually higher risk.",
     "formula": "Volatility is commonly estimated using the standard deviation of returns over a period of time.",
     "example": "If one stock moves between $95 and $105 often while another stays near $100, the first one is more volatile.",
-    "importance": "Volatility is important because it helps measure uncertainty and risk in price movement."
+    "importance": "Volatility is important because it helps measure uncertainty and risk in price movement.",
+    "interpretation": "In practice, volatility tells you how unstable or jumpy a stock is. A highly volatile stock can move sharply in a short time, which may create both opportunity and risk."
   },
   "risk": {
     "definition": "Risk is the chance of losing money or getting a lower return than expected in an investment.",
     "formula": "",
     "example": "A highly unstable stock has more risk than a stable stock with smaller price changes.",
-    "importance": "Understanding risk helps traders and investors make safer and more informed decisions."
+    "importance": "Understanding risk helps traders and investors make safer and more informed decisions.",
+    "interpretation": "In practice, risk means how likely you are to face uncertainty, losses, or outcomes that differ from what you expect."
   },
   "investment": {
     "definition": "Investment means putting money into an asset like stocks, bonds, or funds with the goal of growing it over time.",
@@ -39,7 +41,8 @@
     "definition": "Trend shows the overall market direction of a stock, such as upward, downward, or neutral movement.",
     "formula": "",
     "example": "If a stock keeps moving higher over several periods, it is showing an upward trend.",
-    "importance": "Trend helps users understand direction and momentum in the market."
+    "importance": "Trend helps users understand direction and momentum in the market.",
+    "interpretation": "In practice, trend helps you understand whether the market is generally moving upward, downward, or sideways."
   },
   "risk score": {
     "definition": "Risk score is a simplified value used to represent how risky a stock currently appears. A higher risk score usually means more uncertainty or price movement.",
@@ -51,7 +54,8 @@
     "definition": "Prediction is the model’s estimate of how the stock may move next based on historical data and selected features.",
     "formula": "",
     "example": "If the model predicts a next-day return of 1.2 percent, it is forecasting an upward movement.",
-    "importance": "Predictions help users understand possible future movement, though they are never guaranteed."
+    "importance": "Predictions help users understand possible future movement, though they are never guaranteed.",
+    "interpretation": "In practice, a prediction is not a guarantee. It is the model’s best estimate based on patterns learned from past data."
   },
   "confidence": {
     "definition": "Confidence shows how strongly the model believes in its prediction. Higher confidence usually means the signal is more reliable, but it is never a guarantee.",
@@ -69,13 +73,15 @@
     "definition": "A moving average is a technical indicator that smooths price data over a period of time to help identify market direction.",
     "formula": "A simple moving average is calculated by adding closing prices over a chosen period and dividing by the number of periods.",
     "example": "A 5-day moving average adds the last 5 closing prices and divides the total by 5.",
-    "importance": "Moving averages help traders identify trends and reduce noise in daily price fluctuations."
+    "importance": "Moving averages help traders identify trends and reduce noise in daily price fluctuations.",
+    "interpretation": "In practice, a moving average helps smooth noisy price movement so traders can better spot the broader direction of the market."
   },
   "regression": {
     "definition": "Regression is a statistical method used to estimate the relationship between variables and make predictions.",
     "formula": "In simple linear regression, the relationship is often written as y = mx + b.",
     "example": "A model may use past returns and volatility to predict the next day return of a stock.",
-    "importance": "Regression is important because it helps build predictive models in finance and machine learning."
+    "importance": "Regression is important because it helps build predictive models in finance and machine learning.",
+    "interpretation": "In practice, regression helps estimate how one or more inputs may influence an output, which is useful for prediction tasks."
   },
   "ridge regression": {
     "definition": "Ridge regression is a variation of linear regression that adds regularization to reduce overfitting.",
