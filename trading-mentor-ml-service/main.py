@@ -559,6 +559,21 @@ def detect_knowledge_section(text: str) -> str:
     if "advantage" in text or "advantages" in text or "benefit" in text or "benefits" in text:
         return "advantages"
 
+    if "when not to use" in text or "when should i not use" in text or "when is it not useful" in text or "when should it be avoided" in text:
+        return "when_not_to_use"
+
+    if "common mistake" in text or "common mistakes" in text or "mistake" in text or "mistakes" in text or "misconception" in text or "misconceptions" in text:
+        return "common_mistakes"
+
+    if "related concept" in text or "related concepts" in text or "related topic" in text or "related topics" in text or "connected concepts" in text:
+        return "related_concepts"
+
+    if "prerequisite" in text or "prerequisites" in text or "before learning" in text or "what should i know first" in text or "what to learn before" in text:
+        return "prerequisites"
+
+    if "real world example" in text or "real example" in text or "real world case" in text:
+        return "real_world_example"
+
     return "definition"
 
 # A helper function to build Answers So for "volatility", the bot returns the definition stored in JSON
@@ -731,6 +746,49 @@ def detect_all_knowledge_sections(text: str):
     ):
         sections.append("advantages")
 
+    if (
+    "when not to use" in text or
+    "when should i not use" in text or
+    "when is it not useful" in text or
+    "when should it be avoided" in text
+    ):
+        sections.append("when_not_to_use")
+
+    if (
+    "common mistake" in text or
+    "common mistakes" in text or
+    "mistake" in text or
+    "mistakes" in text or
+    "misconception" in text or
+    "misconceptions" in text
+    ):
+        sections.append("common_mistakes")
+
+    if (
+    "related concept" in text or
+    "related concepts" in text or
+    "related topic" in text or
+    "related topics" in text or
+    "connected concepts" in text
+    ):
+        sections.append("related_concepts")
+
+    if (
+    "prerequisite" in text or
+    "prerequisites" in text or
+    "before learning" in text or
+    "what should i know first" in text or
+    "what to learn before" in text
+    ):
+        sections.append("prerequisites")
+
+    if (
+    "real world example" in text or
+    "real example" in text or
+    "real world case" in text
+    ):
+        sections.append("real_world_example")
+
     if not sections:
         sections.append("definition")
 
@@ -763,7 +821,12 @@ def get_multi_section_knowledge_response(text: str):
         "use_case": "Use Case",
         "comparison": "Comparison",
         "limitations": "Limitations",
-        "advantages": "Advantages"
+        "advantages": "Advantages",
+        "when_not_to_use": "When Not To Use",
+        "common_mistakes": "Common Mistakes",
+        "related_concepts": "Related Concepts",
+        "prerequisites": "Prerequisites"
+        "real_world_example": "Real World Example"
     }
 
     for section in sections:

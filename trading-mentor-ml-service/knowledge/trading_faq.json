@@ -27,7 +27,12 @@
     "interpretation": "In practice, volatility tells you how unstable or jumpy a stock is. A highly volatile stock can move sharply in a short time, which may create both opportunity and risk.",
     "use_case": "Traders use volatility to judge how much a stock may move and to decide position size, stop-loss distance, or whether a stock is suitable for short-term trading.",
     "limitations": "Volatility shows the size of price movement, but it does not tell direction and does not guarantee future market behavior.",
-    "advantages": "Volatility helps measure uncertainty, compare risk across assets, and support better position sizing."
+    "advantages": "Volatility helps measure uncertainty, compare risk across assets, and support better position sizing.",
+    "when_not_to_use": "Volatility should not be used alone when you need direction, because it measures magnitude of movement, not whether price will go up or down.",
+    "common_mistakes": "A common mistake is assuming that volatility means price will definitely fall. Volatility only describes how much price moves, not the direction.",
+    "related_concepts": "Volatility is closely related to risk, standard deviation, momentum, and position sizing.",
+    "prerequisites": "Before learning volatility, it helps to understand price movement, return, and basic market risk.",
+    "real_world_example": "During earnings announcements, stocks like Tesla or Nvidia often experience large price swings in a short time. This is a real-world example of high volatility."
   },
   "risk": {
     "definition": "Risk is the chance of losing money or getting a lower return than expected in an investment.",
@@ -35,7 +40,10 @@
     "example": "A highly unstable stock has more risk than a stable stock with smaller price changes.",
     "importance": "Understanding risk helps traders and investors make safer and more informed decisions.",
     "interpretation": "In practice, risk means how likely you are to face uncertainty, losses, or outcomes that differ from what you expect.",
-    "use_case": "Investors use risk to compare opportunities, size positions, and decide whether a trade fits their goals and tolerance for uncertainty."
+    "use_case": "Investors use risk to compare opportunities, size positions, and decide whether a trade fits their goals and tolerance for uncertainty.",
+    "common_mistakes": "A common mistake is thinking risk always means bad investment. Risk means uncertainty, and some higher-risk investments can also offer higher return potential.",
+    "related_concepts": "Risk is closely related to volatility, drawdown, diversification, and position sizing.",
+    "real_world_example": "A technology startup stock may have higher risk than a large established company because its future earnings are less predictable."
   },
   "investment": {
     "definition": "Investment means putting money into an asset like stocks, bonds, or funds with the goal of growing it over time.",
@@ -65,7 +73,11 @@
     "interpretation": "In practice, a prediction is not a guarantee. It is the model’s best estimate based on patterns learned from past data.",
     "use_case": "Prediction is used to estimate possible future movement so that users can compare model output with current trend, risk, and confidence.",
     "limitations": "Predictions are estimates, not guarantees. They depend on historical data and may fail when market conditions change suddenly.",
-    "advantages": "Predictions help users estimate possible future movement, compare signals, and support data-driven decision making."
+    "advantages": "Predictions help users estimate possible future movement, compare signals, and support data-driven decision making.",
+    "common_mistakes": "A common mistake is treating a model prediction as a guarantee. Predictions are estimates and can be wrong, especially when market conditions change.",
+    "related_concepts": "Prediction is closely related to regression, model training, confidence, feature engineering, and backtesting.",
+    "prerequisites": "Before learning prediction, it helps to understand historical data, features, model training, and uncertainty.",
+    "real_world_example": "A machine learning model trained on historical stock prices may predict tomorrow's return for Apple based on past trends and volatility."
   },
   "confidence": {
     "definition": "Confidence shows how strongly the model believes in its prediction. Higher confidence usually means the signal is more reliable, but it is never a guarantee.",
@@ -86,7 +98,12 @@
     "importance": "Moving averages help traders identify trends and reduce noise in daily price fluctuations.",
     "interpretation": "In practice, a moving average helps smooth noisy price movement so traders can better spot the broader direction of the market.",
     "use_case": "Traders use moving averages to identify trend direction, support/resistance zones, and crossover-based trading signals.",
-    "limitations": "Moving averages are lagging indicators, so they react after price has already moved and may give delayed signals."
+    "limitations": "Moving averages are lagging indicators, so they react after price has already moved and may give delayed signals.",
+    "when_not_to_use": "Moving averages are less useful when you need fast reaction to sudden price changes, because they are lagging indicators.",
+    "common_mistakes": "A common mistake is treating a moving average as an exact buy or sell signal by itself. It is better used with context and confirmation.",
+    "related_concepts": "Moving average is closely related to trend, momentum, moving average crossover, support, and resistance.",
+    "prerequisites": "Before learning moving average, it helps to understand stock prices, time series data, and trend.",
+    "real_world_example": "Many traders watch the 50-day and 200-day moving averages of the S&P 500. When the 50-day crosses above the 200-day, it is often called a 'golden cross'."
   },
   "regression": {
     "definition": "Regression is a statistical method used to estimate the relationship between variables and make predictions.",
@@ -97,7 +114,12 @@
     "use_case": "Regression is used in trading models to estimate future returns or price movement from historical features such as volatility, momentum, and lagged returns.",
     "comparison": "Regression is the general prediction method, while ridge regression is a regularized version designed to reduce overfitting.",
     "limitations": "Regression may miss complex non-linear market behavior and can become unreliable if the input relationships change over time.",
-    "advantages": "Regression is simple, interpretable, and useful for understanding relationships between inputs and outputs."
+    "advantages": "Regression is simple, interpretable, and useful for understanding relationships between inputs and outputs.",
+    "when_not_to_use": "Regression is less suitable when the relationship between variables is highly non-linear or when the market regime changes sharply.",
+    "common_mistakes": "A common mistake is assuming regression proves causation. Regression shows relationships, but not necessarily true cause and effect.",
+    "related_concepts": "Regression is closely related to ridge regression, model training, feature engineering, prediction, and overfitting.",
+    "prerequisites": "Before learning regression, it helps to understand variables, relationships between inputs and outputs, and basic prediction ideas.",
+    "real_world_example": "A regression model might estimate how changes in market volatility affect expected stock returns."
   },
   "ridge regression": {
     "definition": "Ridge regression is a variation of linear regression that adds regularization to reduce overfitting.",
@@ -106,7 +128,9 @@
     "importance": "Ridge regression is important because it improves model generalization and reduces overfitting.",
     "comparison": "Ridge regression is similar to linear regression, but it adds a penalty term that helps stabilize the model and reduce sensitivity to noise.",
     "limitations": "Ridge regression reduces overfitting, but it may still underperform if the features are weak or if the market behavior changes significantly.",
-    "advantages": "Ridge regression helps reduce overfitting, improves stability, and often performs better when features are correlated."
+    "advantages": "Ridge regression helps reduce overfitting, improves stability, and often performs better when features are correlated.",
+    "when_not_to_use": "Ridge regression is less useful if the problem requires strong non-linear modeling or if the main issue is poor feature quality rather than overfitting.",
+    "prerequisites": "Before learning ridge regression, it helps to understand linear regression, overfitting, and the idea of regularization."
   },
   "alpha": {
     "definition": "Alpha can refer to excess return over a benchmark or, in ridge regression, the regularization strength used in the model.",
@@ -199,7 +223,12 @@
     "example": "A strategy can be backtested on five years of stock data before being used in live trading.",
     "importance": "Backtesting is important because it helps evaluate whether a strategy might be useful before real deployment.",
     "limitations": "Backtesting relies on historical data, and strong past performance does not guarantee that the same strategy will work in future markets.",
-    "advantages": "Backtesting helps evaluate ideas on historical data before using them in live trading."
+    "advantages": "Backtesting helps evaluate ideas on historical data before using them in live trading.",
+    "when_not_to_use": "Backtesting should not be relied on alone when market conditions have changed significantly, because past performance may not reflect future behavior.",
+    "common_mistakes": "A common mistake is assuming that a strategy which performed well historically will automatically work in the future.",
+    "related_concepts": "Backtesting is closely related to prediction, model evaluation, historical data, strategy testing, and overfitting.",
+    "prerequisites": "Before learning backtesting, it helps to understand trading strategy, historical data, prediction, and evaluation.",
+    "real_world_example": "A trader may test a strategy that buys when a stock crosses above its 50-day moving average and sells when it falls below it, using historical data."
   },
   "anomaly detection": {
     "definition": "Anomaly detection is the process of identifying unusual patterns in data that do not match normal behavior.",
@@ -281,7 +310,8 @@
     "definition": "Hedging is a strategy used to reduce potential losses by taking an offsetting position in another asset or instrument.",
     "formula": "",
     "example": "An investor may use options to hedge against a possible fall in stock prices.",
-    "importance": "Hedging is important because it helps manage risk in uncertain markets."
+    "importance": "Hedging is important because it helps manage risk in uncertain markets.",
+    "when_not_to_use": "Hedging may be less suitable when the cost of protection is too high or when the investor is willing to accept normal market fluctuations."
   },
   "leverage": {
     "definition": "Leverage means using borrowed money or financial instruments to increase exposure to an investment.",
