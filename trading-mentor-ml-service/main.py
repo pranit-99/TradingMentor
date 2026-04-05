@@ -909,18 +909,24 @@ def get_relationship_response(text: str):
     intro2 = build_alias_aware_intro(topic2, alias2)
 
     if topic2_in_related1 or topic1_in_related2:
-        return(
-           f"{intro1}{intro2}"
-           f"{topic1.title()} and {topic2.title()} are related concepts. "
-           f"{topic1.title()} — Related Concepts: {related1} "
-           f"{topic2.title()} — Related Concepts: {related2}"
-           )
+        explanation = build_relationship_explanation(topic1, topic2, related1, related2)
+        return f"{intro1}{intro2}{explanation}"
     
     return(
         f"{intro1}{intro2}"
         f"{topic1.title()} and {topic2.title()} are both important concepts, "
         f"but I do not yet have a strong relationship explanation stored between them."
         )
+
+#Add a helper to build a natural relationship explanation
+#This gives the relationship answer a more tutor-like structure.
+def build_relationship_explanation(topic1: str, topic2: str, related1: str, related2: str) -> str:
+    return (
+        f"{topic1.title()} and {topic2.title()} are related concepts. "
+        f"{topic1.title()} is connected to {topic2.title()} because {related1} "
+        f"At the same time, {topic2.title()} is connected to {topic1.title()} because {related2}"
+    )
+
     
     
     
