@@ -33,7 +33,10 @@
     "related_concepts": "Volatility is closely related to risk, standard deviation, momentum, and position sizing.",
     "prerequisites": "Before learning volatility, it helps to understand price movement, return, and basic market risk.",
     "real_world_example": "During earnings announcements, stocks like Tesla or Nvidia often experience large price swings in a short time. This is a real-world example of high volatility.",
-    "step_by_step": "Step 1: Collect prices over time. Step 2: Convert them into returns. Step 3: Measure how widely those returns vary. Step 4: Use that variation as a measure of volatility."
+    "step_by_step": "Step 1: Collect prices over time. Step 2: Convert them into returns. Step 3: Measure how widely those returns vary. Step 4: Use that variation as a measure of volatility.",
+    "summary": "Volatility is a measure of how much a stock price moves up and down.",
+    "intuition": "You can think of volatility as the 'jitteriness' of a stock. The more sharply and unpredictably it moves, the higher the volatility.",
+    "analogy": "Volatility is like a car ride on a bumpy road. The more sudden and sharp the bumps, the more volatile the journey feels."
   },
   "risk": {
     "definition": "Risk is the chance of losing money or getting a lower return than expected in an investment.",
@@ -44,7 +47,10 @@
     "use_case": "Investors use risk to compare opportunities, size positions, and decide whether a trade fits their goals and tolerance for uncertainty.",
     "common_mistakes": "A common mistake is thinking risk always means bad investment. Risk means uncertainty, and some higher-risk investments can also offer higher return potential.",
     "related_concepts": "Risk is closely related to volatility, drawdown, diversification, and position sizing.",
-    "real_world_example": "A technology startup stock may have higher risk than a large established company because its future earnings are less predictable."
+    "real_world_example": "A technology startup stock may have higher risk than a large established company because its future earnings are less predictable.",
+    "summary": "Risk is the uncertainty of outcomes, including the possibility of loss.",
+    "intuition": "You can think of risk as how unsure you are about what might happen to your money.",
+    "analogy": "Risk is like walking on an uncertain path. The less predictable the ground, the more careful you need to be."
   },
   "investment": {
     "definition": "Investment means putting money into an asset like stocks, bonds, or funds with the goal of growing it over time.",
@@ -79,7 +85,10 @@
     "related_concepts": "Prediction is closely related to regression, model training, confidence, feature engineering, and backtesting.",
     "prerequisites": "Before learning prediction, it helps to understand historical data, features, model training, and uncertainty.",
     "real_world_example": "A machine learning model trained on historical stock prices may predict tomorrow's return for Apple based on past trends and volatility.",
-    "step_by_step": "Step 1: Collect historical data. Step 2: Build useful features from that data. Step 3: Train a model on past examples. Step 4: Use the model to estimate the next outcome."
+    "step_by_step": "Step 1: Collect historical data. Step 2: Build useful features from that data. Step 3: Train a model on past examples. Step 4: Use the model to estimate the next outcome.",
+    "summary": "Prediction is the model’s estimate of what may happen next based on historical data.",
+    "intuition": "You can think of prediction as the model making its best guess about the future using patterns from the past.",
+    "analogy": "Prediction is like weather forecasting. It uses past and current patterns to estimate what may happen next, but it is never guaranteed."
   },
   "confidence": {
     "definition": "Confidence shows how strongly the model believes in its prediction. Higher confidence usually means the signal is more reliable, but it is never a guarantee.",
@@ -106,7 +115,10 @@
     "related_concepts": "Moving average is closely related to trend, momentum, moving average crossover, support, and resistance.",
     "prerequisites": "Before learning moving average, it helps to understand stock prices, time series data, and trend.",
     "real_world_example": "Many traders watch the 50-day and 200-day moving averages of the S&P 500. When the 50-day crosses above the 200-day, it is often called a 'golden cross'.",
-    "step_by_step": "Step 1: Select a time window such as 5 or 20 days. Step 2: Add the prices in that window. Step 3: Divide by the number of periods. Step 4: Repeat over time to create a smoothed trend line."
+    "step_by_step": "Step 1: Select a time window such as 5 or 20 days. Step 2: Add the prices in that window. Step 3: Divide by the number of periods. Step 4: Repeat over time to create a smoothed trend line.",
+    "summary": "A moving average smooths price data to help show overall trend direction.",
+    "intuition": "You can think of a moving average as a smoothing line that filters out daily noise so the bigger trend becomes easier to see.",
+    "analogy": "A moving average is like smoothing rough handwriting so the overall shape becomes easier to read."
   },
   "regression": {
     "definition": "Regression is a statistical method used to estimate the relationship between variables and make predictions.",
@@ -123,7 +135,10 @@
     "related_concepts": "Regression is closely related to ridge regression, model training, feature engineering, prediction, and overfitting.",
     "prerequisites": "Before learning regression, it helps to understand variables, relationships between inputs and outputs, and basic prediction ideas.",
     "real_world_example": "A regression model might estimate how changes in market volatility affect expected stock returns.",
-    "step_by_step": "Step 1: Collect historical input features and target values. Step 2: Fit a relationship between inputs and output. Step 3: Estimate coefficients. Step 4: Use the fitted model to predict new outputs."
+    "step_by_step": "Step 1: Collect historical input features and target values. Step 2: Fit a relationship between inputs and output. Step 3: Estimate coefficients. Step 4: Use the fitted model to predict new outputs.",
+    "summary": "Regression is a method used to estimate relationships and make predictions.",
+    "intuition": "You can think of regression as drawing the best-fit relationship between inputs and an outcome so future values can be estimated.",
+    "analogy": "Regression is like drawing the best possible line through scattered dots so you can estimate where the next dot might appear."
   },
   "ridge regression": {
     "definition": "Ridge regression is a variation of linear regression that adds regularization to reduce overfitting.",
@@ -234,7 +249,10 @@
     "related_concepts": "Backtesting is closely related to prediction, model evaluation, historical data, strategy testing, and overfitting.",
     "prerequisites": "Before learning backtesting, it helps to understand trading strategy, historical data, prediction, and evaluation.",
     "real_world_example": "A trader may test a strategy that buys when a stock crosses above its 50-day moving average and sells when it falls below it, using historical data.",
-    "step_by_step": "Step 1: Define a trading rule or strategy. Step 2: Apply it to historical data. Step 3: measure returns, drawdowns, and consistency. Step 4: Review whether the results are realistic and robust."
+    "step_by_step": "Step 1: Define a trading rule or strategy. Step 2: Apply it to historical data. Step 3: measure returns, drawdowns, and consistency. Step 4: Review whether the results are realistic and robust.",
+    "summary": "Backtesting tests a strategy or model on historical data to see how it would have performed.",
+    "intuition": "You can think of backtesting as replaying history to see how a strategy would have behaved if you had used it in the past.",
+    "analogy": "Backtesting is like practicing a play using old game footage before stepping onto the field for a real match."
   },
   "anomaly detection": {
     "definition": "Anomaly detection is the process of identifying unusual patterns in data that do not match normal behavior.",

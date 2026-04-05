@@ -577,6 +577,15 @@ def detect_knowledge_section(text: str) -> str:
     if "step by step" in text or "steps" in text or "process" in text or "how it works" in text:
         return "step_by_step"
 
+    if "summary" in text or "short summary" in text or "in short" in text or "quick overview" in text:
+        return "summary"
+
+    if "intuition" in text or "intuitively" in text or "how should i think about it" in text or "mental model" in text:
+        return "intuition"
+
+    if "analogy" in text or "compare it to" in text or "like what" in text or "similar to what" in text:
+        return "analogy"
+
     return "definition"
 
 # A helper function to build Answers So for "volatility", the bot returns the definition stored in JSON
@@ -803,6 +812,30 @@ def detect_all_knowledge_sections(text: str):
     ):
         sections.append("step_by_step")
 
+    if (
+    "summary" in text or
+    "short summary" in text or
+    "in short" in text or
+    "quick overview" in text
+    ):
+        sections.append("summary")
+
+    if (
+    "intuition" in text or
+    "intuitively" in text or
+    "how should i think about it" in text or
+    "mental model" in text
+    ):
+        sections.append("intuition")
+
+    if (
+    "analogy" in text or
+    "compare it to" in text or
+    "like what" in text or
+    "similar to what" in text
+    ):
+        sections.append("analogy")
+
     return sections
 
 # add a helper function for single and multi sections answers
@@ -838,7 +871,10 @@ def get_multi_section_knowledge_response(text: str):
         "related_concepts": "Related Concepts",
         "prerequisites": "Prerequisites",
         "real_world_example": "Real World Example",
-        "step_by_step": "Step By Step"
+        "step_by_step": "Step By Step",
+        "summary": "Summary",
+        "intuition": "Intuition"
+        "analogy": "Analogy"
     }
 
     for section in sections:
