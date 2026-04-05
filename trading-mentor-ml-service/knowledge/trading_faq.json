@@ -32,7 +32,8 @@
     "common_mistakes": "A common mistake is assuming that volatility means price will definitely fall. Volatility only describes how much price moves, not the direction.",
     "related_concepts": "Volatility is closely related to risk, standard deviation, momentum, and position sizing.",
     "prerequisites": "Before learning volatility, it helps to understand price movement, return, and basic market risk.",
-    "real_world_example": "During earnings announcements, stocks like Tesla or Nvidia often experience large price swings in a short time. This is a real-world example of high volatility."
+    "real_world_example": "During earnings announcements, stocks like Tesla or Nvidia often experience large price swings in a short time. This is a real-world example of high volatility.",
+    "step_by_step": "Step 1: Collect prices over time. Step 2: Convert them into returns. Step 3: Measure how widely those returns vary. Step 4: Use that variation as a measure of volatility."
   },
   "risk": {
     "definition": "Risk is the chance of losing money or getting a lower return than expected in an investment.",
@@ -77,7 +78,8 @@
     "common_mistakes": "A common mistake is treating a model prediction as a guarantee. Predictions are estimates and can be wrong, especially when market conditions change.",
     "related_concepts": "Prediction is closely related to regression, model training, confidence, feature engineering, and backtesting.",
     "prerequisites": "Before learning prediction, it helps to understand historical data, features, model training, and uncertainty.",
-    "real_world_example": "A machine learning model trained on historical stock prices may predict tomorrow's return for Apple based on past trends and volatility."
+    "real_world_example": "A machine learning model trained on historical stock prices may predict tomorrow's return for Apple based on past trends and volatility.",
+    "step_by_step": "Step 1: Collect historical data. Step 2: Build useful features from that data. Step 3: Train a model on past examples. Step 4: Use the model to estimate the next outcome."
   },
   "confidence": {
     "definition": "Confidence shows how strongly the model believes in its prediction. Higher confidence usually means the signal is more reliable, but it is never a guarantee.",
@@ -103,7 +105,8 @@
     "common_mistakes": "A common mistake is treating a moving average as an exact buy or sell signal by itself. It is better used with context and confirmation.",
     "related_concepts": "Moving average is closely related to trend, momentum, moving average crossover, support, and resistance.",
     "prerequisites": "Before learning moving average, it helps to understand stock prices, time series data, and trend.",
-    "real_world_example": "Many traders watch the 50-day and 200-day moving averages of the S&P 500. When the 50-day crosses above the 200-day, it is often called a 'golden cross'."
+    "real_world_example": "Many traders watch the 50-day and 200-day moving averages of the S&P 500. When the 50-day crosses above the 200-day, it is often called a 'golden cross'.",
+    "step_by_step": "Step 1: Select a time window such as 5 or 20 days. Step 2: Add the prices in that window. Step 3: Divide by the number of periods. Step 4: Repeat over time to create a smoothed trend line."
   },
   "regression": {
     "definition": "Regression is a statistical method used to estimate the relationship between variables and make predictions.",
@@ -119,7 +122,8 @@
     "common_mistakes": "A common mistake is assuming regression proves causation. Regression shows relationships, but not necessarily true cause and effect.",
     "related_concepts": "Regression is closely related to ridge regression, model training, feature engineering, prediction, and overfitting.",
     "prerequisites": "Before learning regression, it helps to understand variables, relationships between inputs and outputs, and basic prediction ideas.",
-    "real_world_example": "A regression model might estimate how changes in market volatility affect expected stock returns."
+    "real_world_example": "A regression model might estimate how changes in market volatility affect expected stock returns.",
+    "step_by_step": "Step 1: Collect historical input features and target values. Step 2: Fit a relationship between inputs and output. Step 3: Estimate coefficients. Step 4: Use the fitted model to predict new outputs."
   },
   "ridge regression": {
     "definition": "Ridge regression is a variation of linear regression that adds regularization to reduce overfitting.",
@@ -130,7 +134,8 @@
     "limitations": "Ridge regression reduces overfitting, but it may still underperform if the features are weak or if the market behavior changes significantly.",
     "advantages": "Ridge regression helps reduce overfitting, improves stability, and often performs better when features are correlated.",
     "when_not_to_use": "Ridge regression is less useful if the problem requires strong non-linear modeling or if the main issue is poor feature quality rather than overfitting.",
-    "prerequisites": "Before learning ridge regression, it helps to understand linear regression, overfitting, and the idea of regularization."
+    "prerequisites": "Before learning ridge regression, it helps to understand linear regression, overfitting, and the idea of regularization.",
+    "step_by_step": "Step 1: Start with linear regression setup. Step 2: Add a penalty term to large coefficients. Step 3: Train the model while balancing fit and regularization. Step 4: Use the model to predict with better stability."
   },
   "alpha": {
     "definition": "Alpha can refer to excess return over a benchmark or, in ridge regression, the regularization strength used in the model.",
@@ -228,7 +233,8 @@
     "common_mistakes": "A common mistake is assuming that a strategy which performed well historically will automatically work in the future.",
     "related_concepts": "Backtesting is closely related to prediction, model evaluation, historical data, strategy testing, and overfitting.",
     "prerequisites": "Before learning backtesting, it helps to understand trading strategy, historical data, prediction, and evaluation.",
-    "real_world_example": "A trader may test a strategy that buys when a stock crosses above its 50-day moving average and sells when it falls below it, using historical data."
+    "real_world_example": "A trader may test a strategy that buys when a stock crosses above its 50-day moving average and sells when it falls below it, using historical data.",
+    "step_by_step": "Step 1: Define a trading rule or strategy. Step 2: Apply it to historical data. Step 3: measure returns, drawdowns, and consistency. Step 4: Review whether the results are realistic and robust."
   },
   "anomaly detection": {
     "definition": "Anomaly detection is the process of identifying unusual patterns in data that do not match normal behavior.",

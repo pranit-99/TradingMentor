@@ -574,6 +574,9 @@ def detect_knowledge_section(text: str) -> str:
     if "real world example" in text or "real example" in text or "real world case" in text:
         return "real_world_example"
 
+    if "step by step" in text or "steps" in text or "process" in text or "how it works" in text:
+        return "step_by_step"
+
     return "definition"
 
 # A helper function to build Answers So for "volatility", the bot returns the definition stored in JSON
@@ -792,6 +795,14 @@ def detect_all_knowledge_sections(text: str):
     if not sections:
         sections.append("definition")
 
+    if (
+    "step by step" in text or
+    "steps" in text or
+    "process" in text or
+    "how it works" in text
+    ):
+        sections.append("step_by_step")
+
     return sections
 
 # add a helper function for single and multi sections answers
@@ -826,7 +837,8 @@ def get_multi_section_knowledge_response(text: str):
         "common_mistakes": "Common Mistakes",
         "related_concepts": "Related Concepts",
         "prerequisites": "Prerequisites",
-        "real_world_example": "Real World Example"
+        "real_world_example": "Real World Example",
+        "step_by_step": "Step By Step"
     }
 
     for section in sections:
