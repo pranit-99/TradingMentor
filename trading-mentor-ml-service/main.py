@@ -860,7 +860,71 @@ def find_all_knowledge_topics_with_aliases(text: str):
 
     return matched
 
-            
+#Following will be the knowledge reasoning layer here we will be try to connect related concepts automatically
+#This will be bridge between knowledgebased layer
+
+#here bot will answer relitable questions not just definations ans Examples
+def is_relationship_question(text: str) -> bool:
+    text = normalize_knowledge_text(text)
+
+    relationship_phrases = [
+        "how are",
+        "how is",
+        "how does",
+        "related",
+        "relation",
+        "relationship",
+        "connected",
+        "connection",
+        "difference between",
+        "link between"
+        ]
+
+    return any(phrase in text for phrase in relationship_phrases)
+
+#Add a helper to answer relationship questions using
+#Find all matched topics in the question.
+def get_relationship_response(text: str):
+    matched_topics = find_all_knowledge_topics_with_aliases(text)
+
+    if len(matched_topics) < 2:
+        return None
+
+    topic1, alias1 = matched_topics[0]
+    topic2, alias2 = matched_topics[1]
+
+    topic1_data = KNOWLEDGE_BASE.get(topic1, {})
+    topic2_data = KNOWLEDGE_BASE.get(topic2, {})
+
+    if not topic1_data or not topic2_data:
+        return None
+
+    related1 = topic1_data.get("related_concepts", "")
+    related2 = topic2_data.get("related_concepts", "")
+
+    topic2_in_related1 = topic2.lower() in related1.lower()
+    topic1_in_related2 = topic2.lower() in related1.lower()
+
+    intro1 = build_alias_aware_intro(topic1, alias1)
+    intro2 = build_alias_aware_intro(topic2, alias2)
+
+    if topic2_in_related1 or topic1_in_related2:
+        return(
+           intro1 = build_alias_aware_intro(topic1, alias1)
+           f"{topic1.title()} and {topic2.title()} are related concepts. "
+           f"{topic1.title()} — Related Concepts: {related1} "
+           f"{topic2.title()} — Related Concepts: {related2}"
+           )
+    
+    return(
+        f"{intro1}{intro2}"
+        f"{topic1.title()} and {topic2.title()} are both important concepts, "
+        f"but I do not yet have a strong relationship explanation stored between them."
+        )
+    
+    
+    
+    
     
 #-------------------Knowledge Based Chatbotresponse Ends------------------------------
 
@@ -1341,6 +1405,13 @@ def get_basic_chat_response(message: str) -> str:
     symbol_reply = handle_symbol_queries(text)
     if symbol_reply:
         return symbol_reply
+
+    relationship_reply = None
+    if is_relationship_question(text):
+        relationship_reply = get_relationship_response(text)
+
+    if relationship_reply:
+        return relationship_reply
 
     multi_knowledge_reply = get_multi_topic_knowledge_response(text)
     if multi_knowledge_reply:
