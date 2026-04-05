@@ -873,7 +873,7 @@ def get_multi_section_knowledge_response(text: str):
         "real_world_example": "Real World Example",
         "step_by_step": "Step By Step",
         "summary": "Summary",
-        "intuition": "Intuition"
+        "intuition": "Intuition",
         "analogy": "Analogy"
     }
 
