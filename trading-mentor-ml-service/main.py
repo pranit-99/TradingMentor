@@ -910,7 +910,7 @@ def get_relationship_response(text: str):
 
     if topic2_in_related1 or topic1_in_related2:
         return(
-           intro1 = build_alias_aware_intro(topic1, alias1)
+           f"{intro1}{intro2}"
            f"{topic1.title()} and {topic2.title()} are related concepts. "
            f"{topic1.title()} — Related Concepts: {related1} "
            f"{topic2.title()} — Related Concepts: {related2}"
